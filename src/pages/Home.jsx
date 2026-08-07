@@ -55,9 +55,8 @@ export default function Home() {
           </div>
 
           <p className="hero__blurb">
-            A guide to every university major in Kurdistan, Iraq. For the student choosing one
-            before ever seeing what it is, and for the student already inside a major who still
-            wants to understand it properly.
+            Every university major in Kurdistan, Iraq, explained in plain language — before you
+            have to choose one.
           </p>
 
           <div className="hero__actions">
@@ -97,8 +96,8 @@ export default function Home() {
             <Reveal delay={100}>
               <p className="preview__lede">
                 {isAuthenticated
-                  ? 'These three are written up in full. The rest are listed so you can see the whole map, and they open as we finish them.'
-                  : 'These three are written up in full. Sign in to browse the whole shelf, and watch the rest open as we finish them.'}
+                  ? 'These three are written up in full. The rest open as we finish them.'
+                  : 'These three are written up in full. Sign in to browse the whole shelf.'}
               </p>
             </Reveal>
           </div>

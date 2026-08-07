@@ -13,15 +13,15 @@ const REASONS = ['I am a student', 'I teach or advise students', 'I want to cont
 const CHANNELS = [
   {
     label: 'For students',
-    text: 'A major missing, or a page that does not match your experience of it? Tell us. Corrections from people inside the field are the fastest way this gets better.',
+    text: 'A major missing, or a page that does not match your experience of it? Corrections from inside the field are the fastest way this gets better.',
   },
   {
     label: 'For schools',
-    text: 'If you run a middle or high school and want your students exploring majors earlier, we would like to hear how your year is structured.',
+    text: 'Want your students exploring majors earlier? Tell us how your year is structured.',
   },
   {
     label: 'For universities',
-    text: 'Departments who want their programme described accurately are welcome to send the details themselves.',
+    text: 'Departments are welcome to send their programme details themselves.',
   },
 ]
 
@@ -55,7 +55,7 @@ export default function Contact() {
           <h2 className="chead__title">Tell us what we got wrong.</h2>
           <p className="chead__lede">
             Majora is only as good as the people who correct it. If a major is described in a way
-            that does not match the reality of studying it, that is a bug, and we want the report.
+            that does not match the reality of studying it, that is a bug.
           </p>
         </div>
       </header>

@@ -1,72 +1,47 @@
 import Reveal from '../components/Reveal.jsx'
 import Lattice from '../components/decor/Lattice.jsx'
-import CornerLines from '../components/decor/CornerLines.jsx'
 import { MAJORS, FIELDS } from '../data/majors.js'
 import './About.css'
 
 /**
  * The "why this exists" stretch of the landing page (#about).
  *
- * Reads as one argument, in order: the problem → why it persists → the
- * solution → what changes → how it works → what a major page holds → who we
- * are. It is a section, not a route, so it owns no CTA of its own; the page
- * closes with one shared call to action.
+ * Reads as one argument, in order: the problem → the solution → what changes →
+ * how it works → what a major page holds. It is a section, not a route, so it
+ * owns no CTA of its own; the page closes with one shared call to action.
+ *
+ * Kept deliberately short: the landing page earns a click, it does not have to
+ * win the whole argument. Anything that only restates a point made above has
+ * been cut rather than reworded.
  */
 
 const CONSEQUENCES = [
   {
     label: 'Uncertainty',
-    text: 'The deadline arrives before the understanding does. Students pick under pressure, from a list of names they cannot picture.',
+    text: 'The deadline arrives before the understanding does, so the choice gets made under pressure.',
   },
   {
     label: 'Uninformed choices',
-    text: 'A major gets chosen for its reputation, a relative’s advice, or the score it accepts, rarely for what studying it is actually like.',
+    text: 'A major gets picked for its reputation or the score it accepts, rarely for what studying it is like.',
   },
   {
     label: 'Unsuitable majors',
-    text: 'Years, tuition and motivation go into a field that never fit. Switching late is expensive; finishing anyway can cost more.',
-  },
-]
-
-const CAUSES = [
-  {
-    title: 'Exposure comes too late',
-    text: 'Careers are discussed in the final year, if at all, long after subject choices have already narrowed the options.',
-  },
-  {
-    title: 'Information is scattered',
-    text: 'What exists is spread across university pages, PDFs and word of mouth, written for administrators rather than for teenagers.',
-  },
-  {
-    title: 'Nobody describes the work',
-    text: 'Course titles are public. What a student does all day for four to six years is not.',
-  },
-  {
-    title: 'Advice is anecdotal',
-    text: 'One cousin’s experience becomes the whole evidence base for a decade-long decision.',
+    text: 'Years, tuition and motivation go into a field that never fit, and switching late is expensive.',
   },
 ]
 
 const PILLARS = [
   {
     title: 'A complete library, not a highlight reel',
-    text: `All ${MAJORS.length} majors across ${FIELDS.length} fields get the same treatment. Medicine and Kurdish Literature are described with equal care, so nothing looks second-tier by omission.`,
+    text: `All ${MAJORS.length} majors across ${FIELDS.length} fields get the same treatment, so nothing looks second-tier by omission.`,
   },
   {
     title: 'Written to be understood at 14',
-    text: 'Plain language, no admissions jargon, no prestige signalling. If a middle school student cannot follow it, it gets rewritten.',
+    text: 'Plain language, no admissions jargon, no prestige signalling.',
   },
   {
     title: 'Honest about the hard parts',
-    text: 'Every major says who it suits and who it does not. A page that only sells the field is not preparation. It is marketing.',
-  },
-  {
-    title: 'Built for this region',
-    text: 'Scoped to programmes actually offered in Kurdistan, Iraq, and to the careers those degrees genuinely open here.',
-  },
-  {
-    title: 'It keeps working after you have chosen',
-    text: 'Choosing is only the first use. If you are already studying something, the same four answers tell you what the remaining years hold, which skills the degree is quietly building, and what it opens once you graduate. Plenty of students reach second year still unsure what their own major is for.',
+    text: 'Every major says who it suits and who it does not. A page that only sells the field is marketing, not preparation.',
   },
 ]
 
@@ -74,49 +49,47 @@ const STEPS = [
   {
     n: '01',
     title: 'Open the library',
-    text: 'Every major offered in the region, in one place, described in plain language instead of a prospectus.',
+    text: 'Every major offered in the region, in plain language instead of a prospectus.',
   },
   {
     n: '02',
     title: 'See the real work',
-    text: 'What the four to six years actually contain: the subjects, the labs, the studio nights, the hospital shifts.',
+    text: 'What the four to six years actually contain: the subjects, the labs, the hospital shifts.',
   },
   {
     n: '03',
     title: 'Compare honestly',
-    text: 'Put two majors side by side and see where they differ: workload, skills, and where each one leads.',
+    text: 'Two majors side by side: workload, skills, and where each one leads.',
   },
   {
     n: '04',
     title: 'Decide with reasons',
-    text: 'Arrive at the application form able to say why, not because of a score, a relative, or a rumour.',
+    text: 'Arrive at the application form able to say why.',
   },
 ]
 
 const INSIDE = [
   {
     title: 'What you will study',
-    text: 'The actual subjects, year by year. Not a slogan, but the syllabus behind it.',
+    text: 'The actual subjects, year by year — the syllabus, not the slogan.',
   },
   {
     title: 'Skills you will build',
-    text: 'What you will be good at when you graduate, whether or not you stay in the field.',
+    text: 'What you will be good at, whether or not you stay in the field.',
   },
   {
     title: 'Where it leads',
-    text: 'The jobs this degree opens here, and the ones that need a further qualification.',
+    text: 'The jobs this degree opens here, and the ones that need more.',
   },
   {
     title: 'Whether it fits you',
-    text: 'A blunt sentence about who thrives in it, and who quietly regrets choosing it.',
+    text: 'Who thrives in it, and who quietly regrets choosing it.',
   },
 ]
 
 export default function About() {
   return (
     <section className="about" id="about" aria-labelledby="about-heading">
-      {/* Names the landmark for assistive tech; the visible "About Majora"
-          block closes the section rather than opening it. */}
       <h2 className="sr-only" id="about-heading">
         About Majora
       </h2>
@@ -132,12 +105,10 @@ export default function About() {
           <Reveal delay={100}>
             <blockquote className="statement">
               <p>
-                Middle school students and beyond in Kurdistan, Iraq struggle to choose the right
-                major because they are{' '}
-                <mark>not adequately prepared or exposed to different academic and career paths</mark>{' '}
-                before graduation.
+                Students in Kurdistan, Iraq struggle to choose the right major because they are{' '}
+                <mark>not exposed to different academic and career paths</mark> before graduation.
               </p>
-              <footer>The problem statement, in full</footer>
+              <footer>The problem statement</footer>
             </blockquote>
           </Reveal>
 
@@ -159,28 +130,6 @@ export default function About() {
         </div>
       </div>
 
-      {/* ============================ CAUSES =========================== */}
-      <div className="section causes">
-        <div className="shell">
-          <Reveal className="causes__head">
-            <span className="eyebrow eyebrow--dark">Why it keeps happening</span>
-            <h3 className="causes__title">
-              The gap is not intelligence or effort. It is exposure.
-            </h3>
-          </Reveal>
-
-          <div className="causes__grid">
-            {CAUSES.map((cause, i) => (
-              <Reveal className="cause" key={cause.title} delay={i * 80}>
-                <span className="cause__mark" aria-hidden="true" />
-                <h4 className="cause__title">{cause.title}</h4>
-                <p className="cause__text">{cause.text}</p>
-              </Reveal>
-            ))}
-          </div>
-        </div>
-      </div>
-
       {/* =========================== SOLUTION ========================== */}
       <div className="section solution">
         <Lattice className="solution__lattice" size={72} color="rgba(255,255,255,0.05)" />
@@ -195,11 +144,9 @@ export default function About() {
             </Reveal>
             <Reveal delay={120}>
               <p className="solution__lede">
-                Not a ranking. Not an aptitude quiz that hands you an answer. Majora is a library
-                you can walk through for years before you ever fill in a form, where every major
-                explains itself in the same four terms, so you can compare them honestly and end up
-                somewhere that fits. It does not close once the choice is made. The page that helps
-                you pick a major is the same one that shows you the rest of it.
+                Not a ranking, and not a quiz that hands you an answer. Every major explains itself
+                in the same four terms, so you can compare them honestly — before you choose, and
+                after, when you want to understand the one you are already in.
               </p>
             </Reveal>
           </div>
@@ -228,7 +175,6 @@ export default function About() {
             <ul>
               <li>You hear the name of a major for the first time on the application form.</li>
               <li>Your score decides the field, and you adapt to it afterwards.</li>
-              <li>You discover what the degree involves in the second semester.</li>
               <li>Changing course means losing a year, or more.</li>
             </ul>
           </Reveal>
@@ -240,9 +186,8 @@ export default function About() {
           <Reveal className="shift__col shift__col--after" delay={140}>
             <span className="shift__tag shift__tag--gold">With Majora</span>
             <ul>
-              <li>You have been reading about majors.</li>
+              <li>You have been reading about majors for years.</li>
               <li>You know which fields genuinely interest you, and why.</li>
-              <li>You already know what the first two years contain.</li>
               <li>You choose once, deliberately, and can explain the reason.</li>
             </ul>
           </Reveal>
@@ -264,8 +209,8 @@ export default function About() {
             <Reveal delay={120} className="how__lede">
               <p>
                 Most students meet a major for the first time in the week they apply for it. Majora
-                moves that meeting forward, into middle school, into the years when there is still
-                time to be curious, change your mind, and change it back.
+                moves that meeting forward, into the years when there is still time to change your
+                mind.
               </p>
             </Reveal>
           </div>
@@ -292,8 +237,8 @@ export default function About() {
             <span className="eyebrow eyebrow--dark">04 / Inside a major page</span>
             <h3 className="inside__title">Four answers, for every single major in the library.</h3>
             <p className="inside__text">
-              The same four questions, asked of Medicine and of Interior Design alike, so two
-              majors can genuinely be compared instead of merely admired.
+              The same four questions, asked of Medicine and of Interior Design alike, so two majors
+              can genuinely be compared.
             </p>
           </Reveal>
 
@@ -308,23 +253,6 @@ export default function About() {
               </Reveal>
             ))}
           </div>
-        </div>
-      </div>
-
-      {/* ========================= ABOUT MAJORA ======================== */}
-      <div className="ahead">
-        <CornerLines className="ahead__lines" stroke="rgba(255,255,255,0.16)" />
-        <div className="shell ahead__inner">
-          <span className="eyebrow">About Majora</span>
-          <h3 className="ahead__title">
-            A decision this big should not be made
-            <br />
-            on this little information.
-          </h3>
-          <p className="ahead__lede">
-            Majora exists for one reason: students here are asked to choose a major before anyone
-            has shown them what the majors are.
-          </p>
         </div>
       </div>
     </section>
