@@ -1,0 +1,156 @@
+.foot {
+  padding-top: clamp(3.5rem, 7vw, 5.5rem);
+  background: var(--ink);
+  color: var(--white);
+}
+
+.foot__inner {
+  display: grid;
+  grid-template-columns: 0.9fr 1.1fr;
+  gap: clamp(2.5rem, 6vw, 5rem);
+  padding-bottom: clamp(3rem, 6vw, 4.5rem);
+}
+
+/* ============================== BRAND =============================== */
+.foot__lockup {
+  display: inline-flex;
+  align-items: center;
+  gap: 1rem;
+}
+
+.foot__lockup img {
+  width: 58px;
+  height: 58px;
+  object-fit: contain;
+  transition: transform 0.5s var(--ease);
+}
+
+.foot__lockup:hover img {
+  transform: rotate(-8deg);
+}
+
+.foot__lockup span {
+  display: grid;
+  gap: 0.15rem;
+}
+
+.foot__lockup strong {
+  font-family: var(--font-display);
+  font-size: 1.35rem;
+  font-weight: 700;
+  letter-spacing: -0.03em;
+}
+
+.foot__lockup em {
+  font-style: normal;
+  font-size: 0.76rem;
+  letter-spacing: 0.06em;
+  color: var(--text-on-dark-faint);
+}
+
+.foot__blurb {
+  max-width: 38ch;
+  margin-top: 1.4rem;
+  font-size: 0.92rem;
+  line-height: 1.7;
+  color: var(--text-on-dark-dim);
+}
+
+/* =============================== COLS =============================== */
+.foot__cols {
+  display: grid;
+  grid-template-columns: auto auto 1fr;
+  gap: clamp(1.5rem, 4vw, 3rem);
+}
+
+.foot__col h2 {
+  display: flex;
+  align-items: baseline;
+  gap: 0.6rem;
+  margin-bottom: 1.1rem;
+  font-family: var(--font-body);
+  font-size: 0.7rem;
+  font-weight: 700;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: var(--gold);
+}
+
+.foot__col h2 span {
+  font-weight: 500;
+  letter-spacing: 0.08em;
+  color: var(--text-on-dark-faint);
+}
+
+.foot__col ul {
+  list-style: none;
+  padding: 0;
+  display: grid;
+  gap: 0.6rem;
+}
+
+.foot__col a {
+  font-size: 0.92rem;
+  color: var(--text-on-dark-dim);
+  transition: color 0.25s ease;
+}
+
+.foot__col a:hover {
+  color: var(--white);
+}
+
+.foot__fields {
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+
+/* =============================== BAR ================================ */
+.foot__bar {
+  display: flex;
+  align-items: center;
+  gap: 0.9rem;
+  padding-block: 1.4rem;
+  border-top: 1px solid rgba(255, 255, 255, 0.1);
+  font-size: 0.8rem;
+  color: var(--text-on-dark-faint);
+}
+
+.foot__barDot {
+  width: 5px;
+  height: 5px;
+  background: var(--gold);
+  transform: rotate(45deg);
+}
+
+.foot__barSpacer {
+  flex: 1;
+}
+
+.foot__note {
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  font-size: 0.7rem;
+}
+
+@media (max-width: 900px) {
+  .foot__inner {
+    grid-template-columns: 1fr;
+  }
+
+  .foot__cols {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  .foot__col--wide {
+    grid-column: span 2;
+  }
+}
+
+@media (max-width: 560px) {
+  .foot__bar {
+    flex-wrap: wrap;
+  }
+
+  .foot__barSpacer {
+    display: none;
+  }
+}

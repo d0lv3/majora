@@ -1,0 +1,657 @@
+.about {
+  display: block;
+  background: var(--purple-950);
+  /* the nav floats over the page, so an anchor jump has to stop short of it */
+  scroll-margin-top: clamp(84px, 11vh, 104px);
+
+  /* ---------------------------------------------------------------
+     Definition rows — the shared geometry behind the four term+text
+     lists in this section (the three results, the causes, the steps,
+     the major-page panels). Each row is: marker | term | explanation,
+     running the full width instead of stacking inside a tall card.
+
+     The term track is a fixed width rather than content-sized: every
+     row is its own grid, so an auto track would let each row pick a
+     different width and the explanations would not line up.
+     --------------------------------------------------------------- */
+  --def-cols: 2.8rem clamp(8.5rem, 17vw, 15rem) minmax(0, 1fr);
+  --def-gap: clamp(0.9rem, 2.2vw, 2.4rem);
+  --def-pad-y: clamp(0.95rem, 1.7vw, 1.35rem);
+  --def-term: clamp(0.98rem, 1.15vw, 1.1rem);
+  --def-text: clamp(0.86rem, 1vw, 0.94rem);
+}
+
+/* Narrow: drop the term to its own line above the explanation, keeping
+   the marker in the gutter. */
+@media (max-width: 760px) {
+  .about {
+    --def-cols: 2.2rem minmax(0, 1fr);
+    --def-gap: 0.45rem 0.9rem;
+  }
+
+  .cons__text,
+  .cause__text,
+  .step__text,
+  .ipanel__text {
+    grid-column: 2;
+  }
+}
+
+/* ============================== HEADER ============================== */
+.ahead {
+  position: relative;
+  overflow: hidden;
+  padding: clamp(4.5rem, 9vw, 7rem) 0 clamp(4rem, 8vw, 7rem);
+  background: var(--purple-600);
+  background-image: radial-gradient(85% 80% at 18% 0%, rgba(107, 78, 148, 0.55), transparent 62%);
+  color: var(--white);
+}
+
+.ahead__lines {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+}
+
+.ahead__inner {
+  position: relative;
+}
+
+.ahead__title {
+  margin-top: 1.4rem;
+  font-size: var(--step-h1);
+  text-wrap: balance;
+}
+
+.ahead__lede {
+  max-width: 54ch;
+  margin-top: 1.6rem;
+  font-size: var(--step-lead);
+  line-height: 1.7;
+  color: var(--text-on-dark-dim);
+}
+
+/* ============================== PROBLEM ============================= */
+.problem {
+  position: relative;
+  overflow: hidden;
+  background: var(--purple-950);
+  color: var(--white);
+}
+
+.problem__lattice {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+}
+
+.problem .shell {
+  position: relative;
+}
+
+.problem__head {
+  margin-bottom: clamp(2rem, 4vw, 3rem);
+}
+
+/* The problem statement, set as a document rather than body copy — and laid
+   out horizontally: it runs the full width of the shell in three or so lines
+   rather than down a narrow column. The type size is tuned so it fills that
+   width instead of leaving a short last line. */
+.statement {
+  position: relative;
+  max-width: none;
+  margin: 0;
+  padding-left: clamp(1.2rem, 3vw, 2.4rem);
+  border-left: 3px solid var(--gold);
+}
+
+.statement p {
+  font-family: var(--font-display);
+  font-size: clamp(1.2rem, 2.5vw, 2.05rem);
+  font-weight: 500;
+  line-height: 1.34;
+  letter-spacing: -0.028em;
+  text-wrap: pretty;
+}
+
+.statement mark {
+  background: none;
+  color: var(--gold);
+  font-weight: 600;
+}
+
+.statement footer {
+  margin-top: 1.6rem;
+  font-family: var(--font-body);
+  font-size: 0.72rem;
+  font-weight: 600;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: var(--text-on-dark-faint);
+}
+
+.problem__bridge {
+  margin: clamp(3rem, 6vw, 4.5rem) 0 clamp(1.5rem, 3vw, 2.2rem);
+}
+
+.problem__bridge p {
+  font-size: 1.05rem;
+  color: var(--text-on-dark-dim);
+}
+
+.consequences {
+  display: grid;
+  grid-template-columns: 1fr;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: var(--r-md);
+  overflow: hidden;
+}
+
+.cons {
+  display: grid;
+  grid-template-columns: var(--def-cols);
+  gap: var(--def-gap);
+  align-items: baseline;
+  padding: var(--def-pad-y) clamp(1.1rem, 2.2vw, 1.8rem);
+  background: var(--purple-900);
+  transition: background-color 0.4s ease;
+}
+
+.cons + .cons {
+  border-top: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.cons:hover {
+  background: var(--purple-800);
+}
+
+.cons__num {
+  font-size: 0.72rem;
+  font-weight: 700;
+  letter-spacing: 0.18em;
+  color: var(--gold);
+}
+
+.cons__label {
+  margin: 0;
+  font-size: var(--def-term);
+  letter-spacing: -0.015em;
+}
+
+.cons__text {
+  font-size: var(--def-text);
+  line-height: 1.6;
+  color: var(--text-on-dark-dim);
+}
+
+/* =============================== CAUSES ============================= */
+.causes {
+  background: var(--paper);
+  color: var(--text-on-light);
+}
+
+.causes__head {
+  max-width: 30ch;
+  margin-bottom: clamp(2.5rem, 5vw, 3.5rem);
+}
+
+.causes__title {
+  margin-top: 1.1rem;
+  font-size: var(--step-h2);
+  color: var(--purple-600);
+  text-wrap: balance;
+}
+
+.causes__grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  border-top: 1px solid var(--line);
+}
+
+.cause {
+  display: grid;
+  grid-template-columns: var(--def-cols);
+  gap: var(--def-gap);
+  align-items: baseline;
+  padding: var(--def-pad-y) 0.3rem;
+  border-bottom: 1px solid var(--line);
+  transition: background-color 0.35s ease;
+}
+
+.cause:hover {
+  background: rgba(65, 43, 99, 0.04);
+}
+
+.cause__mark {
+  width: 9px;
+  height: 9px;
+  align-self: center;
+  background: var(--gold);
+  transform: rotate(45deg);
+  transition: transform 0.4s var(--ease);
+}
+
+.cause:hover .cause__mark {
+  transform: rotate(45deg) scale(1.3);
+}
+
+.cause__title {
+  margin: 0;
+  font-size: var(--def-term);
+  letter-spacing: -0.015em;
+  color: var(--purple-600);
+}
+
+.cause__text {
+  font-size: var(--def-text);
+  line-height: 1.6;
+  color: var(--text-on-light-dim);
+}
+
+@media (max-width: 560px) {
+  .causes__grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* ============================== SOLUTION ============================ */
+.solution {
+  position: relative;
+  overflow: hidden;
+  background: var(--purple-600);
+  background-image: radial-gradient(80% 70% at 80% 10%, rgba(107, 78, 148, 0.5), transparent 60%);
+  color: var(--white);
+}
+
+.solution__lattice {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+}
+
+.solution .shell {
+  position: relative;
+}
+
+/* One full-width column: the heading and its lede both run across the page
+   rather than stacking inside a half-width column. Sizes are tuned so each
+   fills the measure instead of leaving a short trailing line. */
+.solution__head {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: clamp(1.1rem, 2.2vw, 1.7rem);
+  margin-bottom: clamp(3rem, 6vw, 4.5rem);
+}
+
+.solution__title {
+  margin-top: 1.3rem;
+  max-width: none;
+  font-size: clamp(1.5rem, 3.1vw, 2.6rem);
+  line-height: 1.14;
+}
+
+.solution__title em {
+  font-style: normal;
+  color: var(--gold);
+}
+
+.solution__lede {
+  max-width: none;
+  font-size: clamp(0.98rem, 1.15vw, 1.12rem);
+  line-height: 1.7;
+  color: rgba(255, 255, 255, 0.82);
+}
+
+.pillars {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: clamp(1rem, 2vw, 1.6rem);
+}
+
+.pillar {
+  display: flex;
+  gap: 1.3rem;
+  padding: clamp(1.5rem, 2.6vw, 2rem);
+  border-radius: var(--r-md);
+  background: rgba(21, 13, 33, 0.42);
+  box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.1);
+  transition:
+    transform 0.45s var(--ease),
+    box-shadow 0.45s ease;
+}
+
+.pillar:hover {
+  transform: translateY(-4px);
+  box-shadow: inset 0 0 0 1px rgba(238, 175, 22, 0.45);
+}
+
+/* An odd final pillar runs the full row instead of leaving a gap beside it. */
+.pillar:last-child:nth-child(odd) {
+  grid-column: 1 / -1;
+}
+
+.pillar__index {
+  flex: none;
+  font-family: var(--font-display);
+  font-size: 0.85rem;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  color: var(--gold);
+  padding-top: 0.2rem;
+}
+
+.pillar__title {
+  font-size: 1.14rem;
+  margin-bottom: 0.6rem;
+  text-wrap: balance;
+}
+
+.pillar__text {
+  font-size: 0.94rem;
+  line-height: 1.68;
+  color: rgba(255, 255, 255, 0.75);
+}
+
+@media (max-width: 960px) {
+  .solution__head {
+    grid-template-columns: 1fr;
+    align-items: start;
+  }
+
+  .pillars {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* =============================== SHIFT ============================== */
+.shift {
+  background: var(--paper-warm);
+  color: var(--text-on-light);
+}
+
+.shift__inner {
+  display: grid;
+  grid-template-columns: 1fr auto 1fr;
+  gap: clamp(1.5rem, 3.5vw, 3rem);
+  align-items: center;
+}
+
+.shift__col {
+  padding: clamp(1.8rem, 3vw, 2.6rem);
+  border-radius: var(--r-lg);
+}
+
+.shift__col--before {
+  background: var(--white);
+  border: 1px solid var(--line);
+}
+
+.shift__col--after {
+  background: var(--purple-600);
+  color: var(--white);
+  box-shadow: var(--shadow-card);
+}
+
+.shift__tag {
+  display: inline-block;
+  margin-bottom: 1.3rem;
+  font-size: 0.7rem;
+  font-weight: 700;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: var(--text-on-light-dim);
+}
+
+.shift__tag--gold {
+  color: var(--gold);
+}
+
+.shift__col ul {
+  list-style: none;
+  padding: 0;
+  display: grid;
+  gap: 0.9rem;
+}
+
+.shift__col li {
+  position: relative;
+  padding-left: 1.6rem;
+  font-size: 0.96rem;
+  line-height: 1.6;
+}
+
+.shift__col li::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 0.62em;
+  width: 8px;
+  height: 8px;
+  transform: rotate(45deg);
+}
+
+.shift__col--before li::before {
+  background: var(--line-strong);
+}
+
+.shift__col--before li {
+  color: var(--text-on-light-dim);
+}
+
+.shift__col--after li::before {
+  background: var(--gold);
+}
+
+.shift__arrow {
+  font-size: 2rem;
+  color: var(--gold-600);
+}
+
+@media (max-width: 900px) {
+  .shift__inner {
+    grid-template-columns: 1fr;
+  }
+
+  .shift__arrow {
+    justify-self: center;
+    transform: rotate(90deg);
+  }
+}
+
+/* =============================== HOW =============================== */
+.how {
+  position: relative;
+  background: var(--purple-950);
+  color: var(--white);
+  overflow: hidden;
+}
+
+.how__lattice {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  opacity: 0.7;
+  pointer-events: none;
+}
+
+.how .shell {
+  position: relative;
+}
+
+/* Same full-width treatment as the solution head above. */
+.how__head {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: clamp(1.1rem, 2.2vw, 1.7rem);
+  padding-bottom: clamp(3rem, 6vw, 5rem);
+}
+
+.how__title {
+  margin-top: 1.2rem;
+  max-width: none;
+  font-size: clamp(1.5rem, 3.1vw, 2.6rem);
+  line-height: 1.14;
+}
+
+.how__title em {
+  font-style: normal;
+  color: var(--gold);
+}
+
+.how__lede p {
+  max-width: none;
+  font-size: clamp(0.98rem, 1.15vw, 1.12rem);
+  line-height: 1.7;
+  color: var(--text-on-dark-dim);
+}
+
+.steps {
+  display: grid;
+  grid-template-columns: 1fr;
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  border-top: 1px solid rgba(255, 255, 255, 0.12);
+}
+
+.step {
+  display: grid;
+  grid-template-columns: var(--def-cols);
+  gap: var(--def-gap);
+  align-items: baseline;
+  padding: var(--def-pad-y) 0.3rem;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.12);
+  transition: background-color 0.35s ease;
+}
+
+.step:hover {
+  background: rgba(255, 255, 255, 0.03);
+}
+
+.step__marker {
+  display: flex;
+  align-items: center;
+  gap: 0.7rem;
+  font-family: var(--font-body);
+  font-size: 0.72rem;
+  font-weight: 700;
+  letter-spacing: 0.18em;
+  color: var(--gold);
+}
+
+.step__diamond {
+  width: 9px;
+  height: 9px;
+  flex: none;
+  background: var(--gold);
+  transform: rotate(45deg);
+  transition: transform 0.4s var(--ease);
+}
+
+.step:hover .step__diamond {
+  transform: rotate(45deg) scale(1.3);
+}
+
+.step__title {
+  margin: 0;
+  font-size: var(--def-term);
+  letter-spacing: -0.015em;
+}
+
+.step__text {
+  font-size: var(--def-text);
+  line-height: 1.6;
+  color: var(--text-on-dark-dim);
+}
+
+@media (max-width: 960px) {
+  .how__head {
+    grid-template-columns: 1fr;
+    align-items: start;
+  }
+}
+
+/* ============================== INSIDE ============================= */
+.inside {
+  background: var(--paper);
+  color: var(--text-on-light);
+}
+
+/* one column, so the rows below get the full width to run across */
+.inside__grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: clamp(2rem, 4vw, 3rem);
+  align-items: start;
+}
+
+.inside__intro {
+  max-width: 46ch;
+}
+
+.inside__title {
+  margin-top: 1.2rem;
+  font-size: var(--step-h2);
+  color: var(--purple-600);
+  text-wrap: balance;
+}
+
+.inside__text {
+  margin-top: 1.2rem;
+  font-size: 1.05rem;
+  line-height: 1.75;
+  color: var(--text-on-light-dim);
+}
+
+.inside__items {
+  display: grid;
+  grid-template-columns: 1fr;
+  border: 1px solid var(--line);
+  border-radius: var(--r-md);
+  overflow: hidden;
+}
+
+.ipanel {
+  display: grid;
+  grid-template-columns: var(--def-cols);
+  gap: var(--def-gap);
+  align-items: baseline;
+  padding: var(--def-pad-y) clamp(1.1rem, 2.2vw, 1.8rem);
+  background: var(--white);
+  transition: background-color 0.4s ease;
+}
+
+.ipanel + .ipanel {
+  border-top: 1px solid var(--line);
+}
+
+.ipanel:hover {
+  background: var(--paper-warm);
+}
+
+.ipanel__index {
+  font-size: 0.7rem;
+  font-weight: 700;
+  letter-spacing: 0.18em;
+  color: var(--gold-600);
+}
+
+.ipanel__title {
+  margin: 0;
+  font-size: var(--def-term);
+  letter-spacing: -0.015em;
+  color: var(--purple-600);
+}
+
+.ipanel__text {
+  font-size: var(--def-text);
+  line-height: 1.6;
+  color: var(--text-on-light-dim);
+}

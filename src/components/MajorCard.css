@@ -1,0 +1,217 @@
+.mcard {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  gap: 1rem;
+  aspect-ratio: 1 / 1.06;
+  padding: 1.4rem 1.35rem 1.2rem;
+  overflow: hidden;
+  isolation: isolate;
+  border-radius: var(--r-md);
+  background: var(--purple-800);
+  box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.07);
+  transition:
+    transform 0.5s var(--ease),
+    background-color 0.45s ease,
+    box-shadow 0.45s ease;
+}
+
+.mcard::before {
+  content: '';
+  position: absolute;
+  inset: auto -30% -60% -30%;
+  height: 70%;
+  background: radial-gradient(60% 100% at 50% 100%, rgba(238, 175, 22, 0.25), transparent 70%);
+  opacity: 0;
+  transition: opacity 0.5s var(--ease);
+  z-index: -1;
+}
+
+.mcard:hover,
+.mcard:focus-visible {
+  transform: translateY(-6px);
+  background: var(--purple-700);
+  box-shadow:
+    inset 0 0 0 1px rgba(238, 175, 22, 0.55),
+    var(--shadow-lift);
+}
+
+.mcard:hover::before,
+.mcard:focus-visible::before {
+  opacity: 1;
+}
+
+/* --- corner index --- */
+.mcard__num {
+  position: absolute;
+  top: 1.25rem;
+  right: 1.35rem;
+  font-family: var(--font-body);
+  font-size: 0.7rem;
+  font-weight: 600;
+  letter-spacing: 0.14em;
+  color: rgba(255, 255, 255, 0.28);
+}
+
+/* --- decorative diamond, echoes the logo --- */
+.mcard__glyph {
+  position: absolute;
+  right: -22px;
+  bottom: 42px;
+  width: 118px;
+  height: 118px;
+  color: rgba(255, 255, 255, 0.06);
+  transition:
+    transform 0.7s var(--ease),
+    color 0.5s ease;
+  pointer-events: none;
+}
+
+.mcard:hover .mcard__glyph,
+.mcard:focus-visible .mcard__glyph {
+  transform: rotate(45deg) scale(1.08);
+  color: rgba(238, 175, 22, 0.16);
+}
+
+/* --- field --- */
+.mcard__field {
+  position: relative;
+  max-width: 74%;
+  font-size: 0.66rem;
+  font-weight: 600;
+  letter-spacing: 0.17em;
+  text-transform: uppercase;
+  color: var(--gold);
+  line-height: 1.5;
+}
+
+/* --- name + tagline --- */
+.mcard__body {
+  position: relative;
+  display: block;
+  margin-top: auto;
+}
+
+.mcard__name {
+  display: block;
+  font-family: var(--font-display);
+  font-size: clamp(1.15rem, 1.6vw, 1.42rem);
+  font-weight: 700;
+  line-height: 1.12;
+  letter-spacing: -0.028em;
+  color: var(--white);
+  text-wrap: balance;
+}
+
+.mcard__tagline {
+  display: block;
+  margin-top: 0.55rem;
+  font-size: 0.83rem;
+  line-height: 1.5;
+  color: var(--text-on-dark-dim);
+  max-height: 0;
+  opacity: 0;
+  overflow: hidden;
+  transition:
+    max-height 0.5s var(--ease),
+    opacity 0.4s ease,
+    margin-top 0.5s var(--ease);
+}
+
+.mcard:hover .mcard__tagline,
+.mcard:focus-visible .mcard__tagline {
+  max-height: 6.5rem;
+  opacity: 1;
+}
+
+/* --- footer --- */
+.mcard__foot {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding-top: 0.85rem;
+  border-top: 1px solid rgba(255, 255, 255, 0.1);
+  font-size: 0.76rem;
+  color: var(--text-on-dark-faint);
+  transition: border-color 0.4s ease;
+}
+
+.mcard:hover .mcard__foot,
+.mcard:focus-visible .mcard__foot {
+  border-color: rgba(238, 175, 22, 0.35);
+}
+
+.mcard__go {
+  font-size: 1rem;
+  color: var(--gold);
+  transform: translateX(-4px);
+  opacity: 0;
+  transition:
+    transform 0.4s var(--ease),
+    opacity 0.4s ease;
+}
+
+.mcard:hover .mcard__go,
+.mcard:focus-visible .mcard__go {
+  transform: none;
+  opacity: 1;
+}
+
+/* --- not written up yet --- */
+.mcard--soon {
+  background: rgba(42, 26, 65, 0.5);
+  box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.05);
+  cursor: default;
+}
+
+.mcard--soon:hover {
+  transform: none;
+  background: rgba(42, 26, 65, 0.5);
+  box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.05);
+}
+
+.mcard--soon:hover::before {
+  opacity: 0;
+}
+
+.mcard--soon .mcard__field {
+  color: rgba(238, 175, 22, 0.42);
+}
+
+.mcard--soon .mcard__name {
+  color: rgba(255, 255, 255, 0.52);
+}
+
+.mcard--soon .mcard__glyph {
+  color: rgba(255, 255, 255, 0.035);
+}
+
+.mcard--soon:hover .mcard__glyph {
+  transform: none;
+  color: rgba(255, 255, 255, 0.035);
+}
+
+.mcard--soon .mcard__years {
+  color: rgba(255, 255, 255, 0.28);
+}
+
+.mcard__soon {
+  font-size: 0.66rem;
+  font-weight: 600;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: rgba(255, 255, 255, 0.4);
+}
+
+@media (max-width: 560px) {
+  .mcard {
+    aspect-ratio: 1 / 0.92;
+  }
+
+  .mcard__tagline {
+    max-height: 6.5rem;
+    opacity: 1;
+  }
+}

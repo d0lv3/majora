@@ -1,0 +1,381 @@
+.pill-nav-container {
+  position: absolute;
+  top: 1em;
+  z-index: 99;
+}
+
+@media (max-width: 768px) {
+  .pill-nav-container {
+    width: 100%;
+    left: 0;
+  }
+}
+
+.pill-nav {
+  --nav-h: 42px;
+  --logo: 36px;
+  --pill-pad-x: 18px;
+  --pill-gap: 3px;
+  width: max-content;
+  display: flex;
+  align-items: center;
+  box-sizing: border-box;
+}
+
+@media (max-width: 768px) {
+  .pill-nav {
+    width: 100%;
+    justify-content: space-between;
+    padding: 0 1rem;
+    background: transparent;
+  }
+}
+
+.pill-nav-items {
+  position: relative;
+  display: flex;
+  align-items: center;
+  height: var(--nav-h);
+  background: var(--base, #000);
+  border-radius: 9999px;
+}
+
+.pill-logo {
+  width: var(--nav-h);
+  height: var(--nav-h);
+  border-radius: 50%;
+  background: var(--base, #000);
+  padding: 8px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+}
+
+.pill-logo img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+.pill-list {
+  list-style: none;
+  display: flex;
+  align-items: stretch;
+  gap: var(--pill-gap);
+  margin: 0;
+  padding: 3px;
+  height: 100%;
+}
+
+.pill-list > li {
+  display: flex;
+  height: 100%;
+}
+
+.pill {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  height: 100%;
+  padding: 0 var(--pill-pad-x);
+  background: var(--pill-bg, #fff);
+  color: var(--pill-text, var(--base, #000));
+  text-decoration: none;
+  border-radius: 9999px;
+  box-sizing: border-box;
+  font-weight: 600;
+  font-size: 16px;
+  line-height: 0;
+  text-transform: uppercase;
+  letter-spacing: 0.2px;
+  white-space: nowrap;
+  cursor: pointer;
+  position: relative;
+  overflow: hidden;
+}
+
+.pill .hover-circle {
+  position: absolute;
+  left: 50%;
+  bottom: 0;
+  border-radius: 50%;
+  background: var(--base, #000);
+  z-index: 1;
+  display: block;
+  pointer-events: none;
+  will-change: transform;
+}
+
+.pill .label-stack {
+  position: relative;
+  display: inline-block;
+  line-height: 1;
+  z-index: 2;
+}
+
+.pill .pill-label {
+  position: relative;
+  z-index: 2;
+  display: inline-block;
+  line-height: 1;
+  will-change: transform;
+}
+
+.pill .pill-label-hover {
+  position: absolute;
+  left: 0;
+  top: 0;
+  color: var(--hover-text, #fff);
+  z-index: 3;
+  display: inline-block;
+  will-change: transform, opacity;
+}
+
+.pill.is-active::after {
+  content: '';
+  position: absolute;
+  bottom: -6px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 12px;
+  height: 12px;
+  background: var(--base, #000);
+  border-radius: 50px;
+  z-index: 4;
+}
+
+.desktop-only {
+  display: block;
+}
+
+.mobile-only {
+  display: none;
+}
+
+@media (max-width: 768px) {
+  .desktop-only {
+    display: none;
+  }
+
+  .mobile-only {
+    display: block;
+  }
+}
+
+.mobile-menu-button {
+  width: var(--nav-h);
+  height: var(--nav-h);
+  border-radius: 50%;
+  background: var(--base, #000);
+  border: none;
+  display: none;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 4px;
+  cursor: pointer;
+  padding: 0;
+  position: relative;
+}
+
+@media (max-width: 768px) {
+  .mobile-menu-button {
+    display: flex;
+  }
+}
+
+.hamburger-line {
+  width: 16px;
+  height: 2px;
+  background: var(--pill-bg, #fff);
+  border-radius: 1px;
+  transition: all 0.01s ease;
+  transform-origin: center;
+}
+
+.mobile-menu-popover {
+  position: absolute;
+  top: 3em;
+  left: 1rem;
+  right: 1rem;
+  background: var(--base, #f0f0f0);
+  border-radius: 27px;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.12);
+  z-index: 998;
+  opacity: 0;
+  transform-origin: top center;
+  visibility: hidden;
+}
+
+.mobile-menu-list {
+  list-style: none;
+  margin: 0;
+  padding: 3px;
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+}
+
+.mobile-menu-popover .mobile-menu-link {
+  display: block;
+  padding: 12px 16px;
+  color: var(--pill-text, #fff);
+  background-color: var(--pill-bg, #fff);
+  text-decoration: none;
+  font-size: 16px;
+  font-weight: 500;
+  border-radius: 50px;
+  transition: all 0.2s ease;
+}
+
+.mobile-menu-popover .mobile-menu-link:hover {
+  cursor: pointer;
+  background-color: var(--base);
+  color: var(--hover-text, #fff);
+}
+
+/* =========================================================
+   Majora skin — layered on top, nothing above is modified.
+   Recreates the lockup from the brand key visual: one black
+   bar, white type, oversized purple logo disc, gold accents.
+   ========================================================= */
+
+/* float the bar centred over the page instead of pinning it left */
+.pill-nav-container {
+  position: fixed;
+  top: clamp(0.9rem, 2.2vw, 1.6rem);
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 95;
+}
+
+.pill-nav.majora-nav {
+  --nav-h: 58px;
+  --pill-pad-x: 20px;
+  --pill-gap: 2px;
+  filter: drop-shadow(0 18px 40px rgba(0, 0, 0, 0.45));
+}
+
+/* logo disc: a standalone token sitting beside the bar rather than notched
+   into it, so both shapes keep their own silhouette. The mark is scaled past
+   the padding box so it reads at this size instead of floating in the middle
+   of a large circle. */
+.majora-nav .pill-logo {
+  width: 58px;
+  height: 58px;
+  padding: 2px;
+  margin-right: 10px;
+  background: var(--purple-600);
+  /* a thin ink stroke so the disc keeps its edge against a light section */
+  box-shadow: 0 0 0 2px var(--ink);
+  z-index: 3;
+  transition: background-color 0.35s var(--ease);
+}
+
+.majora-nav .pill-logo:hover {
+  background: var(--purple-500);
+}
+
+/* The disc clips to a circle, and the mark's farthest opaque pixel sits at
+   0.524 of the artwork's frame radius — so anything past ~1.02x pushes the
+   book's base corners outside the circle and shaves them off. */
+.majora-nav .pill-logo img {
+  object-fit: contain;
+  transform: scale(1.02);
+}
+
+/* the bar no longer has to reserve room for an overlapping disc */
+.majora-nav .pill-nav-items {
+  padding-left: 0;
+}
+
+.majora-nav .pill {
+  font-family: var(--font-display);
+  font-size: 1rem;
+  font-weight: 600;
+  text-transform: none;
+  letter-spacing: -0.01em;
+}
+
+/* the sweep that rises on hover reads gold, not the bar colour */
+.majora-nav .pill .hover-circle {
+  background: var(--gold);
+}
+
+/* active marker: a gold diamond tucked inside the pill */
+.majora-nav .pill.is-active::after {
+  bottom: 7px;
+  width: 6px;
+  height: 6px;
+  border-radius: 1px;
+  background: var(--gold);
+  transform: translateX(-50%) rotate(45deg);
+}
+
+/* hairline before the account item, as in the key visual */
+.majora-nav .pill-list > li:last-child {
+  position: relative;
+  margin-left: 12px;
+}
+
+.majora-nav .pill-list > li:last-child::before {
+  content: '';
+  position: absolute;
+  left: -7px;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 1.5px;
+  height: 26px;
+  background: rgba(255, 255, 255, 0.28);
+}
+
+/* --- mobile --- */
+@media (max-width: 768px) {
+  .pill-nav-container {
+    left: 0;
+    transform: none;
+    padding-inline: 0;
+  }
+
+  .majora-nav .pill-logo {
+    width: 52px;
+    height: 52px;
+    margin-right: 0;
+  }
+
+  /* keep the sheet clear of the (now shorter) nav row */
+  .mobile-menu-popover {
+    top: 4.2em;
+  }
+
+  .majora-nav .mobile-menu-button {
+    width: 52px;
+    height: 52px;
+    background: var(--ink);
+    box-shadow: 0 12px 30px -14px rgba(0, 0, 0, 0.8);
+  }
+}
+
+.mobile-menu-popover {
+  border-radius: 22px;
+  padding: 6px;
+  box-shadow: 0 24px 50px -20px rgba(0, 0, 0, 0.6);
+}
+
+.mobile-menu-popover .mobile-menu-link {
+  font-family: var(--font-display);
+  font-weight: 600;
+  font-size: 1.05rem;
+  padding: 14px 20px;
+}
+
+.mobile-menu-popover .mobile-menu-link.is-active {
+  color: var(--gold);
+}
+
+.mobile-menu-popover .mobile-menu-link:hover {
+  background-color: var(--gold);
+  color: var(--purple-950);
+}
