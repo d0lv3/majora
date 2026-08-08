@@ -81,10 +81,14 @@
   text-wrap: pretty;
 }
 
+/* The marked phrase carries the weight of the sentence, so it is still marked
+   up as one, but it is not recoloured: a sentence that changes colour halfway
+   through reads as two sentences. Extra weight against the paragraph's 500 is
+   enough emphasis on its own. */
 .statement mark {
   background: none;
-  color: var(--gold);
-  font-weight: 600;
+  color: inherit;
+  font-weight: 700;
 }
 
 .statement footer {
@@ -189,9 +193,11 @@
   line-height: 1.14;
 }
 
+/* Kept as an <em> for the meaning, but it inherits the heading's white: the
+   clause is the second half of a sentence, not a separate label. */
 .solution__title em {
   font-style: normal;
-  color: var(--gold);
+  color: inherit;
 }
 
 .solution__lede {
@@ -393,9 +399,10 @@
   line-height: 1.14;
 }
 
+/* Same as the solution heading: one sentence, one colour. */
 .how__title em {
   font-style: normal;
-  color: var(--gold);
+  color: inherit;
 }
 
 .how__lede p {
