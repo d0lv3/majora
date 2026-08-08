@@ -6,13 +6,13 @@ import 'leaflet/dist/leaflet.css'
 import FieldGlyph from '../components/decor/FieldGlyph.jsx'
 import { MAJORS, isAvailable, fieldLabel } from '../data/majors.js'
 import {
-  COLLEGES,
-  DATA_IS_SAMPLE,
   IRAQ_BOUNDS,
-  SAMPLE_NOTICE,
   collegesFor,
+  isSampleMajor,
   mappedMajorSlugs,
-} from '../data/colleges.js'
+  sourcesFor,
+  statsFor,
+} from '../data/mapData.js'
 import './MajorMap.css'
 
 /**
@@ -69,6 +69,13 @@ export default function MajorMap() {
 
   const major = useMemo(() => MAJORS.find((m) => m.slug === slug), [slug])
   const colleges = useMemo(() => (slug ? collegesFor(slug) : []), [slug])
+  const sample = isSampleMajor(slug)
+  const sources = useMemo(() => sourcesFor(slug), [slug])
+  const stats = useMemo(() => statsFor(slug), [slug])
+  const branchCount = useMemo(
+    () => colleges.reduce((n, c) => n + c.branches.length, 0),
+    [colleges],
+  )
   const selected = useMemo(
     () => colleges.find((c) => c.id === selectedId) ?? null,
     [colleges, selectedId],
@@ -173,18 +180,36 @@ export default function MajorMap() {
         </p>
       </header>
 
-      {DATA_IS_SAMPLE && (
-        <div className="shell">
+      {/* Per major, not per page: English is researched, the other two are
+          not, and saying so only where it is true is the point. */}
+      <div className="shell">
+        {sample ? (
           <p className="mapPage__warning" role="note">
             <span className="mapPage__warningMark" aria-hidden="true" />
             <span>
               <strong>Sample figures, not real admission data.</strong> The universities and
-              places are real. The rates, scores and seat counts are placeholders while we
-              gather the real ones, so do not plan around them.
+              places are real. The rates, scores and seat counts for {major?.name} are
+              placeholders while we gather the real ones, so do not plan around them.
             </span>
           </p>
-        </div>
-      )}
+        ) : (
+          <p className="mapPage__sourced" role="note">
+            <span className="mapPage__sourcedMark" aria-hidden="true" />
+            <span>
+              <strong>
+                {stats?.departments} departments at {stats?.universities} universities.
+              </strong>{' '}
+              Federal figures come from the{' '}
+              <a href={sources[0]?.href} target="_blank" rel="noreferrer noopener">
+                ministry&rsquo;s 2025 classification
+              </a>
+              . The score ranks the department on the ministry&rsquo;s criteria; it is not an
+              acceptance rate or a grade cut-off. Kurdistan Region universities sit outside
+              that table and are listed from their own departments, without a score.
+            </span>
+          </p>
+        )}
+      </div>
 
       {/* Three grid children rather than a left column and a right one, so a
           phone can put the picker, then the map, then the list, without the
@@ -208,15 +233,16 @@ export default function MajorMap() {
 
           {major && (
             <p className="mapControls__count" aria-live="polite">
-              {colleges.length} {colleges.length === 1 ? 'college' : 'colleges'} run {major.name}
+              {colleges.length} {colleges.length === 1 ? 'university' : 'universities'}
+              {branchCount > colleges.length && `, ${branchCount} departments`}
             </p>
           )}
         </div>
 
         <ul className="clist">
             {colleges.map((college) => {
-              const p = college.programmes[slug]
               const on = college.id === selectedId
+              const best = college.branches[0]
               return (
                 <li key={college.id}>
                   <button
@@ -227,43 +253,90 @@ export default function MajorMap() {
                   >
                     <span className="crow__head">
                       <span className="crow__name">{college.university}</span>
-                      <span className="crow__city">{college.city}</span>
+                      <span className="crow__city">
+                        {college.city}
+                        {college.branches.length > 1 &&
+                          ` · ${college.branches.length} departments`}
+                      </span>
                     </span>
                     <span className="crow__meta">
-                      <span className="crow__score">{p.minScore}%</span>
+                      {/* whichever number this major actually has */}
+                      {best.minScore != null && (
+                        <span className="crow__score">{best.minScore}%</span>
+                      )}
+                      {best.score != null && (
+                        <span className="crow__score" title="2025 ministry classification score">
+                          {best.score.toFixed(1)}
+                        </span>
+                      )}
                       <span className="crow__kind">{college.kind}</span>
                     </span>
                   </button>
 
                   {on && (
                     <div className="cdetail">
-                      <p className="cdetail__dept">{p.college}</p>
-                      <dl className="cdetail__facts">
-                        <div>
-                          <dt>Minimum score</dt>
-                          <dd>{p.minScore}%</dd>
+                      {college.branches.map((b, i) => (
+                        <div className="cbranch" key={`${b.college}-${i}`}>
+                          <p className="cdetail__dept">{b.college}</p>
+                          <dl className="cdetail__facts">
+                            {b.rank != null && (
+                              <div>
+                                {/* named, because ranks restart per college
+                                    type: one university can hold #1 in Arts
+                                    and #1 in Education at the same time */}
+                                <dt>Rank in {b.category ?? 'its college'}</dt>
+                                <dd>#{b.rank}</dd>
+                              </div>
+                            )}
+                            {b.score != null && (
+                              <div>
+                                <dt>2025 score</dt>
+                                <dd>{b.score.toFixed(2)}</dd>
+                              </div>
+                            )}
+                            {b.minScore != null && (
+                              <div>
+                                <dt>Minimum score</dt>
+                                <dd>{b.minScore}%</dd>
+                              </div>
+                            )}
+                            {b.acceptanceRate != null && (
+                              <div>
+                                <dt>Acceptance rate</dt>
+                                <dd>{b.acceptanceRate}%</dd>
+                              </div>
+                            )}
+                            {b.seats != null && (
+                              <div>
+                                <dt>Seats a year</dt>
+                                <dd>{b.seats}</dd>
+                              </div>
+                            )}
+                            <div>
+                              <dt>Length</dt>
+                              <dd>{b.years} years</dd>
+                            </div>
+                            {b.degree && (
+                              <div>
+                                <dt>Degree</dt>
+                                <dd>{b.degree}</dd>
+                              </div>
+                            )}
+                            {b.language && (
+                              <div>
+                                <dt>Taught in</dt>
+                                <dd>{b.language}</dd>
+                              </div>
+                            )}
+                          </dl>
                         </div>
-                        <div>
-                          <dt>Acceptance rate</dt>
-                          <dd>{p.acceptanceRate}%</dd>
-                        </div>
-                        <div>
-                          <dt>Seats a year</dt>
-                          <dd>{p.seats}</dd>
-                        </div>
-                        <div>
-                          <dt>Length</dt>
-                          <dd>{p.years} years</dd>
-                        </div>
-                        <div>
-                          <dt>Taught in</dt>
-                          <dd>{p.language}</dd>
-                        </div>
-                        <div>
-                          <dt>Governorate</dt>
-                          <dd>{college.governorate}</dd>
-                        </div>
-                      </dl>
+                      ))}
+
+                      <p className="cdetail__where">
+                        {college.governorate}
+                        {college.system === 'krg' && ' · Kurdistan Region, no ministry score'}
+                      </p>
+
                       <Link to={`/app/${slug}`} className="cdetail__link">
                         Read what {major.name} actually is
                         <span aria-hidden="true"> →</span>
