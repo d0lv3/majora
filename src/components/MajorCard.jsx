@@ -1,4 +1,5 @@
 import { Link } from 'react-router-dom'
+import FieldGlyph from './decor/FieldGlyph.jsx'
 import { fieldLabel, isAvailable } from '../data/majors.js'
 import './MajorCard.css'
 
@@ -24,10 +25,9 @@ export default function MajorCard({ major, index = 0, to, tone = 'dark' }) {
         {String(index + 1).padStart(2, '0')}
       </span>
 
-      <svg className="mcard__glyph" viewBox="0 0 100 100" aria-hidden="true">
-        <path d="M50 6 L94 50 L50 94 L6 50 Z" fill="none" stroke="currentColor" strokeWidth="2" />
-        <path d="M50 26 L74 50 L50 74 L26 50 Z" fill="currentColor" opacity="0.5" />
-      </svg>
+      {/* the field's own drawing, so a run of cards in one field reads as a
+          set before you have read a single label */}
+      <FieldGlyph field={major.field} className="mcard__glyph" />
 
       <span className="mcard__field">{fieldLabel(major.field)}</span>
 
