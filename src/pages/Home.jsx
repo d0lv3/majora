@@ -1,6 +1,5 @@
 import { Link, useNavigate } from 'react-router-dom'
 
-import logo from '../assets/visual-identity/logo-web.png'
 import cast from '../assets/people_with_different_majors.png'
 import Reveal from '../components/Reveal.jsx'
 import MajorCard from '../components/MajorCard.jsx'
@@ -11,8 +10,39 @@ import SB from '../components/ui/buttonPresets.js'
 import About from '../sections/About.jsx'
 import Contact from '../sections/Contact.jsx'
 import { useAuth } from '../context/AuthContext.jsx'
-import { MAJORS, FIELDS, countByField, availableMajors } from '../data/majors.js'
+import { MAJORS, FIELDS, countByField, countCareers, availableMajors } from '../data/majors.js'
 import './Home.css'
+
+/**
+ * The figures under the hero. Every one is derived from the library itself
+ * rather than typed in, so none of them can quietly become a lie as majors are
+ * added. "Four answers" is the fixed shape of a major page — what you study,
+ * what you will be good at, where it leads, and whether it suits you.
+ */
+const STATS = [
+  {
+    value: MAJORS.length,
+    label: 'University majors',
+    icon: (
+      <path d="M2.5 8.5 12 4l9.5 4.5L12 13 2.5 8.5Zm4 2.6V15c0 1.6 2.5 2.9 5.5 2.9s5.5-1.3 5.5-2.9v-3.9" />
+    ),
+  },
+  {
+    value: FIELDS.length,
+    label: 'Fields of study',
+    icon: <path d="M4 4h6v6H4V4Zm10 0h6v6h-6V4ZM4 14h6v6H4v-6Zm10 0h6v6h-6v-6Z" />,
+  },
+  {
+    value: countCareers(),
+    label: 'Career paths',
+    icon: <path d="M3 8.5h18V19H3V8.5Zm5.5 0V6.2A2.2 2.2 0 0 1 10.7 4h2.6a2.2 2.2 0 0 1 2.2 2.2v2.3M3 13h18" />,
+  },
+  {
+    value: 4,
+    label: 'Answers per major',
+    icon: <path d="M4 6.5h9M4 12h9M4 17.5h9m3.5-11 2 2 4-4" />,
+  },
+]
 
 /**
  * The landing page — the whole of it.
@@ -32,7 +62,7 @@ export default function Home() {
   // Signed in, the primary action opens the app; signed out, it creates the
   // account that unlocks it. /app itself bounces guests to the login screen.
   const startHref = isAuthenticated ? '/app' : '/signup'
-  const startLabel = isAuthenticated ? 'Open the library' : 'Get Started'
+  const startLabel = isAuthenticated ? 'Open the library' : 'Start Exploring'
 
   const scrollTo = (id) => {
     document.getElementById(id)?.scrollIntoView({ behavior: 'smooth', block: 'start' })
@@ -42,18 +72,18 @@ export default function Home() {
     <div className="home">
       {/* ============================ HERO ============================ */}
       <section className="hero" id="top">
-        <CornerLines className="hero__lines" />
+        {/* The brand's sweeping route lines, kept but dialled right down: on a
+            pale surface their default near-black reads as two hard strokes
+            across the artwork. */}
+        <CornerLines className="hero__lines" stroke="rgba(65, 43, 99, 0.12)" />
 
         <div className="shell hero__inner">
           <div className="hero__copy">
-            <div className="hero__lockup">
-              <img src={logo} alt="" className="hero__mark" aria-hidden="true" />
-              <div className="hero__word">
-                <h1 className="hero__title">Majora</h1>
-                <span className="hero__rule" aria-hidden="true" />
-                <p className="hero__tagline">Discover Where You Fit</p>
-              </div>
-            </div>
+            <h1 className="hero__title">
+              Discover
+              <br />
+              Where You Fit
+            </h1>
 
             <p className="hero__blurb">
               Every university major in Kurdistan, Iraq, explained in plain language — before you
@@ -61,16 +91,23 @@ export default function Home() {
             </p>
 
             <div className="hero__actions">
-              <SpecularButton {...SB.gold} size="lg" onClick={() => navigate(startHref)}>
+              <SpecularButton {...SB.purple} size="lg" onClick={() => navigate(startHref)}>
                 {startLabel}
                 <span className="sb-arrow" aria-hidden="true">
                   →
                 </span>
               </SpecularButton>
 
-              <SpecularButton {...SB.ghost} size="lg" onClick={() => scrollTo('how')}>
+              {/* A plain CSS button, not a second SpecularButton: each one paints
+                  its rim in WebGL with its own canvas, and those are rationed. */}
+              <button type="button" className="btn btn--outline-dark" onClick={() => scrollTo('how')}>
+                <span className="hero__glyph" aria-hidden="true">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                    <path d="m7 10 5 5 5-5" strokeLinecap="round" strokeLinejoin="round" />
+                  </svg>
+                </span>
                 How it works
-              </SpecularButton>
+              </button>
             </div>
           </div>
 
@@ -89,10 +126,30 @@ export default function Home() {
           />
         </div>
 
-        <button type="button" className="hero__cue" onClick={() => scrollTo('how')}>
-          <span>Scroll</span>
-          <span className="hero__cueLine" aria-hidden="true" />
-        </button>
+        <div className="shell">
+          <ul className="hero__stats">
+            {STATS.map((stat) => (
+              <li className="stat" key={stat.label}>
+                <span className="stat__icon" aria-hidden="true">
+                  <svg
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    strokeWidth="1.7"
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                  >
+                    {stat.icon}
+                  </svg>
+                </span>
+                <span className="stat__text">
+                  <strong className="stat__value">{stat.value}</strong>
+                  <span className="stat__label">{stat.label}</span>
+                </span>
+              </li>
+            ))}
+          </ul>
+        </div>
       </section>
 
       {/* ============================ ABOUT =========================== */}

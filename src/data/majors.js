@@ -753,6 +753,14 @@ export const fieldLabel = (id) => FIELDS.find((f) => f.id === id)?.label ?? id
 
 export const getMajor = (slug) => MAJORS.find((m) => m.slug === slug)
 
+/**
+ * How many distinct careers the library names, deduped case-insensitively —
+ * plenty of majors lead to the same job. Computed rather than written down so
+ * the figure on the landing page cannot drift from the data behind it.
+ */
+export const countCareers = () =>
+  new Set(MAJORS.flatMap((m) => (m.careers ?? []).map((c) => c.trim().toLowerCase()))).size
+
 export const countByField = () =>
   FIELDS.map((field) => ({
     ...field,
