@@ -42,58 +42,57 @@ export default function Home() {
     <div className="home">
       {/* ============================ HERO ============================ */}
       <section className="hero" id="top">
-        <img src={logo} alt="" className="hero__watermark" aria-hidden="true" />
         <CornerLines className="hero__lines" />
 
         <div className="shell hero__inner">
-          <div className="hero__lockup">
-            <img src={logo} alt="" className="hero__mark" aria-hidden="true" />
-            <div className="hero__word">
-              <h1 className="hero__title">Majora</h1>
-              <span className="hero__rule" aria-hidden="true" />
-              <p className="hero__tagline">Discover Where You Fit</p>
+          <div className="hero__copy">
+            <div className="hero__lockup">
+              <img src={logo} alt="" className="hero__mark" aria-hidden="true" />
+              <div className="hero__word">
+                <h1 className="hero__title">Majora</h1>
+                <span className="hero__rule" aria-hidden="true" />
+                <p className="hero__tagline">Discover Where You Fit</p>
+              </div>
+            </div>
+
+            <p className="hero__blurb">
+              Every university major in Kurdistan, Iraq, explained in plain language — before you
+              have to choose one.
+            </p>
+
+            <div className="hero__actions">
+              <SpecularButton {...SB.gold} size="lg" onClick={() => navigate(startHref)}>
+                {startLabel}
+                <span className="sb-arrow" aria-hidden="true">
+                  →
+                </span>
+              </SpecularButton>
+
+              <SpecularButton {...SB.ghost} size="lg" onClick={() => scrollTo('how')}>
+                How it works
+              </SpecularButton>
             </div>
           </div>
 
-          <p className="hero__blurb">
-            Every university major in Kurdistan, Iraq, explained in plain language — before you
-            have to choose one.
-          </p>
-
-          <div className="hero__actions">
-            <SpecularButton {...SB.gold} size="lg" onClick={() => navigate(startHref)}>
-              {startLabel}
-              <span className="sb-arrow" aria-hidden="true">
-                →
-              </span>
-            </SpecularButton>
-
-            <SpecularButton {...SB.ghost} size="lg" onClick={() => scrollTo('how')}>
-              How it works
-            </SpecularButton>
-          </div>
+          {/* Not eager-loaded by accident: this sits in the first viewport, so
+              lazy would leave a hole in the hero on a slow connection.
+              fetchpriority is lowercase because React 18 does not know the
+              camelCase prop and warns; lowercase passes through to the DOM. */}
+          <img
+            src={cast}
+            alt="Six students standing side by side, each dressed for a different field — medicine, computing, business, law, engineering and the arts — with icons for those subjects floating above them."
+            className="hero__art"
+            width="1717"
+            height="916"
+            decoding="async"
+            fetchpriority="high"
+          />
         </div>
 
         <button type="button" className="hero__cue" onClick={() => scrollTo('how')}>
           <span>Scroll</span>
           <span className="hero__cueLine" aria-hidden="true" />
         </button>
-      </section>
-
-      {/* ============================= CAST =========================== */}
-      {/* A light band between two dark sections: it shows who the site is for
-          before the argument starts, and keeps the hero and the problem
-          statement from running together as one unbroken stretch of purple. */}
-      <section className="cast" aria-label="Students across different fields">
-        <img
-          src={cast}
-          alt="Six students standing side by side, each dressed for a different field — medicine, computing, business, law, engineering and the arts — with icons for those subjects floating above them."
-          className="cast__art"
-          width="1717"
-          height="916"
-          loading="lazy"
-          decoding="async"
-        />
       </section>
 
       {/* ============================ ABOUT =========================== */}
