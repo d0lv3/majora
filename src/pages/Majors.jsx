@@ -2,6 +2,7 @@ import { useMemo, useState } from 'react'
 
 import MajorCard from '../components/MajorCard.jsx'
 import CornerLines from '../components/decor/CornerLines.jsx'
+import students from '../assets/people_with_different_majors.png'
 import { MAJORS, FIELDS, countByField, isAvailable } from '../data/majors.js'
 import { useAuth } from '../context/AuthContext.jsx'
 import './Majors.css'
@@ -49,9 +50,23 @@ export default function Majors() {
         </p>
       </header>
 
+      {/* The artwork gets the full width and its whole height rather than
+          being cropped into a backdrop: it is a picture of people holding the
+          tools of different majors, on the page that lists them, so it is
+          worth seeing. The toolbar below rides up over its lower edge, the
+          way the hero's feature bar sits on the hero art. */}
+      <figure className="library__art">
+        <img
+          src={students}
+          alt="Six students holding the tools of their majors, under icons for medicine, data, computing, law, engineering and art"
+          width="1717"
+          height="827"
+        />
+      </figure>
+
       {/* One card holding search and filters, built like the hero's feature
-          bar: translucent white over the artwork band, so the violet clouds
-          ghost through it. */}
+          bar: translucent white, so the artwork behind its top edge ghosts
+          through it. */}
       <div className="shell">
         <div className="toolbar">
           <div className="search">

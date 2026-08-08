@@ -15,61 +15,16 @@
   color: var(--text-on-light);
 }
 
-/* The students illustration, as a band behind the head and toolbar.
-   This artwork is composed the opposite way to the hero's: the figures fill
-   the centre and there is no empty half to write into, so the copy sits on a
-   veil rather than beside the art, and the veil runs down the page instead of
-   across it.
-
-   Two numbers are load-bearing.
-
-   The 90px offset drops the artwork just far enough that the students' faces
-   land in the gap between the lede and the toolbar, which is the only place
-   on this page they are not covered by something. Nothing is drawn above the
-   offset, so the eyebrow sits on clean ground.
-
-   The veil is flat at 0.86 through the whole copy rather than opening a
-   window near the top. Gradient stops are percentages of a band whose height
-   tracks the viewport, but the copy sits at a fixed pixel offset, so the two
-   drift apart: an earlier version opened to 0.50 at 28% and read fine at
-   1280x720, then put the h1 over a chart icon at 4.05:1 on a 900px-tall
-   screen. Flat removes the coupling.
-
-   Checked at 1280x720, 1366x768, 1440x800, 1600x900, 1920x1080, 375 and 320:
-   worst case is the lede at 5.30:1. */
-.library::before {
-  content: '';
-  position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
-  height: clamp(470px, 66vh, 640px);
-  background-image:
-    linear-gradient(
-      to bottom,
-      rgba(251, 250, 255, 0.86) 0%,
-      rgba(251, 250, 255, 0.86) 70%,
-      rgba(251, 250, 255, 0.5) 86%,
-      #fbfaff 100%
-    ),
-    url('../assets/people_with_different_majors.png');
-  background-repeat: no-repeat;
-  background-position:
-    center,
-    center 90px;
-  background-size: cover;
-  pointer-events: none;
-}
-
 /* Doubled selector: `.library > *` below also matches this SVG at equal
    specificity, and whichever came later would win — this must stay absolute
-   or it becomes a 400px-tall in-flow block shoving the head down. */
+   or it becomes a 400px-tall in-flow block shoving the head down. Scoped to
+   the head, so the strokes frame the copy without crossing the artwork. */
 .library .library__lines {
   position: absolute;
   top: 0;
   left: 0;
   width: 100%;
-  height: clamp(470px, 66vh, 640px);
+  height: clamp(240px, 30vh, 360px);
   pointer-events: none;
 }
 
@@ -86,11 +41,8 @@
 }
 
 /* =============================== HEAD =============================== */
-/* The gap is sized to the artwork, not to taste. At the default 3rem the
-   toolbar cut the students off at the mouth; this leaves the whole face band
-   showing in the one place on the page nothing covers it. */
 .library__head {
-  margin-bottom: clamp(2rem, 7vw, 6rem);
+  margin-bottom: clamp(1.6rem, 3.2vw, 2.6rem);
 }
 
 .library__head .eyebrow {
@@ -115,6 +67,41 @@
   line-height: 1.7;
   color: var(--text-on-light-dim);
   animation: libIn 0.9s 0.3s var(--ease-out) both;
+}
+
+/* =============================== ART =============================== */
+/* Full bleed and whole: no crop, no veil, no text on top. The illustration's
+   own top edge is already near-white (mean luminance 248 against this page's
+   251), which is why it can meet the ground with no fade up there. Its bottom
+   is dense purple foliage, so that edge does need one.
+
+   `.library > *` gives this position: relative, so the toolbar after it in
+   the DOM paints on top; the negative margin is what makes them overlap. */
+.library__art {
+  /* The bite is taken out of the fade, not out of the picture: the bottom
+     quarter of this box is the gradient below, so the toolbar can ride well
+     up into it and cost the illustration nothing. */
+  margin: 0 0 calc(-1 * clamp(3rem, 8vw, 9rem));
+  /* out of the shell to the viewport edges, without a horizontal scrollbar */
+  width: 100%;
+  animation: libIn 1s 0.4s var(--ease-out) both;
+}
+
+.library__art img {
+  display: block;
+  width: 100%;
+  height: auto;
+}
+
+.library__art::after {
+  content: '';
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  height: 26%;
+  background: linear-gradient(to bottom, rgba(251, 250, 255, 0), #fbfaff 92%);
+  pointer-events: none;
 }
 
 /* ============================== TOOLBAR ============================= */
@@ -328,34 +315,17 @@
 }
 
 /* ============================== NARROW ============================== */
-/* A phone-shaped viewport would crop this 1.87:1 artwork to one student's
-   shoulder under `cover`, so fit it to the width instead and let it sit as a
-   shallow band under the copy. Fitted to 375px the whole illustration is only
-   181px tall, so the head lands over the figures rather than over open sky and
-   the 150px offset has nothing left to buy. The veil stays closed through the
-   copy instead: opening it to 0.72 low down put the lede on a student's hair
-   at 3.9:1. Held at 0.88 the worst case is 5.45:1. */
+/* The illustration stays whole on a phone rather than zooming to keep the
+   faces large. Zooming would mean a sideways-scrolling box, and the only
+   affordance for that is a scrollbar we would then be hiding, so the picture
+   would be half unreachable with nothing to say so. Small and complete beats
+   large and hidden. The overlap shrinks with it. */
 @media (max-width: 900px) {
-  .library::before {
-    height: clamp(340px, 46vh, 460px);
-    background-image:
-      linear-gradient(
-        to bottom,
-        rgba(251, 250, 255, 0.95) 0%,
-        rgba(251, 250, 255, 0.93) 42%,
-        rgba(251, 250, 255, 0.88) 82%,
-        #fbfaff 100%
-      ),
-      url('../assets/people_with_different_majors.png');
-    background-position:
-      center,
-      center bottom;
-    background-size:
-      cover,
-      100% auto;
+  .library__art {
+    margin-bottom: calc(-1 * clamp(1.25rem, 4vw, 2.5rem));
   }
 
   .library .library__lines {
-    height: clamp(340px, 46vh, 460px);
+    height: clamp(200px, 26vh, 300px);
   }
 }
