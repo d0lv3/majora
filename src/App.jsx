@@ -1,5 +1,5 @@
 import { Routes, Route, Navigate, useLocation } from 'react-router-dom'
-import { useEffect } from 'react'
+import { Suspense, lazy, useEffect } from 'react'
 
 import Navbar from './components/Navbar.jsx'
 import AppNav from './components/AppNav.jsx'
@@ -11,6 +11,11 @@ import Login from './pages/Login.jsx'
 import Signup from './pages/Signup.jsx'
 import Majors from './pages/Majors.jsx'
 import MajorDetail from './pages/MajorDetail.jsx'
+
+// Split off: Leaflet and its stylesheet are about 160 kB, and every visitor
+// who never opens the map would otherwise download them to read the landing
+// page. This is the only route that needs them.
+const MajorMap = lazy(() => import('./pages/MajorMap.jsx'))
 import NotFound from './pages/NotFound.jsx'
 
 /**
@@ -85,6 +90,18 @@ export default function App() {
             element={
               <RequireAuth>
                 <Majors />
+              </RequireAuth>
+            }
+          />
+          {/* Before /app/:slug, which would otherwise match "map" as a slug
+              and send the reader to a major that does not exist. */}
+          <Route
+            path="/app/map"
+            element={
+              <RequireAuth>
+                <Suspense fallback={<div className="routeWait">Loading the map…</div>}>
+                  <MajorMap />
+                </Suspense>
               </RequireAuth>
             }
           />

@@ -331,6 +331,17 @@ h4 {
   border: 0;
 }
 
+/* Shown while a code-split route fetches its chunk. Sized to hold the fold so
+   the header does not jump when the real page lands. */
+.routeWait {
+  display: grid;
+  place-items: center;
+  min-height: 100svh;
+  background: #fbfaff;
+  color: var(--text-on-light-dim);
+  font-size: 0.95rem;
+}
+
 @media (prefers-reduced-motion: reduce) {
   html {
     scroll-behavior: auto;

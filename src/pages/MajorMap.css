@@ -1,0 +1,419 @@
+/* =========================================================
+   The map — where each major is taught.
+   Same pale ground and same head treatment as the library,
+   so the two app pages read as one place.
+   ========================================================= */
+.mapPage {
+  position: relative;
+  min-height: 100svh;
+  padding: clamp(9rem, 17vh, 12rem) 0 clamp(3rem, 6vw, 5rem);
+  background: #fbfaff;
+  color: var(--text-on-light);
+}
+
+.mapPage__head {
+  margin-bottom: clamp(1.2rem, 2.4vw, 1.8rem);
+}
+
+.mapPage__title {
+  margin-top: 1.1rem;
+  font-size: clamp(2.1rem, 3.6vw, 3rem);
+  font-weight: 800;
+  letter-spacing: -0.035em;
+  color: var(--purple-600);
+}
+
+.mapPage__lede {
+  max-width: 62ch;
+  margin-top: 1rem;
+  font-size: var(--step-lead);
+  line-height: 1.7;
+  color: var(--text-on-light-dim);
+}
+
+/* ------------------------------ warning ------------------------------ */
+/* Deliberately loud. It is the difference between a demo and a page that
+   misinforms someone about their own admission chances. */
+.mapPage__warning {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.9rem;
+  margin-bottom: clamp(1.4rem, 2.8vw, 2rem);
+  padding: clamp(0.9rem, 1.8vw, 1.15rem) clamp(1rem, 2vw, 1.4rem);
+  border-radius: var(--r-md);
+  background: rgba(238, 175, 22, 0.14);
+  box-shadow: inset 0 0 0 1.5px rgba(198, 143, 10, 0.45);
+  font-size: 0.92rem;
+  line-height: 1.6;
+  color: #6b4c05;
+}
+
+.mapPage__warning strong {
+  color: #4f3803;
+}
+
+.mapPage__warningMark {
+  width: 11px;
+  height: 11px;
+  margin-top: 0.45rem;
+  flex: none;
+  background: var(--gold-600);
+  transform: rotate(45deg);
+}
+
+/* ------------------------------- layout ------------------------------ */
+/* Named areas rather than two columns: the picker, the map and the list are
+   three siblings, so a phone can order them picker/map/list while a desktop
+   keeps the picker and the list stacked in one column beside the map. The map
+   spans both rows, which is what makes it the tall element. */
+.mapPage__grid {
+  display: grid;
+  grid-template-columns: minmax(0, 400px) minmax(0, 1fr);
+  grid-template-rows: auto minmax(0, 1fr);
+  grid-template-areas:
+    'controls map'
+    'list     map';
+  gap: clamp(1.2rem, 2.4vw, 2rem);
+  align-items: start;
+}
+
+.mapControls {
+  grid-area: controls;
+  display: grid;
+  gap: 0.6rem;
+  min-width: 0;
+}
+
+.clist {
+  grid-area: list;
+}
+
+.mapStage {
+  grid-area: map;
+}
+
+.mapPick {
+  display: grid;
+  gap: 0.45rem;
+}
+
+.mapPick__label {
+  font-family: var(--font-body);
+  font-size: 0.72rem;
+  font-weight: 600;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--text-on-light-dim);
+}
+
+/* The native control, restyled rather than replaced: a custom listbox would
+   have to re-earn keyboard support, typeahead and the mobile wheel. */
+.mapPick__select {
+  width: 100%;
+  padding: 0.85rem 2.6rem 0.85rem 1.1rem;
+  border: 1.5px solid rgba(65, 43, 99, 0.16);
+  border-radius: var(--r-sm);
+  background-color: var(--white);
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23412b63' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='m7 10 5 5 5-5'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 0.9rem center;
+  background-size: 1.15rem;
+  font-family: var(--font-display);
+  font-size: 1.05rem;
+  font-weight: 600;
+  color: var(--purple-600);
+  appearance: none;
+  cursor: pointer;
+  transition:
+    border-color 0.25s ease,
+    box-shadow 0.25s ease;
+}
+
+.mapPick__select:focus {
+  outline: none;
+  border-color: var(--purple-500);
+  box-shadow: 0 0 0 4px rgba(65, 43, 99, 0.12);
+}
+
+.mapControls__count {
+  font-size: 0.8rem;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--text-on-light-dim);
+}
+
+/* ----------------------------- college list --------------------------- */
+.clist {
+  display: grid;
+  gap: 0.5rem;
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  /* long lists stay inside the panel instead of running past the map */
+  max-height: min(56vh, 620px);
+  overflow-y: auto;
+  padding-right: 0.3rem;
+}
+
+.crow {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.9rem;
+  width: 100%;
+  padding: 0.85rem 1rem;
+  border-radius: var(--r-sm);
+  background: rgba(255, 255, 255, 0.86);
+  box-shadow: inset 0 0 0 1px rgba(65, 43, 99, 0.1);
+  text-align: left;
+  transition:
+    background-color 0.3s ease,
+    box-shadow 0.3s ease,
+    transform 0.3s var(--ease);
+}
+
+.crow:hover {
+  background: var(--white);
+  box-shadow: inset 0 0 0 1px rgba(65, 43, 99, 0.3);
+  transform: translateX(2px);
+}
+
+.crow--on {
+  background: var(--white);
+  box-shadow: inset 0 0 0 1.5px var(--gold-600);
+}
+
+.crow__head {
+  display: grid;
+  gap: 0.15rem;
+  min-width: 0;
+}
+
+.crow__name {
+  font-family: var(--font-display);
+  font-size: 0.98rem;
+  font-weight: 600;
+  line-height: 1.25;
+  letter-spacing: -0.015em;
+  color: var(--purple-600);
+}
+
+.crow__city {
+  font-size: 0.8rem;
+  color: var(--text-on-light-dim);
+}
+
+.crow__meta {
+  display: grid;
+  justify-items: end;
+  gap: 0.15rem;
+  flex: none;
+}
+
+.crow__score {
+  font-family: var(--font-display);
+  font-size: 1rem;
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
+  color: var(--gold-700);
+}
+
+.crow__kind {
+  font-size: 0.68rem;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--text-on-light-dim);
+}
+
+/* ------------------------------- detail ------------------------------- */
+.cdetail {
+  padding: 1rem 1.1rem 1.1rem;
+  margin-top: 0.3rem;
+  border-radius: var(--r-sm);
+  background: var(--paper);
+  box-shadow: inset 0 0 0 1px rgba(65, 43, 99, 0.09);
+}
+
+.cdetail__dept {
+  font-size: 0.88rem;
+  line-height: 1.5;
+  color: var(--purple-600);
+  font-weight: 600;
+}
+
+.cdetail__facts {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 0.7rem 1rem;
+  margin: 0.9rem 0 0;
+}
+
+.cdetail__facts dt {
+  font-size: 0.68rem;
+  letter-spacing: 0.11em;
+  text-transform: uppercase;
+  color: var(--text-on-light-dim);
+}
+
+.cdetail__facts dd {
+  margin: 0.15rem 0 0;
+  font-family: var(--font-display);
+  font-size: 1rem;
+  font-weight: 600;
+  font-variant-numeric: tabular-nums;
+  color: var(--purple-600);
+}
+
+.cdetail__link {
+  display: inline-block;
+  margin-top: 1rem;
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: var(--gold-700);
+}
+
+.cdetail__link:hover {
+  text-decoration: underline;
+}
+
+/* ------------------------------- the map ------------------------------ */
+.mapStage {
+  position: relative;
+  border-radius: var(--r-lg);
+  overflow: hidden;
+  /* sticky so the map stays put while a long college list scrolls past it */
+  position: sticky;
+  top: clamp(84px, 11vh, 104px);
+  box-shadow:
+    inset 0 0 0 1px rgba(65, 43, 99, 0.12),
+    0 30px 60px -44px rgba(21, 13, 33, 0.4);
+}
+
+.mapStage__canvas {
+  width: 100%;
+  height: clamp(460px, 68vh, 720px);
+  background: var(--paper);
+}
+
+/* Which major is plotted, over the map's top-left corner. */
+.mapStage__tag {
+  position: absolute;
+  top: 0.9rem;
+  left: 0.9rem;
+  z-index: 500; /* over Leaflet's panes, under its controls at 1000 */
+  display: flex;
+  align-items: center;
+  gap: 0.7rem;
+  padding: 0.6rem 1rem 0.6rem 0.7rem;
+  border-radius: var(--r-pill);
+  background: rgba(255, 255, 255, 0.92);
+  backdrop-filter: blur(8px);
+  box-shadow: 0 10px 30px -18px rgba(21, 13, 33, 0.6);
+}
+
+.mapStage__tag span {
+  display: grid;
+  line-height: 1.2;
+}
+
+.mapStage__tag strong {
+  font-family: var(--font-display);
+  font-size: 0.95rem;
+  font-weight: 700;
+  letter-spacing: -0.02em;
+  color: var(--purple-600);
+}
+
+.mapStage__tag em {
+  font-style: normal;
+  font-size: 0.7rem;
+  letter-spacing: 0.06em;
+  color: var(--text-on-light-dim);
+}
+
+.mapStage__glyph {
+  width: 30px;
+  height: 30px;
+  flex: none;
+  color: var(--purple-400);
+}
+
+/* ------------------------------- the pins ----------------------------- */
+/* Leaflet's default marker is a PNG it resolves relative to the stylesheet,
+   which a bundler moves; drawing them keeps the brand and dodges that. */
+.pin {
+  display: grid;
+  place-items: center;
+  width: 26px;
+  height: 26px;
+  border-radius: 50%;
+  background: rgba(65, 43, 99, 0.22);
+  transition:
+    background-color 0.3s ease,
+    transform 0.3s var(--ease);
+}
+
+.pin i {
+  width: 13px;
+  height: 13px;
+  border-radius: 50%;
+  background: var(--purple-600);
+  box-shadow: 0 0 0 2.5px var(--white);
+}
+
+.pin:hover {
+  transform: scale(1.15);
+}
+
+.pin--on {
+  background: rgba(238, 175, 22, 0.35);
+  transform: scale(1.2);
+}
+
+.pin--on i {
+  background: var(--gold-600);
+}
+
+/* Leaflet's own chrome, brought in line with the rest of the app. */
+.mapStage .leaflet-container {
+  font-family: var(--font-body);
+  background: var(--paper);
+}
+
+.mapStage .leaflet-control-zoom a {
+  color: var(--purple-600);
+  border-radius: 6px;
+}
+
+.mapStage .leaflet-control-attribution {
+  background: rgba(255, 255, 255, 0.86);
+  font-size: 0.66rem;
+}
+
+/* ------------------------------- narrow ------------------------------- */
+@media (max-width: 980px) {
+  /* Picker, then the map, then the list: choosing a major shows its effect
+     without scrolling, and the list is free to run as long as it needs. */
+  .mapPage__grid {
+    grid-template-columns: 1fr;
+    grid-template-rows: auto auto auto;
+    grid-template-areas:
+      'controls'
+      'map'
+      'list';
+  }
+
+  .mapStage {
+    position: relative;
+    top: auto;
+  }
+
+  .mapStage__canvas {
+    height: clamp(320px, 44vh, 460px);
+  }
+
+  .clist {
+    max-height: none;
+    overflow-y: visible;
+  }
+}
