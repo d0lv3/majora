@@ -199,13 +199,29 @@ export default function MajorMap() {
               <strong>
                 {stats?.departments} departments at {stats?.universities} universities.
               </strong>{' '}
-              Federal figures come from the{' '}
-              <a href={sources[0]?.href} target="_blank" rel="noreferrer noopener">
-                ministry&rsquo;s 2025 classification
-              </a>
-              . The score ranks the department on the ministry&rsquo;s criteria; it is not an
-              acceptance rate or a grade cut-off. Kurdistan Region universities sit outside
-              that table and are listed from their own departments, without a score.
+              {slug === 'cybersecurity' ? (
+                <>
+                  The cut-off is the real 2025-26{' '}
+                  <a href={sources[0]?.href} target="_blank" rel="noreferrer noopener">
+                    central admission minimum
+                  </a>
+                  , the grade you need. {stats?.withoutCutoff} departments are confirmed but
+                  have no published cut-off, and say so rather than showing a guess. The
+                  ministry&rsquo;s department classification does not cover cybersecurity at
+                  all, so none of this comes from there.
+                </>
+              ) : (
+                <>
+                  Federal figures come from the{' '}
+                  <a href={sources[0]?.href} target="_blank" rel="noreferrer noopener">
+                    ministry&rsquo;s 2025 classification
+                  </a>
+                  . The score ranks the department on the ministry&rsquo;s criteria; it is not
+                  an acceptance rate or a grade cut-off. Kurdistan Region universities sit
+                  outside that table and are listed from their own departments, without a
+                  score.
+                </>
+              )}
             </span>
           </p>
         )}
@@ -276,8 +292,12 @@ export default function MajorMap() {
                   {on && (
                     <div className="cdetail">
                       {college.branches.map((b, i) => (
-                        <div className="cbranch" key={`${b.college}-${i}`}>
-                          <p className="cdetail__dept">{b.college}</p>
+                        <div className="cbranch" key={`${b.college}-${b.department ?? i}`}>
+                          {/* Cybersecurity runs under five different names and
+                              they are not interchangeable, so the department
+                              leads and the college sits under it. */}
+                          <p className="cdetail__dept">{b.department ?? b.college}</p>
+                          {b.department && <p className="cdetail__in">{b.college}</p>}
                           <dl className="cdetail__facts">
                             {b.rank != null && (
                               <div>
@@ -296,8 +316,22 @@ export default function MajorMap() {
                             )}
                             {b.minScore != null && (
                               <div>
-                                <dt>Minimum score</dt>
+                                <dt>{college.sample ? 'Minimum score' : 'Cut-off 2025-26'}</dt>
                                 <dd>{b.minScore}%</dd>
+                              </div>
+                            )}
+                            {/* Absence is information: the department is real,
+                                the cut-off simply is not published. */}
+                            {!college.sample && b.minScore == null && b.track && (
+                              <div>
+                                <dt>Cut-off 2025-26</dt>
+                                <dd className="cdetail__unknown">not on record</dd>
+                              </div>
+                            )}
+                            {b.track && (
+                              <div>
+                                <dt>Degree track</dt>
+                                <dd>{b.track}</dd>
                               </div>
                             )}
                             {b.acceptanceRate != null && (

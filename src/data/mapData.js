@@ -23,28 +23,36 @@
 
 import { COLLEGES as SAMPLE_COLLEGES } from './colleges.js'
 import { ENGLISH_COLLEGES, ENGLISH_SOURCES, ENGLISH_STATS } from './englishDepartments.js'
+import { CYBER_COLLEGES, CYBER_SOURCES, CYBER_STATS } from './cybersecurityDepartments.js'
 
 const ENGLISH_SLUG = 'english-language-literature'
+const CYBER_SLUG = 'cybersecurity'
 
-/** Majors whose figures are researched rather than invented. */
-const RESEARCHED = new Set([ENGLISH_SLUG])
+/**
+ * Majors whose figures are researched rather than invented, each with the
+ * sources behind them. Dentistry is the only one left on placeholders.
+ */
+const RESEARCHED = {
+  [ENGLISH_SLUG]: { rows: ENGLISH_COLLEGES, sources: ENGLISH_SOURCES, stats: ENGLISH_STATS },
+  [CYBER_SLUG]: { rows: CYBER_COLLEGES, sources: CYBER_SOURCES, stats: CYBER_STATS },
+}
 
-export const isSampleMajor = (slug) => !RESEARCHED.has(slug)
+export const isSampleMajor = (slug) => !RESEARCHED[slug]
 
 export function sourcesFor(slug) {
-  return slug === ENGLISH_SLUG ? ENGLISH_SOURCES : []
+  return RESEARCHED[slug]?.sources ?? []
 }
 
 export function statsFor(slug) {
-  return slug === ENGLISH_SLUG ? ENGLISH_STATS : null
+  return RESEARCHED[slug]?.stats ?? null
 }
 
 /** Every university teaching this major, northernmost first. */
 export function collegesFor(slug) {
-  const rows =
-    slug === ENGLISH_SLUG
-      ? ENGLISH_COLLEGES.map((c) => ({ ...c, sample: false }))
-      : SAMPLE_COLLEGES.filter((c) => c.programmes[slug]).map((c) => ({
+  const researched = RESEARCHED[slug]
+  const rows = researched
+    ? researched.rows.map((c) => ({ ...c, sample: false }))
+    : SAMPLE_COLLEGES.filter((c) => c.programmes[slug]).map((c) => ({
           id: c.id,
           university: c.university,
           city: c.city,
@@ -62,7 +70,7 @@ export function collegesFor(slug) {
 
 /** The majors the map can plot at all. */
 export function mappedMajorSlugs() {
-  const slugs = new Set([ENGLISH_SLUG])
+  const slugs = new Set(Object.keys(RESEARCHED))
   for (const c of SAMPLE_COLLEGES) for (const s of Object.keys(c.programmes)) slugs.add(s)
   return [...slugs]
 }

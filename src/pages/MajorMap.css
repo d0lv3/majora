@@ -276,6 +276,19 @@
   font-weight: 600;
 }
 
+.cdetail__in {
+  margin-top: 0.15rem;
+  font-size: 0.78rem;
+  color: var(--text-on-light-dim);
+}
+
+/* A missing cut-off is stated, not left blank, so it does not read as zero. */
+.cdetail__unknown {
+  font-weight: 500 !important;
+  font-style: italic;
+  color: var(--text-on-light-dim) !important;
+}
+
 .cdetail__facts {
   display: grid;
   grid-template-columns: repeat(2, minmax(0, 1fr));
