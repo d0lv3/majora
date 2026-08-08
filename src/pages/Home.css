@@ -63,8 +63,13 @@
   align-items: center;
 }
 
+/* The upper bound is set by the first line, not by taste: the copy column stops
+   growing once the shell caps at 1240px, so past roughly 1250px viewport the
+   headline would keep scaling into a fixed 523px measure and "Majora -
+   Discover" would break across two lines. 3.6rem is the largest size that
+   still holds it on one. Below that width 4.6vw governs and nothing changes. */
 .hero__title {
-  font-size: clamp(2.5rem, 4.6vw, 4.1rem);
+  font-size: clamp(2.5rem, 4.6vw, 3.6rem);
   font-weight: 800;
   letter-spacing: -0.035em;
   line-height: 1.02;
@@ -287,6 +292,16 @@
   .feat + .feat {
     border-top: 1px solid rgba(65, 43, 99, 0.09);
     padding-top: 0.85rem;
+  }
+}
+
+/* Phones. The 2.5rem floor above is wider than the column below roughly 385px,
+   so "Majora - Discover" spills and the headline lands as three lines with a
+   dangling "Majora -" on its own. Scaling with the viewport down here keeps it
+   to the two lines it is written as, at 320px and up. */
+@media (max-width: 400px) {
+  .hero__title {
+    font-size: clamp(1.6rem, 8.3vw, 2.1rem);
   }
 }
 

@@ -81,7 +81,7 @@ export default function Home() {
         <div className="shell hero__inner">
           <div className="hero__copy">
             <h1 className="hero__title">
-              Discover
+              Majora - Discover
               <br />
               Where You Fit
             </h1>
