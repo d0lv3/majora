@@ -1,7 +1,7 @@
 import { useMemo, useState } from 'react'
 
 import MajorCard from '../components/MajorCard.jsx'
-import Lattice from '../components/decor/Lattice.jsx'
+import CornerLines from '../components/decor/CornerLines.jsx'
 import { MAJORS, FIELDS, countByField, isAvailable } from '../data/majors.js'
 import { useAuth } from '../context/AuthContext.jsx'
 import './Majors.css'
@@ -37,10 +37,11 @@ export default function Majors() {
 
   return (
     <div className="library">
-      <Lattice className="library__lattice" size={90} color="rgba(255,255,255,0.045)" />
+      {/* the same route lines as the hero, in the same light-surface tint */}
+      <CornerLines className="library__lines" stroke="rgba(65, 43, 99, 0.12)" />
 
       <header className="library__head shell">
-        <span className="eyebrow">Welcome, {firstName}</span>
+        <span className="eyebrow eyebrow--dark">Welcome, {firstName}</span>
         <h1 className="library__title">The library</h1>
         <p className="library__lede">
           Every major, one card each. {READY_COUNT} are written up and open now; the rest are on
@@ -48,49 +49,59 @@ export default function Majors() {
         </p>
       </header>
 
-      <div className="toolbar shell">
-        <div className="search">
-          <svg viewBox="0 0 24 24" aria-hidden="true" className="search__icon">
-            <circle cx="11" cy="11" r="7" fill="none" stroke="currentColor" strokeWidth="2" />
-            <path d="M16.5 16.5L21 21" stroke="currentColor" strokeWidth="2" strokeLinecap="round" />
-          </svg>
-          <input
-            type="search"
-            value={query}
-            onChange={(e) => setQuery(e.target.value)}
-            placeholder="Search a major, or a job it leads to…"
-            aria-label="Search majors"
-          />
-          {query && (
-            <button type="button" className="search__clear" onClick={() => setQuery('')}>
-              Clear
-            </button>
-          )}
-        </div>
+      {/* One card holding search and filters, built like the hero's feature
+          bar: translucent white over the artwork band, so the violet clouds
+          ghost through it. */}
+      <div className="shell">
+        <div className="toolbar">
+          <div className="search">
+            <svg viewBox="0 0 24 24" aria-hidden="true" className="search__icon">
+              <circle cx="11" cy="11" r="7" fill="none" stroke="currentColor" strokeWidth="2" />
+              <path
+                d="M16.5 16.5L21 21"
+                stroke="currentColor"
+                strokeWidth="2"
+                strokeLinecap="round"
+              />
+            </svg>
+            <input
+              type="search"
+              value={query}
+              onChange={(e) => setQuery(e.target.value)}
+              placeholder="Search a major, or a job it leads to…"
+              aria-label="Search majors"
+            />
+            {query && (
+              <button type="button" className="search__clear" onClick={() => setQuery('')}>
+                Clear
+              </button>
+            )}
+          </div>
 
-        <div className="filters" role="group" aria-label="Filter by field">
-          <button
-            type="button"
-            className={`filter ${field === 'all' ? 'is-on' : ''}`}
-            aria-pressed={field === 'all'}
-            onClick={() => setField('all')}
-          >
-            All fields
-            <span className="filter__count">{MAJORS.length}</span>
-          </button>
-
-          {FIELDS.map((f) => (
+          <div className="filters" role="group" aria-label="Filter by field">
             <button
               type="button"
-              key={f.id}
-              className={`filter ${field === f.id ? 'is-on' : ''}`}
-              aria-pressed={field === f.id}
-              onClick={() => setField(f.id)}
+              className={`filter ${field === 'all' ? 'is-on' : ''}`}
+              aria-pressed={field === 'all'}
+              onClick={() => setField('all')}
             >
-              {f.label}
-              <span className="filter__count">{counts.find((c) => c.id === f.id)?.count}</span>
+              All fields
+              <span className="filter__count">{MAJORS.length}</span>
             </button>
-          ))}
+
+            {FIELDS.map((f) => (
+              <button
+                type="button"
+                key={f.id}
+                className={`filter ${field === f.id ? 'is-on' : ''}`}
+                aria-pressed={field === f.id}
+                onClick={() => setField(f.id)}
+              >
+                {f.label}
+                <span className="filter__count">{counts.find((c) => c.id === f.id)?.count}</span>
+              </button>
+            ))}
+          </div>
         </div>
       </div>
 
@@ -106,8 +117,10 @@ export default function Majors() {
         {results.length > 0 ? (
           <ul className="library__grid">
             {results.map((major, i) => (
-              <li key={major.slug}>
-                <MajorCard major={major} index={i} />
+              // --card-i staggers the entrance; capped so card 40 does not
+              // arrive a full two seconds after card 1
+              <li key={major.slug} style={{ '--card-i': Math.min(i, 11) }}>
+                <MajorCard major={major} index={i} tone="light" />
               </li>
             ))}
           </ul>

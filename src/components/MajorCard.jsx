@@ -10,9 +10,13 @@ import './MajorCard.css'
  * Majors that are not written up yet render as a dimmed, non-interactive
  * tile rather than being hidden: the shelf keeps its real shape, and nobody
  * clicks through into an empty page.
+ *
+ * `tone` picks the skin: "dark" (default) for the landing's purple sections,
+ * "light" for the library, which sits on the hero's pale ground.
  */
-export default function MajorCard({ major, index = 0, to }) {
+export default function MajorCard({ major, index = 0, to, tone = 'dark' }) {
   const ready = isAvailable(major)
+  const skin = tone === 'light' ? ' mcard--light' : ''
 
   const inner = (
     <>
@@ -47,14 +51,18 @@ export default function MajorCard({ major, index = 0, to }) {
 
   if (!ready) {
     return (
-      <div className="mcard mcard--soon" aria-label={`${major.name}, coming soon`}>
+      <div className={`mcard mcard--soon${skin}`} aria-label={`${major.name}, coming soon`}>
         {inner}
       </div>
     )
   }
 
   return (
-    <Link to={to ?? `/app/${major.slug}`} className="mcard" aria-label={`Open ${major.name}`}>
+    <Link
+      to={to ?? `/app/${major.slug}`}
+      className={`mcard${skin}`}
+      aria-label={`Open ${major.name}`}
+    >
       {inner}
     </Link>
   )

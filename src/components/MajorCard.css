@@ -215,3 +215,104 @@
     opacity: 1;
   }
 }
+
+/* ====================================================================
+   Light skin (tone="light") — the library.
+   The library sits on the hero's pale ground, so its cards take the
+   hero feature bar's construction: translucent white with the artwork
+   ghosting through, a purple hairline, gold arriving on hover. The
+   geometry, glyph, and tagline reveal above are shared; only the paint
+   changes.
+   ==================================================================== */
+.mcard--light {
+  background: rgba(255, 255, 255, 0.86);
+  backdrop-filter: blur(8px);
+  box-shadow:
+    inset 0 0 0 1px rgba(65, 43, 99, 0.1),
+    0 24px 50px -42px rgba(21, 13, 33, 0.35);
+}
+
+.mcard--light::before {
+  background: radial-gradient(60% 100% at 50% 100%, rgba(238, 175, 22, 0.16), transparent 70%);
+}
+
+.mcard--light:hover,
+.mcard--light:focus-visible {
+  background: var(--white);
+  box-shadow:
+    inset 0 0 0 1px rgba(238, 175, 22, 0.6),
+    0 34px 70px -34px rgba(21, 13, 33, 0.3);
+}
+
+.mcard--light .mcard__num {
+  color: rgba(65, 43, 99, 0.3);
+}
+
+.mcard--light .mcard__glyph {
+  color: rgba(65, 43, 99, 0.06);
+}
+
+.mcard--light:hover .mcard__glyph,
+.mcard--light:focus-visible .mcard__glyph {
+  color: rgba(238, 175, 22, 0.28);
+}
+
+/* the text-safe gold: brighter steps fail contrast as type on white */
+.mcard--light .mcard__field {
+  color: var(--gold-700);
+}
+
+.mcard--light .mcard__name {
+  color: var(--purple-600);
+}
+
+.mcard--light .mcard__tagline {
+  color: var(--text-on-light-dim);
+}
+
+.mcard--light .mcard__foot {
+  border-top-color: rgba(65, 43, 99, 0.12);
+  color: var(--text-on-light-dim);
+}
+
+.mcard--light:hover .mcard__foot,
+.mcard--light:focus-visible .mcard__foot {
+  border-color: rgba(238, 175, 22, 0.5);
+}
+
+.mcard--light .mcard__go {
+  color: var(--gold-600);
+}
+
+/* --- not written up yet, on light: sunk into the page, not greyed out --- */
+.mcard--light.mcard--soon {
+  background: rgba(255, 255, 255, 0.45);
+  backdrop-filter: none;
+  box-shadow: inset 0 0 0 1px rgba(65, 43, 99, 0.08);
+}
+
+.mcard--light.mcard--soon:hover {
+  background: rgba(255, 255, 255, 0.45);
+  box-shadow: inset 0 0 0 1px rgba(65, 43, 99, 0.08);
+}
+
+.mcard--light.mcard--soon .mcard__field {
+  color: rgba(198, 143, 10, 0.55);
+}
+
+.mcard--light.mcard--soon .mcard__name {
+  color: rgba(65, 43, 99, 0.55);
+}
+
+.mcard--light.mcard--soon .mcard__glyph,
+.mcard--light.mcard--soon:hover .mcard__glyph {
+  color: rgba(65, 43, 99, 0.04);
+}
+
+.mcard--light.mcard--soon .mcard__years {
+  color: rgba(28, 19, 39, 0.35);
+}
+
+.mcard--light.mcard--soon .mcard__soon {
+  color: rgba(65, 43, 99, 0.45);
+}

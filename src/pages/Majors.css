@@ -1,17 +1,59 @@
+/* =========================================================
+   The library — the hero's second page, not another dark room.
+   Same pale ground, same artwork behind the head with the same
+   right-anchor and left-scrim geometry, and the toolbar built
+   like the hero's feature bar: a translucent white card the
+   artwork ghosts through. The dark card skin stays on the
+   landing; here the cards flip to their light skin.
+   ========================================================= */
 .library {
   position: relative;
   overflow: hidden;
   min-height: 100svh;
   padding: clamp(9rem, 17vh, 12rem) 0 clamp(5rem, 9vw, 7rem);
-  background: var(--purple-950);
-  color: var(--white);
+  background: #fbfaff;
+  color: var(--text-on-light);
 }
 
-.library__lattice {
+/* The hero's artwork, reprised as a band behind the head and toolbar.
+   Anchored right like the hero, with the hero's left scrim protecting the
+   copy — plus a bottom fade so it has melted into plain ground before the
+   grid starts. */
+.library::before {
+  content: '';
   position: absolute;
-  inset: 0;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: clamp(430px, 62vh, 600px);
+  background-image:
+    linear-gradient(
+      100deg,
+      #fbfaff 0%,
+      rgba(251, 250, 255, 0.97) 26%,
+      rgba(251, 250, 255, 0.8) 42%,
+      rgba(251, 250, 255, 0.12) 62%
+    ),
+    linear-gradient(to bottom, rgba(251, 250, 255, 0) 55%, #fbfaff 96%),
+    url('../assets/hero-bg.png');
+  background-repeat: no-repeat;
+  background-position:
+    center,
+    center,
+    right center;
+  background-size: cover;
+  pointer-events: none;
+}
+
+/* Doubled selector: `.library > *` below also matches this SVG at equal
+   specificity, and whichever came later would win — this must stay absolute
+   or it becomes a 400px-tall in-flow block shoving the head down. */
+.library .library__lines {
+  position: absolute;
+  top: 0;
+  left: 0;
   width: 100%;
-  height: 100%;
+  height: clamp(430px, 62vh, 600px);
   pointer-events: none;
 }
 
@@ -19,29 +61,57 @@
   position: relative;
 }
 
+/* Everything above the grid arrives the way the hero does. */
+@keyframes libIn {
+  from {
+    opacity: 0;
+    transform: translateY(16px);
+  }
+}
+
 /* =============================== HEAD =============================== */
 .library__head {
   margin-bottom: clamp(2rem, 4vw, 3rem);
 }
 
+.library__head .eyebrow {
+  animation: libIn 0.9s 0.05s var(--ease-out) both;
+}
+
+/* Drawn like the hero title: same weight, same tracking, brand purple. */
 .library__title {
   margin-top: 1.1rem;
-  font-size: var(--step-h1);
+  font-size: clamp(2.4rem, 4.2vw, 3.4rem);
+  font-weight: 800;
+  letter-spacing: -0.035em;
+  color: var(--purple-600);
+  animation: libIn 0.9s 0.15s var(--ease-out) both;
 }
 
 .library__lede {
-  max-width: 56ch;
+  /* short measure keeps the copy inside the artwork's empty left half */
+  max-width: 52ch;
   margin-top: 1.1rem;
   font-size: var(--step-lead);
   line-height: 1.7;
-  color: var(--text-on-dark-dim);
+  color: var(--text-on-light-dim);
+  animation: libIn 0.9s 0.3s var(--ease-out) both;
 }
 
 /* ============================== TOOLBAR ============================= */
+/* The hero feature bar's construction, carrying controls instead of
+   promises: translucent white, purple hairline, soft drop. */
 .toolbar {
   display: grid;
-  gap: 1.4rem;
+  gap: clamp(0.9rem, 1.8vw, 1.2rem);
   margin-bottom: 2rem;
+  padding: clamp(1rem, 2vw, 1.4rem) clamp(1.1rem, 2.4vw, 1.8rem);
+  border: 1px solid rgba(65, 43, 99, 0.08);
+  border-radius: var(--r-lg);
+  background: rgba(255, 255, 255, 0.86);
+  backdrop-filter: blur(8px);
+  box-shadow: 0 30px 60px -44px rgba(21, 13, 33, 0.4);
+  animation: libIn 0.9s 0.45s var(--ease-out) both;
 }
 
 .search {
@@ -49,26 +119,28 @@
   display: flex;
   align-items: center;
   gap: 0.8rem;
-  max-width: 520px;
+  max-width: 560px;
   padding: 0.25rem 0.35rem 0.25rem 1.1rem;
   border-radius: var(--r-pill);
-  background: rgba(255, 255, 255, 0.06);
-  box-shadow: inset 0 0 0 1.5px rgba(255, 255, 255, 0.12);
+  background: var(--paper);
+  box-shadow: inset 0 0 0 1.5px rgba(65, 43, 99, 0.14);
   transition:
     box-shadow 0.3s ease,
     background-color 0.3s ease;
 }
 
 .search:focus-within {
-  background: rgba(255, 255, 255, 0.09);
-  box-shadow: inset 0 0 0 1.5px var(--gold);
+  background: var(--white);
+  box-shadow:
+    inset 0 0 0 1.5px var(--purple-500),
+    0 0 0 4px rgba(65, 43, 99, 0.1);
 }
 
 .search__icon {
   width: 19px;
   height: 19px;
   flex: none;
-  color: var(--text-on-dark-faint);
+  color: rgba(65, 43, 99, 0.45);
 }
 
 .search input {
@@ -77,12 +149,12 @@
   padding: 0.85rem 0;
   border: 0;
   background: none;
-  color: var(--white);
+  color: var(--text-on-light);
   font-size: 0.98rem;
 }
 
 .search input::placeholder {
-  color: var(--text-on-dark-faint);
+  color: rgba(92, 81, 112, 0.65);
 }
 
 .search input:focus {
@@ -97,11 +169,13 @@
   flex: none;
   padding: 0.5rem 1rem;
   border-radius: var(--r-pill);
-  background: rgba(255, 255, 255, 0.1);
+  background: rgba(65, 43, 99, 0.08);
   font-size: 0.8rem;
   font-weight: 600;
-  color: var(--white);
-  transition: background-color 0.25s ease;
+  color: var(--purple-600);
+  transition:
+    background-color 0.25s ease,
+    color 0.25s ease;
 }
 
 .search__clear:hover {
@@ -110,10 +184,13 @@
 }
 
 /* --- field filters --- */
+/* Divided from the search the way the feature bar divides its cells. */
 .filters {
   display: flex;
   flex-wrap: wrap;
   gap: 0.5rem;
+  padding-top: clamp(0.9rem, 1.8vw, 1.2rem);
+  border-top: 1px solid rgba(65, 43, 99, 0.09);
 }
 
 .filter {
@@ -123,10 +200,10 @@
   padding: 0.55rem 0.95rem;
   border-radius: var(--r-pill);
   background: transparent;
-  box-shadow: inset 0 0 0 1.5px rgba(255, 255, 255, 0.14);
+  box-shadow: inset 0 0 0 1.5px rgba(65, 43, 99, 0.16);
   font-size: 0.85rem;
   font-weight: 500;
-  color: var(--text-on-dark-dim);
+  color: var(--text-on-light-dim);
   transition:
     background-color 0.25s ease,
     box-shadow 0.25s ease,
@@ -135,14 +212,16 @@
 }
 
 .filter:hover {
-  color: var(--white);
-  box-shadow: inset 0 0 0 1.5px rgba(255, 255, 255, 0.4);
+  color: var(--purple-600);
+  box-shadow: inset 0 0 0 1.5px rgba(65, 43, 99, 0.4);
 }
 
+/* selected = the hero's primary button colour, not gold: gold stays the
+   accent that arrives on hover, purple is the colour of "chosen" */
 .filter.is-on {
-  background: var(--gold);
-  box-shadow: inset 0 0 0 1.5px var(--gold);
-  color: var(--purple-950);
+  background: var(--purple-600);
+  box-shadow: inset 0 0 0 1.5px var(--purple-600);
+  color: var(--white);
   font-weight: 600;
   transform: translateY(-1px);
 }
@@ -151,6 +230,13 @@
   font-size: 0.72rem;
   font-variant-numeric: tabular-nums;
   opacity: 0.62;
+}
+
+@media (max-width: 560px) {
+  /* comfortable thumb targets once this is a phone */
+  .filter {
+    padding: 0.7rem 1.05rem;
+  }
 }
 
 /* =============================== GRID =============================== */
@@ -162,17 +248,18 @@
   font-size: 0.82rem;
   letter-spacing: 0.1em;
   text-transform: uppercase;
-  color: var(--text-on-dark-faint);
+  color: var(--text-on-light-dim);
+  animation: libIn 0.9s 0.55s var(--ease-out) both;
 }
 
 .library__ready {
   padding: 0.25rem 0.7rem;
   border-radius: var(--r-pill);
-  background: rgba(238, 175, 22, 0.14);
-  box-shadow: inset 0 0 0 1px rgba(238, 175, 22, 0.35);
+  background: rgba(238, 175, 22, 0.16);
+  box-shadow: inset 0 0 0 1px rgba(198, 143, 10, 0.4);
   font-size: 0.72rem;
   letter-spacing: 0.1em;
-  color: var(--gold);
+  color: var(--gold-700);
 }
 
 .library__grid {
@@ -183,6 +270,10 @@
   padding: 0;
 }
 
+.library__grid > li {
+  animation: libIn 0.7s calc(0.55s + var(--card-i, 0) * 55ms) var(--ease-out) both;
+}
+
 /* =============================== EMPTY ============================== */
 .library__empty {
   display: grid;
@@ -190,7 +281,7 @@
   gap: 1rem;
   padding: clamp(3rem, 8vw, 6rem) 1rem;
   text-align: center;
-  border: 1px dashed rgba(255, 255, 255, 0.18);
+  border: 1px dashed rgba(65, 43, 99, 0.28);
   border-radius: var(--r-lg);
 }
 
@@ -204,20 +295,36 @@
 
 .library__empty h2 {
   font-size: 1.5rem;
+  color: var(--purple-600);
 }
 
 .library__empty p {
   max-width: 44ch;
-  color: var(--text-on-dark-dim);
+  color: var(--text-on-light-dim);
 }
 
+/* .btn--outline-dark was built for light surfaces; here it needs no help */
 .library__empty .btn--outline-dark {
-  --btn-fg: var(--white);
-  box-shadow: inset 0 0 0 1.5px rgba(255, 255, 255, 0.35);
   margin-top: 0.6rem;
 }
 
-.library__empty .btn--outline-dark:hover {
-  --btn-bg: var(--gold);
-  --btn-fg: var(--purple-950);
+/* ============================== NARROW ============================== */
+/* Phone-shaped viewports crop the 16:9 artwork down to a sliver of one
+   figure, so the band trades the side scrim for a veil: the artwork stays
+   as atmosphere, the copy centre stage. */
+@media (max-width: 900px) {
+  .library::before {
+    background-image:
+      linear-gradient(
+        to bottom,
+        rgba(251, 250, 255, 0.94) 0%,
+        rgba(251, 250, 255, 0.86) 45%,
+        #fbfaff 94%
+      ),
+      url('../assets/hero-bg.png');
+    background-position:
+      center,
+      72% top;
+    background-size: cover;
+  }
 }

@@ -22,6 +22,7 @@
   --purple-100: #ded5ea;
 
   /* --- gold ramp --- */
+  --gold-700: #8a6206; /* the only gold dark enough to be TEXT on white */
   --gold-600: #c68f0a;
   --gold-500: #eeaf16;
   --gold-400: #f5c33f;
