@@ -1,6 +1,7 @@
 import { Link, useNavigate } from 'react-router-dom'
 
 import logo from '../assets/visual-identity/logo-web.png'
+import cast from '../assets/people_with_different_majors.png'
 import Reveal from '../components/Reveal.jsx'
 import MajorCard from '../components/MajorCard.jsx'
 import CornerLines from '../components/decor/CornerLines.jsx'
@@ -77,6 +78,22 @@ export default function Home() {
           <span>Scroll</span>
           <span className="hero__cueLine" aria-hidden="true" />
         </button>
+      </section>
+
+      {/* ============================= CAST =========================== */}
+      {/* A light band between two dark sections: it shows who the site is for
+          before the argument starts, and keeps the hero and the problem
+          statement from running together as one unbroken stretch of purple. */}
+      <section className="cast" aria-label="Students across different fields">
+        <img
+          src={cast}
+          alt="Six students standing side by side, each dressed for a different field — medicine, computing, business, law, engineering and the arts — with icons for those subjects floating above them."
+          className="cast__art"
+          width="1717"
+          height="916"
+          loading="lazy"
+          decoding="async"
+        />
       </section>
 
       {/* ============================ ABOUT =========================== */}

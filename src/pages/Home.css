@@ -196,6 +196,40 @@
   }
 }
 
+/* ============================== CAST =============================== */
+/* A framed illustration rather than a full bleed, on purpose. The artwork's
+   own edges disagree — its top is near-white (#fdfdfd) while its bottom is
+   saturated purple foliage (#9e81e5) — so no single band colour can hide all
+   four sides. Rounding and lifting it instead makes it read as a deliberate
+   panel, which is honest, where a half-matched edge would just look wrong.
+   The band takes --paper because it is the closest existing token to the
+   illustration's pale upper half. */
+.cast {
+  padding: clamp(2.5rem, 6vw, 5rem) 0;
+  background: var(--paper);
+}
+
+.cast__art {
+  display: block;
+  /* Capped below the file's 1717px so it never upscales past its own
+     resolution, and because 1.87:1 gets very tall at full desktop width. */
+  width: min(100%, 1080px);
+  height: auto;
+  margin: 0 auto;
+  border-radius: var(--r-lg);
+  box-shadow: 0 30px 60px -40px rgba(21, 13, 33, 0.45);
+}
+
+@media (max-width: 640px) {
+  .cast {
+    padding-block: clamp(1.5rem, 6vw, 2.5rem);
+  }
+
+  .cast__art {
+    border-radius: var(--r-md);
+  }
+}
+
 /* ============================= PREVIEW ============================= */
 .preview {
   position: relative;
