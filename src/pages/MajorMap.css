@@ -292,9 +292,9 @@
 .mapStage__canvas {
   width: 100%;
   height: clamp(460px, 68vh, 720px);
-  /* the tinted basemap's own land blue, so tiles fade in rather than
+  /* the filtered basemap's own water blue, so tiles fade in rather than
      replacing a lavender rectangle */
-  background: #b6cede;
+  background: #d7edf3;
 }
 
 /* Which major is plotted, over the map's top-left corner. */
@@ -372,49 +372,32 @@
   transform: scale(1.2);
 }
 
-/* The darker gold. Against the old near-white basemap gold-600 was fine; on
-   the tinted land it falls to 1.76:1, under the 3:1 that WCAG asks of a
-   graphical object. gold-700 gets it to 3.4:1 and still reads as gold next to
-   the purple pins. */
 .pin--on i {
-  background: var(--gold-700);
+  background: var(--gold-600);
 }
 
 /* Leaflet's own chrome, brought in line with the rest of the app. */
 .mapStage .leaflet-container {
   font-family: var(--font-body);
-  background: #b6cede;
+  background: #d7edf3;
 }
 
-/* The blue, in two steps.
+/* The blue.
+   The basemap is CARTO Voyager, which gets the pale Google-ish land and quiet
+   roads right but paints its water a grey cyan: rgb(223,235,235), a mere 0.6%
+   of pixels reading as actually blue. Plain OpenStreetMap has properly blue
+   water (69.5%) but heavy beige land, so neither one is both.
+   Rotating Voyager's hue into blue gives both: water becomes rgb(215,237,243)
+   at 71.6% blue pixels, matching OSM's, while the land only moves from
+   rgb(248,245,240) to rgb(247,246,234) because saturation scales chroma and
+   near-white has almost none to scale. Past about 20deg the land starts
+   turning yellow-green, which is what caps this at 15.
 
-   saturate/hue-rotate first, which deepens the water: Voyager paints it a grey
-   cyan, rgb(223,235,235), and this takes it to a real blue. It cannot touch
-   the land, because near-white has no chroma for either function to scale, so
-   on its own the map stayed 86% white and only the Gulf went blue.
-
-   Then the multiply, which is what actually colours the land: rgb(248,245,240)
-   becomes rgb(182,206,222), and 96% of pixels read blue against 5% before.
-   Multiply is the right operator rather than a taste call, because black
-   times anything is black, so the labels and roads keep their contrast; the
-   brightness-then-sepia chains that can tint a white all lifted the darkest
-   pixels from 30 to about 100 and left the type a washed grey.
-
-   Water still separates from land afterwards, blue minus red 72 against 40.
-
-   Scoped to the tile pane, not the container. Over the whole map it would
-   tint the pins, the zoom control and the attribution too, and the gold
-   selected pin would come out olive. */
+   Scoped to the tile pane on purpose. On .leaflet-container it would rotate
+   the pins, the zoom control and the attribution along with the map, and the
+   purple pins would come out blue. */
 .mapStage .leaflet-tile-pane {
-  filter: saturate(2) hue-rotate(15deg) url('#majoraMapBlue');
-}
-
-/* The filter lives in the DOM but must never take up space. */
-.mapStage__filterDef {
-  position: absolute;
-  width: 0;
-  height: 0;
-  pointer-events: none;
+  filter: saturate(2) hue-rotate(15deg);
 }
 
 .mapStage .leaflet-control-zoom a {
