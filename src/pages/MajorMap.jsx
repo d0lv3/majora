@@ -276,6 +276,28 @@ export default function MajorMap() {
         </ul>
 
         <div className="mapStage">
+          {/* The blue. A per-channel scale is exactly a multiply blend, and
+              multiply is the only way to tint this basemap: its land is
+              near-white, and white has no chroma for saturate/hue-rotate to
+              act on, so every filter-only attempt either left it white or
+              blew it out to cyan and washed the labels grey. Multiplying
+              leaves black at black, so the type stays crisp.
+
+              Values are #bcd6f2 over 255. sRGB is set explicitly because SVG
+              filters default to linearRGB, which would not match the sRGB
+              multiply these numbers were chosen against. */}
+          <svg className="mapStage__filterDef" aria-hidden="true" focusable="false">
+            <filter id="majoraMapBlue" colorInterpolationFilters="sRGB">
+              <feColorMatrix
+                type="matrix"
+                values="0.737 0 0 0 0
+                        0 0.839 0 0 0
+                        0 0 0.949 0 0
+                        0 0 0 1 0"
+              />
+            </filter>
+          </svg>
+
           {major && (
             <div className="mapStage__tag">
               <FieldGlyph field={major.field} className="mapStage__glyph" />
