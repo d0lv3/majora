@@ -1,4 +1,4 @@
-﻿.home {
+.home {
   background: var(--purple-950);
 }
 
@@ -9,12 +9,10 @@
 }
 
 /* =============================== HERO =============================== */
-/* Light, unlike the rest of the dark sections below it — and that is the point
-   rather than a departure. The illustration carries its own near-white
-   background (#fdfdfd, sampled from the file), so a pale hero lets it sit in
-   the page with nothing to blend away. The previous dark hero needed a fake
-   pale spotlight painted behind it and a four-sided mask to hide the seam;
-   none of that is necessary once the surface matches the artwork. */
+/* Light, unlike the dark sections below it, and that is the point rather than
+   a departure. The artwork is a full-bleed background here, and it carries its
+   own near-white ground, so matching the surface to it means there is no seam
+   to hide: no spotlight painted behind the figures, no edge masks. */
 .hero {
   position: relative;
   min-height: 100svh;
@@ -25,12 +23,24 @@
   overflow: hidden;
   padding: clamp(7rem, 13vh, 9.5rem) 0 clamp(2.5rem, 5vh, 4rem);
   background-color: #fbfaff;
-  /* Soft violet clouds where the artwork sits, so the right-hand side has some
-     weight to it and the figures are not floating on flat white. */
+  /* The artwork itself, plus a scrim over its left half.
+     The illustration keeps its figures on the right and leaves the left
+     deliberately empty for this copy, so it is anchored `right center`: when
+     the viewport is taller than the file's 16:9, `cover` crops from the left,
+     which is the empty side. The scrim guarantees the headline stays legible
+     no matter how far that crop walks the figures inward. */
   background-image:
-    radial-gradient(44% 48% at 74% 42%, rgba(179, 161, 203, 0.42), transparent 70%),
-    radial-gradient(26% 30% at 60% 18%, rgba(138, 112, 173, 0.24), transparent 72%),
-    radial-gradient(38% 44% at 96% 82%, rgba(199, 185, 226, 0.34), transparent 72%);
+    linear-gradient(
+      100deg,
+      #fbfaff 0%,
+      rgba(251, 250, 255, 0.97) 24%,
+      rgba(251, 250, 255, 0.78) 40%,
+      rgba(251, 250, 255, 0) 58%
+    ),
+    url('../assets/hero-bg.png');
+  background-repeat: no-repeat, no-repeat;
+  background-position: center, right center;
+  background-size: cover, cover;
   color: var(--text-on-light);
   isolation: isolate;
 }
@@ -44,26 +54,13 @@
   pointer-events: none;
 }
 
-/* Copy left, artwork right. The art column takes the larger share because the
-   illustration is 1.87:1 and needs the width to read at all. */
+/* The artwork is the section's background now, so this only has to keep the
+   copy inside the empty left half of it. */
 .hero__inner {
   position: relative;
   display: grid;
-  grid-template-columns: minmax(0, 0.92fr) minmax(0, 1.08fr);
-  gap: clamp(1.5rem, 4vw, 3.5rem);
+  grid-template-columns: minmax(0, 47%);
   align-items: center;
-}
-
-/* Only the bottom needs hiding now. The file ends in saturated purple foliage
-   (#9e81e5, sampled) that would cut off in a hard horizontal line; its top and
-   sides are near-white and simply disappear into the surface. One mask layer
-   instead of two intersected ones, because there is only one bad edge left. */
-.hero__art {
-  width: 100%;
-  height: auto;
-  -webkit-mask-image: linear-gradient(to bottom, #000 72%, transparent 98%);
-  mask-image: linear-gradient(to bottom, #000 72%, transparent 98%);
-  animation: heroIn 1.1s 0.35s var(--ease-out) both;
 }
 
 .hero__title {
@@ -121,15 +118,16 @@
   height: 1rem;
 }
 
-.btn--outline-dark:hover .hero__glyph {
-  background: rgba(255, 255, 255, 0.18);
+.specular-button:hover .hero__glyph {
+  background: rgba(65, 43, 99, 0.18);
 }
 
-/* ------------------------------ stat bar ----------------------------- */
-/* A white card carrying the four figures, closing the hero where a scroll cue
-   used to sit. It states the size of the library up front, which is the one
-   thing a first-time reader has no other way to learn above the fold. */
-.hero__stats {
+/* ----------------------------- feature bar ---------------------------- */
+/* A white card carrying what the platform gives you, closing the hero where
+   the figures used to sit. Semi-transparent so the artwork's violet clouds
+   show faintly through the right-hand cells and it reads as part of the
+   picture rather than a panel dropped on top of it. */
+.hero__features {
   display: grid;
   grid-template-columns: repeat(4, 1fr);
   gap: clamp(0.75rem, 2vw, 2rem);
@@ -144,19 +142,19 @@
   animation: heroIn 1s 0.75s var(--ease-out) both;
 }
 
-.stat {
+.feat {
   display: flex;
-  align-items: center;
+  align-items: flex-start;
   gap: clamp(0.6rem, 1.2vw, 0.9rem);
   min-width: 0;
 }
 
-.stat + .stat {
+.feat + .feat {
   border-left: 1px solid rgba(65, 43, 99, 0.09);
   padding-left: clamp(0.75rem, 2vw, 2rem);
 }
 
-.stat__icon {
+.feat__icon {
   display: grid;
   place-items: center;
   width: clamp(2.1rem, 3.4vw, 2.7rem);
@@ -165,58 +163,105 @@
   border-radius: var(--r-sm);
   background: rgba(65, 43, 99, 0.08);
   color: var(--purple-600);
+  transition:
+    background-color 0.35s ease,
+    color 0.35s ease;
 }
 
-.stat__icon svg {
+.feat:hover .feat__icon {
+  background: var(--gold);
+  color: var(--purple-950);
+}
+
+.feat__icon svg {
   width: 55%;
   height: 55%;
 }
 
-.stat__text {
+.feat__text {
   display: flex;
   flex-direction: column;
+  gap: 0.2rem;
   min-width: 0;
 }
 
-.stat__value {
+.feat__title {
   font-family: var(--font-display);
-  font-size: clamp(1.05rem, 1.7vw, 1.5rem);
-  font-weight: 700;
-  letter-spacing: -0.02em;
-  line-height: 1.1;
+  font-size: clamp(0.85rem, 1.05vw, 0.98rem);
+  font-weight: 600;
+  letter-spacing: -0.015em;
+  line-height: 1.2;
   color: var(--purple-600);
+  text-wrap: balance;
 }
 
-.stat__label {
-  font-size: clamp(0.7rem, 0.85vw, 0.82rem);
-  line-height: 1.35;
+.feat__desc {
+  font-size: clamp(0.7rem, 0.82vw, 0.8rem);
+  line-height: 1.45;
   color: var(--text-on-light-dim);
 }
 
+/* The artwork is 16:9. On any viewport taller than that, `cover` scales to
+   fill the height and crops the width, and because it is anchored right, the
+   crop eats the empty left side and walks the figures in under the headline.
+   At 935x1000 they reach x=47 while the copy still runs to x=442. So this is
+   an aspect-ratio problem, not a width one: widen the scrim to hold a solid
+   ground under the copy, and let the figures start where it fades. */
+@media (min-width: 901px) and (max-aspect-ratio: 16 / 9) {
+  .hero {
+    background-image:
+      linear-gradient(
+        100deg,
+        #fbfaff 0%,
+        #fbfaff 40%,
+        rgba(251, 250, 255, 0.94) 55%,
+        rgba(251, 250, 255, 0) 76%
+      ),
+      url('../assets/hero-bg.png');
+  }
+}
+
 /* Two-up before the four columns get too narrow to read. */
-@media (max-width: 860px) {
-  .hero__stats {
+@media (max-width: 1040px) {
+  .hero__features {
     grid-template-columns: repeat(2, 1fr);
     gap: clamp(0.9rem, 3vw, 1.4rem);
   }
 
   /* The rule belongs between columns, not before every third and fourth item. */
-  .stat + .stat {
+  .feat + .feat {
     border-left: 0;
     padding-left: 0;
   }
 
-  .stat:nth-child(even) {
+  .feat:nth-child(even) {
     border-left: 1px solid rgba(65, 43, 99, 0.09);
     padding-left: clamp(0.9rem, 3vw, 1.4rem);
   }
 }
 
-/* Stacked: copy first, artwork under it. */
+/* Stacked: the artwork drops to a band under the copy, because `cover` on a
+   phone-shaped viewport would crop this 16:9 file down to one figure's
+   shoulder. Sized and biased right so the three students and the subject
+   icons above them are what actually shows. */
 @media (max-width: 900px) {
+  .hero {
+    justify-content: flex-start;
+    padding-bottom: clamp(13rem, 34vh, 19rem);
+    background-image:
+      linear-gradient(
+        to bottom,
+        #fbfaff 0%,
+        rgba(251, 250, 255, 0.96) 38%,
+        rgba(251, 250, 255, 0) 60%
+      ),
+      url('../assets/hero-bg.png');
+    background-position: center, 72% bottom;
+    background-size: cover, 168% auto;
+  }
+
   .hero__inner {
     grid-template-columns: 1fr;
-    gap: clamp(1.5rem, 5vw, 2.5rem);
     text-align: center;
   }
 
@@ -229,17 +274,17 @@
   }
 }
 
-@media (max-width: 520px) {
-  .hero__stats {
+@media (max-width: 560px) {
+  .hero__features {
     grid-template-columns: 1fr;
   }
 
-  .stat:nth-child(even) {
+  .feat:nth-child(even) {
     border-left: 0;
     padding-left: 0;
   }
 
-  .stat + .stat {
+  .feat + .feat {
     border-top: 1px solid rgba(65, 43, 99, 0.09);
     padding-top: 0.85rem;
   }

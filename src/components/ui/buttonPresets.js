@@ -53,6 +53,22 @@ export const SB = {
     intensity: 1.1,
   },
 
+  /**
+   * Secondary action on a light surface. The ghost preset above is built for
+   * dark panels: its white rim and white label vanish on the pale hero, so
+   * this one keeps the same glass construction but paints the label and the
+   * specular line in brand purple over a near-white fill.
+   */
+  outline: {
+    ...shared,
+    tint: '#ffffff',
+    tintOpacity: 0.86,
+    textColor: '#412b63',
+    lineColor: '#412b63',
+    baseColor: '#b3a1cb',
+    intensity: 0.9,
+  },
+
   /** Near-black, for when gold would fight with the surrounding colour. */
   ink: {
     ...shared,

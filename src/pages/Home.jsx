@@ -1,6 +1,5 @@
 import { Link, useNavigate } from 'react-router-dom'
 
-import cast from '../assets/people_with_different_majors.png'
 import Reveal from '../components/Reveal.jsx'
 import MajorCard from '../components/MajorCard.jsx'
 import CornerLines from '../components/decor/CornerLines.jsx'
@@ -10,37 +9,39 @@ import SB from '../components/ui/buttonPresets.js'
 import About from '../sections/About.jsx'
 import Contact from '../sections/Contact.jsx'
 import { useAuth } from '../context/AuthContext.jsx'
-import { MAJORS, FIELDS, countByField, countCareers, availableMajors } from '../data/majors.js'
+import { MAJORS, FIELDS, countByField, availableMajors } from '../data/majors.js'
 import './Home.css'
 
 /**
- * The figures under the hero. Every one is derived from the library itself
- * rather than typed in, so none of them can quietly become a lie as majors are
- * added. "Four answers" is the fixed shape of a major page — what you study,
- * what you will be good at, where it leads, and whether it suits you.
+ * What the platform gives you, stated where the figures used to be. Counting
+ * the library was a fact about our shelf; this is a promise about the reader's
+ * decision, which is the thing they are actually weighing above the fold.
+ *
+ * Three of the four are not built yet. They describe the product, not the
+ * current build, and the library preview further down is what is live today.
  */
-const STATS = [
+const FEATURES = [
   {
-    value: MAJORS.length,
-    label: 'University majors',
+    title: 'Detailed major information',
+    text: 'What you study, the skills it builds, and where it leads.',
+    icon: <path d="M6.5 3h7l4.5 4.5V21h-11.5V3Zm7 0v4.5H18M9.5 12.5h5M9.5 16.5h5" />,
+  },
+  {
+    title: 'Acceptance rates',
+    text: 'The scores each programme actually takes, not the rumour.',
+    icon: <path d="M4 20V11m5 9V4m5 16v-6m5 6V8" />,
+  },
+  {
+    title: 'Simulations',
+    text: 'Try what a major is really like before you commit to it.',
+    icon: <path d="M3.5 5.5h17v13h-17v-13Zm6.7 4 4.6 2.5-4.6 2.5v-5Z" />,
+  },
+  {
+    title: 'A fit test',
+    text: 'A short test that points to the majors worth your time.',
     icon: (
-      <path d="M2.5 8.5 12 4l9.5 4.5L12 13 2.5 8.5Zm4 2.6V15c0 1.6 2.5 2.9 5.5 2.9s5.5-1.3 5.5-2.9v-3.9" />
+      <path d="M12 21a9 9 0 1 0 0-18 9 9 0 0 0 0 18Zm0-5.5a3.5 3.5 0 1 0 0-7 3.5 3.5 0 0 0 0 7Z" />
     ),
-  },
-  {
-    value: FIELDS.length,
-    label: 'Fields of study',
-    icon: <path d="M4 4h6v6H4V4Zm10 0h6v6h-6V4ZM4 14h6v6H4v-6Zm10 0h6v6h-6v-6Z" />,
-  },
-  {
-    value: countCareers(),
-    label: 'Career paths',
-    icon: <path d="M3 8.5h18V19H3V8.5Zm5.5 0V6.2A2.2 2.2 0 0 1 10.7 4h2.6a2.2 2.2 0 0 1 2.2 2.2v2.3M3 13h18" />,
-  },
-  {
-    value: 4,
-    label: 'Answers per major',
-    icon: <path d="M4 6.5h9M4 12h9M4 17.5h9m3.5-11 2 2 4-4" />,
   },
 ]
 
@@ -98,39 +99,28 @@ export default function Home() {
                 </span>
               </SpecularButton>
 
-              {/* A plain CSS button, not a second SpecularButton: each one paints
-                  its rim in WebGL with its own canvas, and those are rationed. */}
-              <button type="button" className="btn btn--outline-dark" onClick={() => scrollTo('how')}>
+              {/* Both actions are SpecularButtons so the pair matches. Each one
+                  paints its rim in a WebGL canvas and browsers keep only ~16
+                  live, but the landing page runs five in total, so the pair is
+                  affordable. The dense controls are still plain CSS. */}
+              <SpecularButton {...SB.outline} size="lg" onClick={() => scrollTo('how')}>
                 <span className="hero__glyph" aria-hidden="true">
                   <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
                     <path d="m7 10 5 5 5-5" strokeLinecap="round" strokeLinejoin="round" />
                   </svg>
                 </span>
                 How it works
-              </button>
+              </SpecularButton>
             </div>
           </div>
 
-          {/* Not eager-loaded by accident: this sits in the first viewport, so
-              lazy would leave a hole in the hero on a slow connection.
-              fetchpriority is lowercase because React 18 does not know the
-              camelCase prop and warns; lowercase passes through to the DOM. */}
-          <img
-            src={cast}
-            alt="Six students standing side by side, each dressed for a different field — medicine, computing, business, law, engineering and the arts — with icons for those subjects floating above them."
-            className="hero__art"
-            width="1717"
-            height="916"
-            decoding="async"
-            fetchpriority="high"
-          />
         </div>
 
         <div className="shell">
-          <ul className="hero__stats">
-            {STATS.map((stat) => (
-              <li className="stat" key={stat.label}>
-                <span className="stat__icon" aria-hidden="true">
+          <ul className="hero__features">
+            {FEATURES.map((feature) => (
+              <li className="feat" key={feature.title}>
+                <span className="feat__icon" aria-hidden="true">
                   <svg
                     viewBox="0 0 24 24"
                     fill="none"
@@ -139,12 +129,12 @@ export default function Home() {
                     strokeLinecap="round"
                     strokeLinejoin="round"
                   >
-                    {stat.icon}
+                    {feature.icon}
                   </svg>
                 </span>
-                <span className="stat__text">
-                  <strong className="stat__value">{stat.value}</strong>
-                  <span className="stat__label">{stat.label}</span>
+                <span className="feat__text">
+                  <strong className="feat__title">{feature.title}</strong>
+                  <span className="feat__desc">{feature.text}</span>
                 </span>
               </li>
             ))}
