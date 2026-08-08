@@ -30,9 +30,19 @@ import './MajorMap.css'
  * rebuilding it on selection change is cheaper than reconciling it.
  */
 
-const OSM_URL = 'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png'
-const OSM_ATTRIBUTION =
-  '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+/**
+ * CARTO's Voyager basemap rather than standard OpenStreetMap tiles: blue
+ * water, pale land and quiet roads, which is the look people mean by "like
+ * Google Maps". Plain OSM paints its land a heavy beige and its parks a
+ * strong green, and next to this page's near-white ground it read as a
+ * brown rectangle dropped on the layout.
+ *
+ * Same OpenStreetMap data underneath, so both get credited. {r} is Leaflet's
+ * retina token and pairs with detectRetina below.
+ */
+const TILE_URL = 'https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png'
+const TILE_ATTRIBUTION =
+  '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors &copy; <a href="https://carto.com/attributions">CARTO</a>'
 
 const prefersReducedMotion = () =>
   typeof window !== 'undefined' &&
@@ -84,7 +94,12 @@ export default function MajorMap() {
       attributionControl: true,
     })
     map.fitBounds(IRAQ_BOUNDS)
-    L.tileLayer(OSM_URL, { attribution: OSM_ATTRIBUTION, maxZoom: 18 }).addTo(map)
+    L.tileLayer(TILE_URL, {
+      attribution: TILE_ATTRIBUTION,
+      subdomains: 'abcd',
+      detectRetina: true,
+      maxZoom: 20,
+    }).addTo(map)
 
     layerRef.current = L.layerGroup().addTo(map)
     mapRef.current = map

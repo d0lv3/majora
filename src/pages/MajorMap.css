@@ -292,7 +292,9 @@
 .mapStage__canvas {
   width: 100%;
   height: clamp(460px, 68vh, 720px);
-  background: var(--paper);
+  /* the filtered basemap's own water blue, so tiles fade in rather than
+     replacing a lavender rectangle */
+  background: #d7edf3;
 }
 
 /* Which major is plotted, over the map's top-left corner. */
@@ -377,7 +379,25 @@
 /* Leaflet's own chrome, brought in line with the rest of the app. */
 .mapStage .leaflet-container {
   font-family: var(--font-body);
-  background: var(--paper);
+  background: #d7edf3;
+}
+
+/* The blue.
+   The basemap is CARTO Voyager, which gets the pale Google-ish land and quiet
+   roads right but paints its water a grey cyan: rgb(223,235,235), a mere 0.6%
+   of pixels reading as actually blue. Plain OpenStreetMap has properly blue
+   water (69.5%) but heavy beige land, so neither one is both.
+   Rotating Voyager's hue into blue gives both: water becomes rgb(215,237,243)
+   at 71.6% blue pixels, matching OSM's, while the land only moves from
+   rgb(248,245,240) to rgb(247,246,234) because saturation scales chroma and
+   near-white has almost none to scale. Past about 20deg the land starts
+   turning yellow-green, which is what caps this at 15.
+
+   Scoped to the tile pane on purpose. On .leaflet-container it would rotate
+   the pins, the zoom control and the attribution along with the map, and the
+   purple pins would come out blue. */
+.mapStage .leaflet-tile-pane {
+  filter: saturate(2) hue-rotate(15deg);
 }
 
 .mapStage .leaflet-control-zoom a {
