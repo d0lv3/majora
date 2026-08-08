@@ -7,6 +7,7 @@ import FieldGlyph from '../components/decor/FieldGlyph.jsx'
 import { MAJORS, isAvailable, fieldLabel } from '../data/majors.js'
 import {
   IRAQ_BOUNDS,
+  admissionFor,
   collegesFor,
   isSampleMajor,
   mappedMajorSlugs,
@@ -72,6 +73,7 @@ export default function MajorMap() {
   const sample = isSampleMajor(slug)
   const sources = useMemo(() => sourcesFor(slug), [slug])
   const stats = useMemo(() => statsFor(slug), [slug])
+  const admission = useMemo(() => admissionFor(slug), [slug])
   const branchCount = useMemo(
     () => colleges.reduce((n, c) => n + c.branches.length, 0),
     [colleges],
@@ -199,7 +201,19 @@ export default function MajorMap() {
               <strong>
                 {stats?.departments} departments at {stats?.universities} universities.
               </strong>{' '}
-              {slug === 'cybersecurity' ? (
+              {admission ? (
+                <>
+                  Entry is not decided per college here: government dentistry takes a national
+                  minimum of <strong>{admission.governmentMinimum}%</strong> for 2025-26 and then
+                  allocates seats by grade within each channel and governorate. The number on each
+                  card is the{' '}
+                  <a href={sources[0]?.href} target="_blank" rel="noreferrer noopener">
+                    ministry&rsquo;s 2025 classification
+                  </a>{' '}
+                  score, which rates the college, not your chances. {stats?.privateCount} of these
+                  are private and sit below that bar.
+                </>
+              ) : slug === 'cybersecurity' ? (
                 <>
                   The cut-off is the real 2025-26{' '}
                   <a href={sources[0]?.href} target="_blank" rel="noreferrer noopener">

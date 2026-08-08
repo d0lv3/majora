@@ -21,20 +21,39 @@
  * and Basic Education. A single-programme model would have hidden two of them.
  */
 
-import { COLLEGES as SAMPLE_COLLEGES } from './colleges.js'
 import { ENGLISH_COLLEGES, ENGLISH_SOURCES, ENGLISH_STATS } from './englishDepartments.js'
 import { CYBER_COLLEGES, CYBER_SOURCES, CYBER_STATS } from './cybersecurityDepartments.js'
+import {
+  DENTISTRY_ADMISSION,
+  DENTISTRY_COLLEGES,
+  DENTISTRY_SOURCES,
+  DENTISTRY_STATS,
+} from './dentistryDepartments.js'
 
 const ENGLISH_SLUG = 'english-language-literature'
 const CYBER_SLUG = 'cybersecurity'
+const DENTISTRY_SLUG = 'dentistry'
 
 /**
- * Majors whose figures are researched rather than invented, each with the
- * sources behind them. Dentistry is the only one left on placeholders.
+ * Every major the map plots is now researched. Nothing reads from colleges.js
+ * any more, and the sample branch below is kept only so adding a fourth major
+ * with placeholder data still shows the warning rather than passing itself off
+ * as sourced.
  */
 const RESEARCHED = {
   [ENGLISH_SLUG]: { rows: ENGLISH_COLLEGES, sources: ENGLISH_SOURCES, stats: ENGLISH_STATS },
   [CYBER_SLUG]: { rows: CYBER_COLLEGES, sources: CYBER_SOURCES, stats: CYBER_STATS },
+  [DENTISTRY_SLUG]: {
+    rows: DENTISTRY_COLLEGES,
+    sources: DENTISTRY_SOURCES,
+    stats: DENTISTRY_STATS,
+    admission: DENTISTRY_ADMISSION,
+  },
+}
+
+/** The national entry bar, where one exists instead of per-department cut-offs. */
+export function admissionFor(slug) {
+  return RESEARCHED[slug]?.admission ?? null
 }
 
 export const isSampleMajor = (slug) => !RESEARCHED[slug]
@@ -50,29 +69,13 @@ export function statsFor(slug) {
 /** Every university teaching this major, northernmost first. */
 export function collegesFor(slug) {
   const researched = RESEARCHED[slug]
-  const rows = researched
-    ? researched.rows.map((c) => ({ ...c, sample: false }))
-    : SAMPLE_COLLEGES.filter((c) => c.programmes[slug]).map((c) => ({
-          id: c.id,
-          university: c.university,
-          city: c.city,
-          governorate: c.governorate,
-          kind: c.kind,
-          lat: c.lat,
-          lng: c.lng,
-          sample: true,
-          system: null,
-          branches: [{ ...c.programmes[slug] }],
-        }))
-
-  return rows.sort((a, b) => b.lat - a.lat)
+  if (!researched) return []
+  return researched.rows.map((c) => ({ ...c, sample: false })).sort((a, b) => b.lat - a.lat)
 }
 
 /** The majors the map can plot at all. */
 export function mappedMajorSlugs() {
-  const slugs = new Set(Object.keys(RESEARCHED))
-  for (const c of SAMPLE_COLLEGES) for (const s of Object.keys(c.programmes)) slugs.add(s)
-  return [...slugs]
+  return Object.keys(RESEARCHED)
 }
 
 /** Roughly the country, used to frame the map before anything is selected. */

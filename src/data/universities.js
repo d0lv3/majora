@@ -91,4 +91,29 @@ export const UNIVERSITIES = {
   stuthiqar: ['Southern Technical University, Thi-Qar', 'الجامعة التقنية الجنوبية/ذي قار', 'Nasiriyah', 'Thi-Qar', 'public', 31.054, 46.257],
   shaab: ['Al-Shaab University', 'جامعة الشعب', 'Baghdad', 'Baghdad', 'private', 33.35, 44.4],
   iraqisciences: ['Iraqi University of Sciences (Baghdad College)', 'جامعة العلوم العراقية', 'Baghdad', 'Baghdad', 'private', 33.31, 44.37],
+
+  /* ------------------ added for dentistry, federal ------------------ */
+  kafeel: ['Al-Kafeel University', 'جامعة الكفيل', 'Najaf', 'Najaf', 'private', 32.03, 44.35],
+  uruk: ['Uruk University', 'جامعة أوروك', 'Baghdad', 'Baghdad', 'private', 33.3, 44.42],
+  ibnsina: ['Ibn Sina University of Medical & Pharmaceutical Sciences', 'جامعة ابن سينا', 'Baghdad', 'Baghdad', 'private', 33.34, 44.4],
+  kut: ['Al-Kut University College', 'كلية الكوت الجامعة', 'Kut', 'Wasit', 'private', 32.51, 45.82],
+  ainiraqia: ['Al-Ain Al-Iraqia University', 'جامعة العين العراقية', 'Nasiriyah', 'Thi-Qar', 'private', 31.05, 46.26],
+  bayan: ['Albayan University', 'جامعة البيان', 'Baghdad', 'Baghdad', 'private', 33.32, 44.36],
+  ameed: ['Al-Ameed University', 'جامعة العميد', 'Karbala', 'Karbala', 'private', 32.61, 44.03],
+  safwa: ['Al-Safwa University College', 'جامعة الصفوة', 'Karbala', 'Karbala', 'private', 32.62, 44.04],
+  zahrawi: ['Al-Zahrawi University College', 'جامعة الزهراوي', 'Karbala', 'Karbala', 'private', 32.6, 44.02],
+  nust: ['National University of Science & Technology', 'الجامعة الوطنية للعلوم والتكنولوجيا', 'Nasiriyah', 'Thi-Qar', 'private', 31.06, 46.25],
+  rasheed: ['Al-Rasheed University College', 'كلية الرشيد الجامعة', 'Baghdad', 'Baghdad', 'private', 33.3, 44.45],
+  hadi: ['Al-Hadi University College', 'جامعة الهادي', 'Baghdad', 'Baghdad', 'private', 33.31, 44.4],
+  farabi: ['Al-Farabi University College', 'جامعة الفارابي', 'Baghdad', 'Baghdad', 'private', 33.29, 44.43],
+  ashur: ['Ashur University', 'جامعة اشور', 'Baghdad', 'Baghdad', 'private', 33.33, 44.38],
+  manara: ['Al-Manara University College', 'جامعة المنارة', 'Amarah', 'Maysan', 'private', 31.84, 47.14],
+  usoolalilm: ['Usool Al-Ilm University College', 'كلية اصول العلم الجامعة', 'Baghdad', 'Baghdad', 'private', 33.36, 44.37],
+  rafidainuc: ['Al-Rafidain University College', 'جامعة الرافدين', 'Baghdad', 'Baghdad', 'private', 33.32, 44.44],
+  mashreq: ['Al-Mashreq University', 'جامعة المشرق', 'Baghdad', 'Baghdad', 'private', 33.34, 44.41],
+  nukhba: ['Al-Nukhba University College', 'كلية النخبة الجامعة', 'Baghdad', 'Baghdad', 'private', 33.33, 44.39],
+  kunooz: ['Al-Kunooz University College', 'كلية الكنوز الجامعة', 'Basra', 'Basra', 'private', 30.52, 47.8],
+
+  /* ------------------ added for dentistry, Kurdistan ----------------- */
+  hawlermedical: ['Hawler Medical University', 'زانکۆی پزیشکی هەولێر', 'Erbil', 'Erbil', 'public', 36.1783, 44.0093],
 }
