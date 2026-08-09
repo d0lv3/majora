@@ -66,56 +66,53 @@
 }
 
 /* =============================== LAYOUT ============================== */
-/* Named areas so the toggle button, the nav and the document can be three
-   siblings: narrow, the bar sits above the document and the nav leaves the
-   flow entirely, which a two-column grid could not express.
-
-   The bar spans both columns rather than sitting over the nav. It used to be
-   in column one, which is the column that collapses to zero — the button then
-   overflowed its own area and, on anything under about 1150px, printed itself
-   across the first lines of the document. Spanning, it never collapses. */
+/* Two areas, not three. The toggle used to be its own grid row above the
+   nav, which meant it could not travel: a sticky grid item is confined to its
+   own area, and a 44px row gives it nowhere to go. Button and list share one
+   rail now, and the rail is what sticks — so the control stays beside the
+   reader instead of scrolling off the top with the header. */
 .guide__body {
   display: grid;
   grid-template-columns: minmax(0, 260px) minmax(0, 1fr);
-  grid-template-areas:
-    'bar  bar'
-    'nav  doc';
+  grid-template-areas: 'rail doc';
   align-items: start;
   gap: 0 clamp(1.5rem, 3.5vw, 3.5rem);
-}
-
-/* Collapsed: the nav keeps its row but gives up its column, and the document
-   takes the width. Transitioning grid-template-columns rather than hiding the
-   nav is what makes the collapse slide instead of jump. */
-.guide__body[data-open='false'] {
-  grid-template-columns: 0 minmax(0, 1fr);
-}
-
-.guide__body {
   transition: grid-template-columns 0.35s var(--ease);
 }
 
-.guide__bar {
-  grid-area: bar;
-  margin-bottom: 1rem;
+/* Collapsed to a gutter rather than to nothing. The button lives in this
+   column, so a zero-width track would push it out over the document — which
+   is exactly what happened when the two were separate. 52px holds a 44px
+   target with room either side. */
+.guide__body[data-open='false'] {
+  grid-template-columns: 52px minmax(0, 1fr);
 }
 
 /* Sticky against the grid area, which runs the full height of the document
-   column beside it — that is what gives it somewhere to travel. align-self is
-   stated rather than inherited from the container so the item keeps its own
-   height instead of stretching to the row, which would leave it nothing to
-   slide within.
+   beside it — that is what gives it somewhere to travel. align-self is stated
+   rather than inherited from the container so the rail keeps its own height
+   instead of stretching to the row, which would leave it nothing to slide
+   within.
 
-   overflow-y auto rather than hidden: a contents list longer than the screen
-   has to be able to scroll on its own, or its last entries are unreachable
-   once it sticks. x stays hidden, which is what clips it during the collapse. */
-.guide__nav {
-  grid-area: nav;
+   Rows are auto then 1fr: the button takes what it needs and the list takes
+   the rest, so a contents list longer than the screen scrolls inside the rail
+   rather than pushing its own last entries out of reach. */
+.guide__rail {
+  grid-area: rail;
   position: sticky;
   top: var(--anchor-offset);
   align-self: start;
+  z-index: 130;
+  display: grid;
+  grid-template-rows: auto minmax(0, 1fr);
+  gap: 0.9rem;
   min-width: 0;
-  max-height: calc(100svh - var(--anchor-offset) - 2rem);
+  max-height: calc(100svh - var(--anchor-offset) - 1.5rem);
+}
+
+.guide__nav {
+  min-width: 0;
+  min-height: 0;
   overflow-x: hidden;
   overflow-y: auto;
   overscroll-behavior: contain;
@@ -148,21 +145,23 @@
 }
 
 /* ------------------------------- toggle ------------------------------ */
+/* Square and wordless. It sits in a 52px gutter when the panel is away, and a
+   label would not fit there without the gutter growing into the document. The
+   name lives in aria-label and title instead. */
 .guide__toggle {
-  display: inline-flex;
-  align-items: center;
-  gap: 0.7rem;
-  min-height: 44px;
-  padding: 0 1.1rem;
-  border-radius: var(--r-pill);
+  display: grid;
+  place-items: center;
+  width: 44px;
+  height: 44px;
+  justify-self: start;
+  border-radius: var(--r-sm);
   background: var(--white);
   box-shadow: inset 0 0 0 1.5px rgba(65, 43, 99, 0.16);
-  font-size: 0.85rem;
-  font-weight: 600;
   color: var(--purple-600);
   transition:
     box-shadow 0.25s ease,
-    background-color 0.25s ease;
+    background-color 0.25s ease,
+    color 0.25s ease;
 }
 
 .guide__toggle:hover {
@@ -170,27 +169,33 @@
   box-shadow: inset 0 0 0 1.5px var(--purple-500);
 }
 
+/* A panel with its side rail, and a caret for where it is about to go. Drawn
+   rather than lettered so the control reads the same at any language. */
 .guide__toggleIcon {
-  display: grid;
-  gap: 3px;
-  width: 15px;
+  width: 21px;
+  height: 21px;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 1.7;
+  stroke-linecap: round;
+  stroke-linejoin: round;
 }
 
-.guide__toggleIcon span {
-  height: 1.8px;
-  border-radius: 2px;
-  background: currentColor;
-  transition: transform 0.3s var(--ease);
+.guide__toggleCaret {
+  transform-box: fill-box;
+  transform-origin: center;
+  transition: transform 0.35s var(--ease);
 }
 
-/* Closed, the three rules pull together into a tighter stack — enough of a
-   change to read as a state without pretending to be an X. */
-.guide__body[data-open='false'] .guide__toggleIcon span:first-child {
-  transform: translateY(2px);
+/* Closed, the caret turns to point the way back out. */
+.guide__body[data-open='false'] .guide__toggleCaret {
+  transform: rotate(180deg);
 }
 
-.guide__body[data-open='false'] .guide__toggleIcon span:last-child {
-  transform: translateY(-2px);
+/* And the rail of the panel icon fills in while the real panel is showing, so
+   the state is legible without reading the caret. */
+.guide__body[data-open='true'] .guide__toggleIcon rect {
+  fill: rgba(65, 43, 99, 0.08);
 }
 
 /* ------------------------------- the nav ----------------------------- */
@@ -705,10 +710,36 @@
   .guide__body,
   .guide__body[data-open='false'] {
     grid-template-columns: minmax(0, 1fr);
-    grid-template-areas:
-      'bar'
-      'doc';
+    grid-template-areas: 'doc';
     transition: none;
+  }
+
+  /* Fixed, not sticky. The rail has no column of its own down here, so its
+     grid area would be a single 44px row — and a sticky box cannot travel
+     outside its area. Fixed pins it to the corner instead, which is the same
+     thing the reader asked for: a control that stays put while the page moves.
+     Out of flow, so it claims no track.
+
+     Right, not left. Everything in this page's header is left-aligned, and a
+     button in that corner sat directly on top of the back link — two targets
+     in one place. The right-hand side of the header is empty at every width. */
+  .guide__rail {
+    position: fixed;
+    top: calc(var(--anchor-offset) + 0.4rem);
+    right: var(--gutter);
+    z-index: 130;
+    display: block;
+    max-height: none;
+    /* Only the button is solid; the rest of the rail must not swallow taps
+       meant for the text underneath it. */
+    pointer-events: none;
+  }
+
+  .guide__toggle {
+    pointer-events: auto;
+    box-shadow:
+      inset 0 0 0 1.5px rgba(65, 43, 99, 0.16),
+      0 12px 24px -14px rgba(21, 13, 33, 0.7);
   }
 
   .guide__nav {
@@ -718,14 +749,9 @@
     left: 0;
     z-index: 120;
     width: min(320px, 86vw);
-    /* top/bottom already give it the full height; the sticky ceiling from the
-       wide layout would leave a dead strip under the sheet.
-
-       align-self has to go back to stretch with it. The grid container sets
-       align-items: start, and Chrome applies that to a fixed-position grid
-       child too — which beat top:0/bottom:0 and left the sheet 483px tall in
-       an 812px window, floating with a gap under it. */
-    align-self: stretch;
+    pointer-events: auto;
+    /* top/bottom already give it the full height; the ceiling from the wide
+       layout would leave a dead strip under the sheet. */
     max-height: none;
     padding: clamp(1.2rem, 4vw, 1.8rem) 1.1rem;
     overflow-y: auto;

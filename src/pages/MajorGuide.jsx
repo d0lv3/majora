@@ -298,44 +298,52 @@ export default function MajorGuide() {
       </header>
 
       <div className="shell guide__body" data-open={open ? 'true' : 'false'}>
-        <div className="guide__bar">
+        {/* The toggle travels with the contents rather than sitting above
+            them, so one sticky rail carries both: collapsed, the rail keeps a
+            narrow gutter and the button stays exactly where it was. */}
+        <div className="guide__rail">
           <button
             type="button"
             className="guide__toggle"
             aria-expanded={open}
             aria-controls="guide-nav"
+            /* Icon-only, so the name has to come from the label rather than
+               the text — and title gives the same words to a mouse. */
+            aria-label={open ? 'Hide contents' : 'Show contents'}
+            title={open ? 'Hide contents' : 'Show contents'}
             onClick={() => setOpen((v) => !v)}
           >
-            <span className="guide__toggleIcon" aria-hidden="true">
-              <span />
-              <span />
-              <span />
-            </span>
-            {open ? 'Hide contents' : 'Contents'}
+            <svg className="guide__toggleIcon" viewBox="0 0 24 24" aria-hidden="true">
+              <rect x="3" y="4.5" width="18" height="15" rx="3.5" />
+              <path d="M9.3 4.5v15" />
+              {/* Points the way the panel is about to go: left to tuck it
+                  away, flipped right to bring it back. */}
+              <path className="guide__toggleCaret" d="m16.6 9.3-2.7 2.7 2.7 2.7" />
+            </svg>
           </button>
-        </div>
 
-        {/* Rendered either way so the toggle animates rather than the list
-            popping in, and hidden from assistive tech when it is closed. */}
-        <nav className="guide__nav" id="guide-nav" aria-label="Sections" aria-hidden={!open}>
-          <p className="guide__navTitle">Contents</p>
-          <ol className="guide__navList">
-            {sections.map((section, i) => (
-              <li key={section.id}>
-                <button
-                  type="button"
-                  className={`gnav${active === section.id ? ' is-on' : ''}`}
-                  onClick={() => goTo(section.id)}
-                  tabIndex={open ? 0 : -1}
-                  aria-current={active === section.id ? 'true' : undefined}
-                >
-                  <span className="gnav__n">{String(i + 1).padStart(2, '0')}</span>
-                  <span className="gnav__label">{section.title}</span>
-                </button>
-              </li>
-            ))}
-          </ol>
-        </nav>
+          {/* Rendered either way so the toggle animates rather than the list
+              popping in, and hidden from assistive tech when it is closed. */}
+          <nav className="guide__nav" id="guide-nav" aria-label="Sections" aria-hidden={!open}>
+            <p className="guide__navTitle">Contents</p>
+            <ol className="guide__navList">
+              {sections.map((section, i) => (
+                <li key={section.id}>
+                  <button
+                    type="button"
+                    className={`gnav${active === section.id ? ' is-on' : ''}`}
+                    onClick={() => goTo(section.id)}
+                    tabIndex={open ? 0 : -1}
+                    aria-current={active === section.id ? 'true' : undefined}
+                  >
+                    <span className="gnav__n">{String(i + 1).padStart(2, '0')}</span>
+                    <span className="gnav__label">{section.title}</span>
+                  </button>
+                </li>
+              ))}
+            </ol>
+          </nav>
+        </div>
 
         {/* Closes the sheet when it is tapped past, on narrow screens only. */}
         <button
