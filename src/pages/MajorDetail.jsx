@@ -45,12 +45,6 @@ export default function MajorDetail() {
   const branches = branchesFor(slug)
   const readyBranches = branches.filter((b) => b.ready).length
 
-  const blocks = [
-    { key: 'studies', label: 'What you will study', items: major.studies },
-    { key: 'skills', label: 'Skills you will build', items: major.skills },
-    { key: 'careers', label: 'Where it leads', items: major.careers },
-  ]
-
   return (
     <div className="mdetail">
       <header className="mdetail__head">
@@ -81,31 +75,6 @@ export default function MajorDetail() {
           </dl>
         </div>
       </header>
-
-      <section className="section mdetail__body">
-        <div className="shell mdetail__grid">
-          {blocks.map((block, i) => (
-            <Reveal className="mblock" key={block.key} delay={i * 90}>
-              <h2 className="mblock__label">
-                <span className="mblock__diamond" aria-hidden="true" />
-                {block.label}
-              </h2>
-              <ul className="mblock__list">
-                {block.items.map((item) => (
-                  <li key={item}>{item}</li>
-                ))}
-              </ul>
-            </Reveal>
-          ))}
-        </div>
-
-        <div className="shell">
-          <Reveal className="fitcard">
-            <span className="fitcard__tag">Is it for you?</span>
-            <p className="fitcard__text">{major.fitIf}</p>
-          </Reveal>
-        </div>
-      </section>
 
       {branches.length > 0 && (
         <section className="section mdetail__branches">
