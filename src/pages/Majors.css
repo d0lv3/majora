@@ -10,7 +10,10 @@
   position: relative;
   overflow: hidden;
   min-height: 100svh;
-  padding: clamp(9rem, 17vh, 12rem) 0 clamp(5rem, 9vw, 7rem);
+  /* Both ends move with the nav: head room when the bar is overhead, and a
+     reservation at the foot when it is pinned to the bottom of the screen.
+     Off a phone --nav-clear is 0 and this is the layout it always had. */
+  padding: var(--nav-headroom) 0 calc(clamp(5rem, 9vw, 7rem) + var(--nav-clear));
   background: #fbfaff;
   color: var(--text-on-light);
 }
@@ -156,7 +159,11 @@
   border: 0;
   background: none;
   color: var(--text-on-light);
-  font-size: 0.98rem;
+  /* Not 0.98rem, which computes to 15.7px: iOS Safari zooms the whole
+     viewport when a focused field is under 16px, so tapping the search box
+     would jump the page's scale with no way back but a pinch. The 0.3px
+     this adds on a desktop is not worth a second rule to avoid. */
+  font-size: 1rem;
 }
 
 .search input::placeholder {
@@ -327,5 +334,15 @@
 
   .library .library__lines {
     height: clamp(200px, 26vh, 300px);
+  }
+}
+
+/* Fingers, not screen size: a coarse pointer needs a 44px target whatever
+   the viewport is, and a desktop touchscreen needs it as much as a phone. */
+@media (pointer: coarse) {
+  /* Sat at 34px next to a 58px field. */
+  .search__clear {
+    min-height: 44px;
+    padding-inline: 0.9rem;
   }
 }

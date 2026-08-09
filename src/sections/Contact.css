@@ -1,7 +1,7 @@
 .contact {
   display: block;
   background: var(--paper);
-  scroll-margin-top: clamp(84px, 11vh, 104px);
+  scroll-margin-top: var(--anchor-offset);
 }
 
 /* =============================== HEAD =============================== */
@@ -164,3 +164,4 @@
     grid-template-columns: 1fr;
   }
 }
+

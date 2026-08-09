@@ -2,7 +2,7 @@
   display: block;
   background: var(--purple-950);
   /* the nav floats over the page, so an anchor jump has to stop short of it */
-  scroll-margin-top: clamp(84px, 11vh, 104px);
+  scroll-margin-top: var(--anchor-offset);
 
   /* ---------------------------------------------------------------
      Definition rows — the shared geometry behind the term+text lists

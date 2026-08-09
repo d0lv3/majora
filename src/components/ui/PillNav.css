@@ -331,30 +331,90 @@
   background: rgba(255, 255, 255, 0.28);
 }
 
-/* --- mobile --- */
-@media (max-width: 768px) {
+/* ---------------------------------------------------------------------
+   Mobile: the bar moves to the bottom of the screen.
+
+   A phone holds its navigation where the thumb already is, not where the
+   eye starts reading. Same black bar, same gold diamond, same drop shadow
+   — pinned to the bottom edge and opened out into four tab stops, so the
+   destinations are visible instead of folded behind a hamburger. With four
+   short labels there is nothing a menu would buy that the bar cannot show
+   outright, and a tap costs one action instead of two.
+   --------------------------------------------------------------------- */
+/* Both clauses are the phone test from index.css — see the note there. A
+   phone on its side is wider than the breakpoint but still wants the bar
+   under its thumb. */
+@media (max-width: 768px), (pointer: coarse) and (max-height: 520px) {
   .pill-nav-container {
+    top: auto;
+    bottom: 0;
     left: 0;
+    right: 0;
+    width: 100%;
     transform: none;
-    padding-inline: 0;
+    /* the bottom pad also clears the iOS home indicator */
+    padding: 0 var(--nav-inset) calc(var(--nav-inset) + env(safe-area-inset-bottom, 0px));
   }
 
+  .pill-nav.majora-nav {
+    --nav-h: var(--nav-h-mobile);
+    --pill-pad-x: 4px;
+    --pill-gap: 2px;
+    width: 100%;
+    padding: 0;
+  }
+
+  /* The disc is branding, and branding is not worth a quarter of the bar
+     when four destinations have to share it. The hero still carries it. */
   .majora-nav .pill-logo {
-    width: 52px;
-    height: 52px;
-    margin-right: 0;
+    display: none;
   }
 
-  /* keep the sheet clear of the (now shorter) nav row */
+  /* Sized by flex-basis rather than width: the reveal animation leaves an
+     inline `width` on this element, and flex-basis beats it. */
+  .majora-nav .pill-nav-items.desktop-only {
+    display: flex;
+    flex: 1;
+    min-width: 0;
+  }
+
+  .majora-nav .pill-list {
+    flex: 1;
+    min-width: 0;
+  }
+
+  /* Equal thirds/quarters rather than content-width pills: a tab bar whose
+     stops are different sizes reads as a row of buttons, not a bar. */
+  .majora-nav .pill-list > li {
+    flex: 1 1 0;
+    min-width: 0;
+  }
+
+  /* The label tracks the viewport because the longest one decides the bar.
+     At a flat 0.9rem "Open app" overruns its pill at 360px — the width half
+     of Android sits at — and .pill clips rather than wraps, so it would have
+     silently lost its last letters on a very ordinary phone. */
+  .majora-nav .pill {
+    width: 100%;
+    font-size: clamp(0.72rem, 3.2vw, 0.92rem);
+  }
+
+  /* The hairline before the account item marked it as the odd one out in a
+     content-width row. Between even tab stops it reads as a stray mark. */
+  .majora-nav .pill-list > li:last-child {
+    margin-left: 0;
+  }
+
+  .majora-nav .pill-list > li:last-child::before {
+    display: none;
+  }
+
+  /* The hamburger and its sheet have nothing left to do. Kept in the DOM
+     rather than cut from the component: everything Majora-specific in this
+     file is a skin over stock React Bits, and that stays true. */
+  .majora-nav .mobile-menu-button,
   .mobile-menu-popover {
-    top: 4.2em;
-  }
-
-  .majora-nav .mobile-menu-button {
-    width: 52px;
-    height: 52px;
-    background: var(--ink);
-    box-shadow: 0 12px 30px -14px rgba(0, 0, 0, 0.8);
+    display: none;
   }
 }
 

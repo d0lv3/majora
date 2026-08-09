@@ -263,3 +263,38 @@
     display: none;
   }
 }
+
+/* The grade chips measured 42px, just under a comfortable fingertip, and
+   they are the one control on this form you tap rather than type into. */
+@media (pointer: coarse) {
+  .chip {
+    display: inline-flex;
+    align-items: center;
+    min-height: 44px;
+  }
+
+  /* "Create an account" sits mid-sentence, where it cannot be made taller
+     without opening a gap in the paragraph. Padding grows the hit box and
+     the negative margin hands most of that height back to the flow, so it
+     becomes a 44px target while the line moves by a few pixels. */
+  .auth__swap {
+    display: inline-block;
+    padding-block: 0.82rem;
+    margin-block: -0.6rem;
+  }
+
+  /* "Forgot?" gets the row instead of the same treatment: padded to 44px it
+     reached 2px over the top of the password input below, so the first two
+     pixels of the field would have opened the wrong thing. Growing the row
+     it shares with the label keeps the target and the overlap at zero. */
+  .field__row {
+    align-items: center;
+    min-height: 44px;
+  }
+
+  .field__aside {
+    display: inline-flex;
+    align-items: center;
+    align-self: stretch;
+  }
+}

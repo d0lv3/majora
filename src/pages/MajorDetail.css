@@ -7,7 +7,7 @@
 .mdetail__head {
   position: relative;
   overflow: hidden;
-  padding: clamp(9rem, 17vh, 12rem) 0 clamp(3rem, 6vw, 5rem);
+  padding: var(--nav-headroom) 0 clamp(3rem, 6vw, 5rem);
   background: var(--purple-600);
   background-image: radial-gradient(85% 80% at 15% 0%, rgba(107, 78, 148, 0.55), transparent 60%);
 }
@@ -160,6 +160,23 @@
 @media (max-width: 900px) {
   .mdetail__grid {
     grid-template-columns: 1fr;
+  }
+}
+
+/* Clearance for a nav bar pinned to the foot of the screen; 0 without one. */
+.mdetail__related,
+.mdetail--missing {
+  padding-bottom: calc(var(--section-y) + var(--nav-clear));
+}
+
+/* The way back out of a major, and it was a 22px target. The reduced margin
+   absorbs the added height, so the title below does not move down. */
+@media (pointer: coarse) {
+  .mdetail__back {
+    display: inline-flex;
+    align-items: center;
+    min-height: 44px;
+    margin-bottom: 0.9rem;
   }
 }
 

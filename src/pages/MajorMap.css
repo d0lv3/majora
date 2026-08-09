@@ -6,7 +6,9 @@
 .mapPage {
   position: relative;
   min-height: 100svh;
-  padding: clamp(9rem, 17vh, 12rem) 0 clamp(3rem, 6vw, 5rem);
+  /* head room for a bar overhead, clearance for one at the foot — see the
+     nav tokens in index.css */
+  padding: var(--nav-headroom) 0 calc(clamp(3rem, 6vw, 5rem) + var(--nav-clear));
   background: #fbfaff;
   color: var(--text-on-light);
 }
@@ -499,5 +501,25 @@
   .clist {
     max-height: none;
     overflow-y: visible;
+  }
+}
+
+/* 44vh left the map 357px tall on a 375x812 phone — enough to see Iraq, not
+   enough to tell two pins apart in Baghdad. The map is what this page is for,
+   so it gets the height. The floor keeps it usable in landscape, where 58vh
+   would collapse it to about 220px. */
+@media (max-width: 768px) {
+  .mapStage__canvas {
+    height: clamp(300px, 58vh, 520px);
+  }
+}
+
+/* Leaflet ships 30px zoom buttons, which is a miss under a fingertip. */
+@media (pointer: coarse) {
+  .mapStage .leaflet-control-zoom a {
+    width: 44px;
+    height: 44px;
+    line-height: 44px;
+    font-size: 1.35rem;
   }
 }

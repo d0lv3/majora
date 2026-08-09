@@ -104,11 +104,14 @@
 }
 
 /* =============================== BAR ================================ */
+/* The last row on the page, and on a phone the nav bar floats over it — so
+   it ends above the bar. The padding is here rather than on the body so the
+   ink ground still runs to the bottom edge behind it. */
 .foot__bar {
   display: flex;
   align-items: center;
   gap: 0.9rem;
-  padding-block: 1.4rem;
+  padding-block: 1.4rem calc(1.4rem + var(--nav-clear));
   border-top: 1px solid rgba(255, 255, 255, 0.1);
   font-size: 0.8rem;
   color: var(--text-on-dark-faint);
@@ -142,6 +145,22 @@
 
   .foot__col--wide {
     grid-column: span 2;
+  }
+}
+
+/* A 0.92rem link is an 18px-tall target — half of what a fingertip can hit
+   reliably, and there are fourteen of them down here. The row gap becomes
+   padding inside each link, so the list grows the targets rather than the
+   space between them. */
+@media (pointer: coarse) {
+  .foot__col {
+    gap: 0;
+  }
+
+  .foot__col a {
+    display: flex;
+    align-items: center;
+    min-height: 44px;
   }
 }
 

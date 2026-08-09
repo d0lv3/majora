@@ -60,6 +60,26 @@
   --max: 1240px;
   --max-narrow: 820px;
 
+  /* --- the floating nav bar ---
+     The bar is at the top on a desktop and at the bottom on a phone, and
+     three measurements change with it. They are tokens so that the "is this
+     a phone" test is written once, in the media query below, instead of
+     being restated in every page's stylesheet — where the copies would
+     drift apart the first time the breakpoint moved.
+
+       --nav-clear     room a page leaves at its foot for the bar. 0 on
+                       desktop, where nothing has to end early. Pages add it
+                       to their own padding rather than letting the body pad,
+                       so their background still reaches the bottom edge.
+       --nav-headroom  the head room a page leaves for a bar at the top.
+       --anchor-offset where an in-page anchor stops short. */
+  --nav-h-mobile: 56px;
+  --nav-inset: 10px;
+  --nav-clear: 0px;
+  --nav-headroom: clamp(9rem, 17vh, 12rem);
+  --hero-headroom: clamp(7rem, 13vh, 9.5rem);
+  --anchor-offset: clamp(84px, 11vh, 104px);
+
   /* --- shape --- */
   --r-sm: 10px;
   --r-md: 18px;
@@ -90,6 +110,43 @@
 html {
   -webkit-text-size-adjust: 100%;
   scroll-behavior: smooth;
+}
+
+/* ---------------------------------------------------------------------
+   THE PHONE TEST. Written here and nowhere else.
+
+   Two clauses, because width alone gets a phone wrong. Held upright a phone
+   is narrow and the first clause catches it. Turned on its side the same
+   phone is 800-odd points wide — wider than the breakpoint, and it would
+   fall back to the desktop bar and desktop-sized tap targets on a screen
+   only 390 points tall. The second clause catches that: short, and under a
+   finger rather than a cursor. A tablet in landscape stays on the desktop
+   layout because it is not short, and a desktop never has a coarse pointer.
+   --------------------------------------------------------------------- */
+@media (max-width: 768px), (pointer: coarse) and (max-height: 520px) {
+  :root {
+    --nav-clear: calc(
+      var(--nav-h-mobile) + var(--nav-inset) * 2 + env(safe-area-inset-bottom, 0px)
+    );
+    /* the bar is no longer overhead, so this space goes back to the page */
+    --nav-headroom: clamp(2.25rem, 6vh, 3.25rem);
+    --hero-headroom: clamp(2.5rem, 7vh, 4rem);
+    --anchor-offset: 0.75rem;
+  }
+
+  html {
+    scroll-padding-bottom: var(--nav-clear);
+  }
+}
+
+/* A phone on its side has height to spare nowhere: the bar gives some back.
+   Overriding the token rather than the bar means the clearance every page
+   reserves shrinks with it, so no page is left with a dead strip. */
+@media (max-height: 520px) and (pointer: coarse) {
+  :root {
+    --nav-h-mobile: 46px;
+    --nav-inset: 8px;
+  }
 }
 
 body {

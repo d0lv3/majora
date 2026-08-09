@@ -2,10 +2,11 @@
   background: var(--purple-950);
 }
 
-/* Anchor targets stop below the floating nav rather than under it. */
+/* Anchor targets stop below the floating nav rather than under it — and on a
+   phone, where the bar is at the foot of the screen, barely short at all. */
 .home #top,
 .home #how {
-  scroll-margin-top: clamp(84px, 11vh, 104px);
+  scroll-margin-top: var(--anchor-offset);
 }
 
 /* =============================== HERO =============================== */
@@ -21,7 +22,7 @@
   justify-content: center;
   gap: clamp(2.5rem, 5vw, 4rem);
   overflow: hidden;
-  padding: clamp(7rem, 13vh, 9.5rem) 0 clamp(2.5rem, 5vh, 4rem);
+  padding: var(--hero-headroom) 0 clamp(2.5rem, 5vh, 4rem);
   background-color: #fbfaff;
   /* The artwork itself, plus a scrim over its left half.
      The illustration keeps its figures on the right and leaves the left
@@ -292,6 +293,17 @@
   .feat + .feat {
     border-top: 1px solid rgba(65, 43, 99, 0.09);
     padding-top: 0.85rem;
+  }
+}
+
+/* The alternative to the big gold button, and the only other thing to tap on
+   that screen — it should not be a 25px sliver underneath it. */
+@media (pointer: coarse) {
+  .closer__alt {
+    display: inline-flex;
+    align-items: center;
+    min-height: 44px;
+    padding-inline: 0.5rem;
   }
 }
 
