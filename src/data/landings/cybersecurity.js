@@ -6,31 +6,46 @@
  * markdown document, and shipping it as one would mean a parser in the bundle
  * and every enumeration coming out as whatever the parser's default bullet
  * happens to be. As data, the lists of subjects and job titles are real chips
- * and the closing flow is a real chain.
+ * and the closing sequence is a real chain.
  *
  * The document runs: what is it -> what will I study -> what will I get good
- * at -> where does it lead -> try it. The head of the page already carries the
- * name, the field and the length, so this starts one step in, at the
- * definition.
+ * at -> where does it lead -> try it. Five sections, and the opening and the
+ * closing panel are two of them rather than loose copy either side, because
+ * the contents rail beside the document lists sections and those two are as
+ * worth reaching as the middle three.
  *
- * Block types, both rendered by MajorLanding.jsx:
+ * Block types, all rendered by MajorLanding.jsx:
  *
- *   text   a paragraph
- *   tags   a row of chips — the subjects, the skills, the job titles
+ *   lede    the opening line of a section, set large
+ *   text    a paragraph
+ *   tags    a row of chips — the subjects, the skills, the job titles
+ *   flow    an arrow chain, used once, for the order the simulations come in
+ *   action  the button the document ends on
  *
- * Two types because the document uses two. The guide file explains the same
- * choice at more length.
+ * Section ids are what the rail scrolls to, so they are stable names rather
+ * than indexes: renumbering the document should not break a link.
  */
 
 export const CYBERSECURITY_LANDING = {
-  eyebrow: 'What is cybersecurity?',
-  title: 'Protect the digital world. Solve problems. Think like a defender.',
-  lede: [
-    'Cybersecurity is the field of protecting computers, networks, applications, and information from people who try to access, damage, or misuse them.',
-    'Every time you send a message, connect to Wi-Fi, use an online bank, or log into an account, cybersecurity helps keep that information safe.',
-  ],
-
   sections: [
+    /* ----------------------------- overview ----------------------------- */
+    {
+      id: 'overview',
+      title: 'What is cybersecurity?',
+      blocks: [
+        { type: 'lede', text: 'Protect the digital world. Solve problems. Think like a defender.' },
+        {
+          type: 'text',
+          text: 'Cybersecurity is the field of protecting computers, networks, applications, and information from people who try to access, damage, or misuse them.',
+        },
+        {
+          type: 'text',
+          text: 'Every time you send a message, connect to Wi-Fi, use an online bank, or log into an account, cybersecurity helps keep that information safe.',
+        },
+      ],
+    },
+
+    /* ------------------------------ study ------------------------------- */
     {
       id: 'study',
       title: 'What will you study?',
@@ -59,6 +74,7 @@ export const CYBERSECURITY_LANDING = {
       ],
     },
 
+    /* ------------------------------ skills ------------------------------ */
     {
       id: 'skills',
       title: 'Skills you’ll develop',
@@ -85,6 +101,7 @@ export const CYBERSECURITY_LANDING = {
       ],
     },
 
+    /* ----------------------------- careers ------------------------------ */
     {
       id: 'careers',
       title: 'What can you do with it?',
@@ -111,19 +128,30 @@ export const CYBERSECURITY_LANDING = {
         },
       ],
     },
-  ],
 
-  /**
-   * The closing panel. `action` is the label the document ends on; the
-   * simulations it points at are not built yet, so the page renders it as a
-   * button that is plainly not ready rather than a link to nowhere.
-   */
-  cta: {
-    title: 'Experience cybersecurity',
-    lede: 'Don’t just read about it. Try it yourself.',
-    text: 'Explore interactive simulations that let you experience different parts of cybersecurity. Start by discovering how devices communicate in a network, then explore how information is protected through cryptography and how security professionals investigate suspicious activity.',
-    flow: ['Networks', 'Cryptography', 'Investigation'],
-    action: 'Start Exploring',
-    note: 'The simulations are being built.',
-  },
+    /* ---------------------------- experience ---------------------------- */
+    /* `panel` paints the section as the closing call to action rather than
+       more document. The simulations the button points at are not built yet,
+       so `ready: false` renders it as a button that is plainly not ready
+       instead of a link to nowhere. */
+    {
+      id: 'experience',
+      title: 'Experience cybersecurity',
+      panel: true,
+      blocks: [
+        { type: 'lede', text: 'Don’t just read about it. Try it yourself.' },
+        {
+          type: 'text',
+          text: 'Explore interactive simulations that let you experience different parts of cybersecurity. Start by discovering how devices communicate in a network, then explore how information is protected through cryptography and how security professionals investigate suspicious activity.',
+        },
+        { type: 'flow', steps: ['Networks', 'Cryptography', 'Investigation'] },
+        {
+          type: 'action',
+          label: 'Start Exploring',
+          ready: false,
+          note: 'The simulations are being built.',
+        },
+      ],
+    },
+  ],
 }

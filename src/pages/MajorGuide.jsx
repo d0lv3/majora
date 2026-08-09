@@ -1,7 +1,8 @@
-import { useCallback, useEffect, useMemo, useState } from 'react'
+import { useMemo } from 'react'
 import { Link, useParams } from 'react-router-dom'
 
 import Lattice from '../components/decor/Lattice.jsx'
+import ContentsRail, { useContentsNav } from '../components/ContentsRail.jsx'
 import { getMajor, isAvailable } from '../data/majors.js'
 import { getBranch } from '../data/branches.js'
 import { ENGLISH_LITERATURE } from '../data/guides/englishLiterature.js'
@@ -11,24 +12,15 @@ import './MajorGuide.css'
  * A branch of a major, written out in full: contents down the left, the
  * document on the right.
  *
- * The nav is a table of contents rather than a set of tabs — every section is
- * on the page at once and clicking scrolls to it. A student reading about a
- * degree is not looking things up, they are reading the whole thing once, and
- * tabs would hide seven eighths of it behind a click.
- *
- * The sidebar toggles because it is worth different amounts at different
- * widths. Wide, it is open and sticky and the document keeps its measure
- * beside it. Narrow, there is no room for two columns, so it starts closed and
- * opens over the page as a sheet, closing again the moment a section is
- * chosen.
+ * The rail is ContentsRail, shared with the majors that are written out on
+ * their own page; what belongs to this file is the document beside it — the
+ * blocks the guides are made of, and the styles for them.
  */
 
 /** Branch slug -> its guide. One so far; the rest are still 'coming soon'. */
 const GUIDES = {
   'english-literature': ENGLISH_LITERATURE,
 }
-
-const WIDE = '(min-width: 1000px)'
 
 /**
  * The only markup the document data carries: **bold** and *italic*.
@@ -186,78 +178,7 @@ export default function MajorGuide() {
   const guide = GUIDES[branchSlug] ?? null
 
   const sections = useMemo(() => guide?.sections ?? [], [guide])
-  const [open, setOpen] = useState(() =>
-    typeof window === 'undefined' ? true : window.matchMedia(WIDE).matches,
-  )
-  const [active, setActive] = useState(sections[0]?.id ?? '')
-
-  /* The sidebar's default belongs to the viewport, not to the last thing the
-     reader did on another screen size: rotating a phone into landscape should
-     not leave a sheet open over the document. */
-  useEffect(() => {
-    const mq = window.matchMedia(WIDE)
-    const sync = (e) => setOpen(e.matches)
-    mq.addEventListener('change', sync)
-    return () => mq.removeEventListener('change', sync)
-  }, [])
-
-  /**
-   * Which section the reader is in front of.
-   *
-   * Measured on scroll rather than watched with an IntersectionObserver. An
-   * observer only reports the moment an edge crosses a band, so the answer
-   * depends on tuning that band against section heights nobody controls —
-   * short sections can pass through without ever being the answer, and the
-   * last one, sitting at the foot of the page, may never reach the band at
-   * all. Reading positions directly is the same approach the landing nav
-   * takes, and it cannot get stuck: the section whose top has most recently
-   * passed the reading line is the one you are in, always.
-   *
-   * rAF-throttled, so a fast scroll costs one measurement per frame.
-   */
-  useEffect(() => {
-    if (!sections.length) return undefined
-
-    let frame = 0
-    const measure = () => {
-      frame = 0
-      const line = window.innerHeight * 0.3
-      let current = sections[0].id
-      for (const section of sections) {
-        const el = document.getElementById(section.id)
-        if (el && el.getBoundingClientRect().top <= line) current = section.id
-      }
-      // At the very bottom the last section wins whatever the line says: it is
-      // usually too short to reach it, and you are plainly reading it.
-      const atBottom =
-        window.innerHeight + window.scrollY >= document.documentElement.scrollHeight - 4
-      setActive(atBottom ? sections[sections.length - 1].id : current)
-    }
-
-    const onScroll = () => {
-      if (!frame) frame = window.requestAnimationFrame(measure)
-    }
-
-    measure()
-    window.addEventListener('scroll', onScroll, { passive: true })
-    window.addEventListener('resize', onScroll)
-    return () => {
-      if (frame) window.cancelAnimationFrame(frame)
-      window.removeEventListener('scroll', onScroll)
-      window.removeEventListener('resize', onScroll)
-    }
-  }, [sections])
-
-  const goTo = useCallback((id) => {
-    const el = document.getElementById(id)
-    if (!el) return
-    const reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches
-    el.scrollIntoView({ behavior: reduced ? 'auto' : 'smooth', block: 'start' })
-    setActive(id)
-    // On a phone the nav is a sheet over what you just chose, so choosing
-    // closes it. On a desktop it is a column beside the text and stays put.
-    if (!window.matchMedia(WIDE).matches) setOpen(false)
-  }, [])
+  const contents = useContentsNav(sections)
 
   // A branch nobody has written yet, or a slug that does not exist.
   if (!major || !isAvailable(major) || !branch || !guide) {
@@ -297,64 +218,10 @@ export default function MajorGuide() {
         </div>
       </header>
 
-      <div className="shell guide__body" data-open={open ? 'true' : 'false'}>
-        {/* The toggle travels with the contents rather than sitting above
-            them, so one sticky rail carries both: collapsed, the rail keeps a
-            narrow gutter and the button stays exactly where it was. */}
-        <div className="guide__rail">
-          <button
-            type="button"
-            className="guide__toggle"
-            aria-expanded={open}
-            aria-controls="guide-nav"
-            /* Icon-only, so the name has to come from the label rather than
-               the text — and title gives the same words to a mouse. */
-            aria-label={open ? 'Hide contents' : 'Show contents'}
-            title={open ? 'Hide contents' : 'Show contents'}
-            onClick={() => setOpen((v) => !v)}
-          >
-            <svg className="guide__toggleIcon" viewBox="0 0 24 24" aria-hidden="true">
-              <rect x="3" y="4.5" width="18" height="15" rx="3.5" />
-              <path d="M9.3 4.5v15" />
-              {/* Points the way the panel is about to go: left to tuck it
-                  away, flipped right to bring it back. */}
-              <path className="guide__toggleCaret" d="m16.6 9.3-2.7 2.7 2.7 2.7" />
-            </svg>
-          </button>
+      <div className="shell contents" data-open={contents.open ? 'true' : 'false'}>
+        <ContentsRail sections={sections} id="guide-nav" {...contents} />
 
-          {/* Rendered either way so the toggle animates rather than the list
-              popping in, and hidden from assistive tech when it is closed. */}
-          <nav className="guide__nav" id="guide-nav" aria-label="Sections" aria-hidden={!open}>
-            <p className="guide__navTitle">Contents</p>
-            <ol className="guide__navList">
-              {sections.map((section, i) => (
-                <li key={section.id}>
-                  <button
-                    type="button"
-                    className={`gnav${active === section.id ? ' is-on' : ''}`}
-                    onClick={() => goTo(section.id)}
-                    tabIndex={open ? 0 : -1}
-                    aria-current={active === section.id ? 'true' : undefined}
-                  >
-                    <span className="gnav__n">{String(i + 1).padStart(2, '0')}</span>
-                    <span className="gnav__label">{section.title}</span>
-                  </button>
-                </li>
-              ))}
-            </ol>
-          </nav>
-        </div>
-
-        {/* Closes the sheet when it is tapped past, on narrow screens only. */}
-        <button
-          type="button"
-          className="guide__scrim"
-          tabIndex={-1}
-          aria-hidden="true"
-          onClick={() => setOpen(false)}
-        />
-
-        <article className="guide__doc gdoc">
+        <article className="contents__doc gdoc">
           {sections.map((section, i) => (
             <section className="gdoc__section" id={section.id} key={section.id}>
               <span className="gdoc__num" aria-hidden="true">

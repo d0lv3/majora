@@ -1,0 +1,305 @@
+/* =========================================================
+   Contents left, document right. Lifted out of the branch
+   guide so the majors written out on their own page get the
+   same rail rather than a second copy of it.
+   ========================================================= */
+
+/* Two areas, not three. The toggle used to be its own grid row above the
+   nav, which meant it could not travel: a sticky grid item is confined to its
+   own area, and a 44px row gives it nowhere to go. Button and list share one
+   rail now, and the rail is what sticks — so the control stays beside the
+   reader instead of scrolling off the top with the header. */
+.contents {
+  display: grid;
+  grid-template-columns: minmax(0, 260px) minmax(0, 1fr);
+  grid-template-areas: 'rail doc';
+  align-items: start;
+  gap: 0 clamp(1.5rem, 3.5vw, 3.5rem);
+  transition: grid-template-columns 0.35s var(--ease);
+}
+
+/* Collapsed to a gutter rather than to nothing. The button lives in this
+   column, so a zero-width track would push it out over the document — which
+   is exactly what happened when the two were separate. 52px holds a 44px
+   target with room either side. */
+.contents[data-open='false'] {
+  grid-template-columns: 52px minmax(0, 1fr);
+}
+
+/* Sticky against the grid area, which runs the full height of the document
+   beside it — that is what gives it somewhere to travel. align-self is stated
+   rather than inherited from the container so the rail keeps its own height
+   instead of stretching to the row, which would leave it nothing to slide
+   within.
+
+   Rows are auto then 1fr: the button takes what it needs and the list takes
+   the rest, so a contents list longer than the screen scrolls inside the rail
+   rather than pushing its own last entries out of reach. */
+.contents__rail {
+  grid-area: rail;
+  position: sticky;
+  top: var(--anchor-offset);
+  align-self: start;
+  z-index: 130;
+  display: grid;
+  grid-template-rows: auto minmax(0, 1fr);
+  gap: 0.9rem;
+  min-width: 0;
+  max-height: calc(100svh - var(--anchor-offset) - 1.5rem);
+}
+
+.contents__nav {
+  min-width: 0;
+  min-height: 0;
+  overflow-x: hidden;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  transition:
+    opacity 0.3s ease,
+    visibility 0.3s ease;
+}
+
+.contents[data-open='false'] .contents__nav {
+  opacity: 0;
+  visibility: hidden;
+}
+
+.contents__doc {
+  grid-area: doc;
+  min-width: 0;
+}
+
+/* Collapsed, the document keeps its reading measure but the column it sits in
+   is the whole shell, so without this it hugs the left edge and leaves 300px
+   of nothing beside it. Widening the measure instead would be the wrong fix —
+   the line length is what makes it readable. */
+.contents[data-open='false'] .contents__doc {
+  margin-inline: auto;
+}
+
+/* The scrim only exists on narrow screens; here it is inert and invisible. */
+.contents__scrim {
+  display: none;
+}
+
+/* ------------------------------- toggle ------------------------------ */
+/* Square and wordless. It sits in a 52px gutter when the panel is away, and a
+   label would not fit there without the gutter growing into the document. The
+   name lives in aria-label and title instead. */
+.contents__toggle {
+  display: grid;
+  place-items: center;
+  width: 44px;
+  height: 44px;
+  justify-self: start;
+  border-radius: var(--r-sm);
+  background: var(--white);
+  box-shadow: inset 0 0 0 1.5px rgba(65, 43, 99, 0.16);
+  color: var(--purple-600);
+  transition:
+    box-shadow 0.25s ease,
+    background-color 0.25s ease,
+    color 0.25s ease;
+}
+
+.contents__toggle:hover {
+  background: var(--paper);
+  box-shadow: inset 0 0 0 1.5px var(--purple-500);
+}
+
+/* A panel with its side rail, and a caret for where it is about to go. Drawn
+   rather than lettered so the control reads the same at any language. */
+.contents__toggleIcon {
+  width: 21px;
+  height: 21px;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 1.7;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+.contents__toggleCaret {
+  transform-box: fill-box;
+  transform-origin: center;
+  transition: transform 0.35s var(--ease);
+}
+
+/* Closed, the caret turns to point the way back out. */
+.contents[data-open='false'] .contents__toggleCaret {
+  transform: rotate(180deg);
+}
+
+/* And the rail of the panel icon fills in while the real panel is showing, so
+   the state is legible without reading the caret. */
+.contents[data-open='true'] .contents__toggleIcon rect {
+  fill: rgba(65, 43, 99, 0.08);
+}
+
+/* ------------------------------- the nav ----------------------------- */
+.contents__navTitle {
+  margin-bottom: 0.7rem;
+  font-size: 0.68rem;
+  font-weight: 700;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: var(--text-on-light-dim);
+}
+
+.contents__navList {
+  display: grid;
+  gap: 0.15rem;
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.cnav {
+  display: flex;
+  align-items: baseline;
+  gap: 0.65rem;
+  width: 100%;
+  padding: 0.6rem 0.75rem;
+  border-radius: var(--r-sm);
+  text-align: left;
+  font-size: 0.9rem;
+  line-height: 1.35;
+  color: var(--text-on-light-dim);
+  transition:
+    background-color 0.25s ease,
+    color 0.25s ease;
+}
+
+.cnav:hover {
+  background: rgba(65, 43, 99, 0.06);
+  color: var(--purple-600);
+}
+
+/* The current section, marked with the gold rule the rest of the site uses
+   for "you are here" rather than a heavier background. */
+.cnav.is-on {
+  background: var(--white);
+  box-shadow: inset 0 0 0 1px rgba(65, 43, 99, 0.1);
+  color: var(--purple-600);
+  font-weight: 600;
+}
+
+.cnav__n {
+  flex: none;
+  font-family: var(--font-display);
+  font-size: 0.68rem;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  color: var(--gold-600);
+}
+
+.cnav__label {
+  min-width: 0;
+}
+
+/* ============================== NARROW =============================== */
+/* Under two columns' worth of room the nav stops being a column and becomes a
+   sheet over the document: fixed, off to the left, slid in when open. The
+   document keeps the full width either way, so opening the contents never
+   reflows the text you were reading. */
+@media (max-width: 999px) {
+  .contents,
+  .contents[data-open='false'] {
+    grid-template-columns: minmax(0, 1fr);
+    grid-template-areas: 'doc';
+    transition: none;
+  }
+
+  /* Fixed, not sticky. The rail has no column of its own down here, so its
+     grid area would be a single 44px row — and a sticky box cannot travel
+     outside its area. Fixed pins it to the corner instead, which is the same
+     thing the reader asked for: a control that stays put while the page moves.
+     Out of flow, so it claims no track.
+
+     Right, not left. Everything in this page's header is left-aligned, and a
+     button in that corner sat directly on top of the back link — two targets
+     in one place. The right-hand side of the header is empty at every width. */
+  .contents__rail {
+    position: fixed;
+    top: calc(var(--anchor-offset) + 0.4rem);
+    right: var(--gutter);
+    z-index: 130;
+    display: block;
+    max-height: none;
+    /* Only the button is solid; the rest of the rail must not swallow taps
+       meant for the text underneath it. */
+    pointer-events: none;
+  }
+
+  .contents__toggle {
+    pointer-events: auto;
+    box-shadow:
+      inset 0 0 0 1.5px rgba(65, 43, 99, 0.16),
+      0 12px 24px -14px rgba(21, 13, 33, 0.7);
+  }
+
+  .contents__nav {
+    position: fixed;
+    top: 0;
+    bottom: 0;
+    left: 0;
+    z-index: 120;
+    width: min(320px, 86vw);
+    pointer-events: auto;
+    /* top/bottom already give it the full height; the ceiling from the wide
+       layout would leave a dead strip under the sheet. */
+    max-height: none;
+    padding: clamp(1.2rem, 4vw, 1.8rem) 1.1rem;
+    overflow-y: auto;
+    background: var(--white);
+    box-shadow: 0 30px 60px -30px rgba(21, 13, 33, 0.55);
+    transform: translateX(-102%);
+    visibility: hidden;
+    transition:
+      transform 0.35s var(--ease),
+      visibility 0.35s ease;
+  }
+
+  .contents[data-open='true'] .contents__nav {
+    transform: none;
+    visibility: visible;
+    opacity: 1;
+  }
+
+  .contents__scrim {
+    display: block;
+    position: fixed;
+    inset: 0;
+    z-index: 110;
+    background: rgba(21, 13, 33, 0.45);
+    opacity: 0;
+    visibility: hidden;
+    transition:
+      opacity 0.3s ease,
+      visibility 0.3s ease;
+  }
+
+  .contents[data-open='true'] .contents__scrim {
+    opacity: 1;
+    visibility: visible;
+  }
+
+  /* A document that is only one band of a longer page cannot own a control
+     pinned to the corner of the viewport: the reader scrolls past it to the
+     related majors and the button is still there, offering the contents of
+     something they have left. Those documents ask for --noSheet and go without
+     a rail down here — they are five sections read straight through, and the
+     headings are on the page either way. */
+  .contents--noSheet .contents__rail,
+  .contents--noSheet .contents__scrim {
+    display: none;
+  }
+}
+
+/* The contents entries do not clear 44px on their own padding. */
+@media (pointer: coarse) {
+  .cnav {
+    min-height: 44px;
+    align-items: center;
+  }
+}
