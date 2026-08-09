@@ -15,18 +15,22 @@
  * student. Each one can be skipped, and so can the whole test.
  */
 
+/**
+ * The two branches, in English only. They are علمي and أدبي in the school
+ * system — that is the whole reason this test exists — but the result screen
+ * names them in the language the rest of the site is written in, and a lone
+ * RTL word dropped into an LTR page was never carrying its weight.
+ */
 export const TRACKS = {
   scientific: {
     id: 'scientific',
     name: 'Scientific',
-    nameAr: 'علمي',
     subjects: 'mathematics, physics, chemistry and biology',
     text: 'You reach for the mechanism first — how a thing works, and whether the answer checks out. That is the habit the science track is built around.',
   },
   literary: {
     id: 'literary',
     name: 'Literary / Humanities',
-    nameAr: 'أدبي',
     subjects: 'Arabic, history, geography, economics and the other humanities',
     text: 'You reach for the reasons first — why people and systems ended up this way, and how to argue it well. That is the habit the literary track is built around.',
   },

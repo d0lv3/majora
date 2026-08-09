@@ -180,9 +180,6 @@ export default function TrackTest() {
             {track ? (
               <>
                 <h1 className="quiz__result" id="quiz-result">
-                  <span className="quiz__resultAr" lang="ar" dir="rtl">
-                    {track.nameAr}
-                  </span>
                   <span className="quiz__resultEn">{track.name}</span>
                 </h1>
 
@@ -218,10 +215,7 @@ export default function TrackTest() {
               /* Even. Naming a winner off a tiebreak would be inventing a
                  result the answers did not give. */
               <>
-                <h1 className="quiz__result quiz__result--even" id="quiz-result">
-                  <span className="quiz__resultAr" lang="ar" dir="rtl">
-                    {TRACKS.scientific.nameAr} / {TRACKS.literary.nameAr}
-                  </span>
+                <h1 className="quiz__result" id="quiz-result">
                   <span className="quiz__resultEn">Evenly split</span>
                 </h1>
 

@@ -167,13 +167,20 @@ export default function About() {
       </div>
 
       {/* ========================= BEFORE/AFTER ======================== */}
+      {/* Read across, not down: the two columns are the same four points made
+          twice, in the same order, so a reader can put any line beside its
+          opposite. Adding to one side means adding to the other. */}
       <div className="section shift">
         <div className="shell shift__inner">
           <Reveal className="shift__col shift__col--before">
             <span className="shift__tag">Without it</span>
             <ul>
               <li>You hear the name of a major for the first time on the application form.</li>
-              <li>Your score decides the field, and you adapt to it afterwards.</li>
+              <li>You choose from the handful of majors the people around you can name.</li>
+              <li>
+                What the years actually hold — the labs, the shifts, the reading — you find out in
+                the first semester.
+              </li>
               <li>Changing course means losing a year, or more.</li>
             </ul>
           </Reveal>
@@ -187,6 +194,7 @@ export default function About() {
             <ul>
               <li>You have been reading about majors for years.</li>
               <li>You know which fields genuinely interest you, and why.</li>
+              <li>You know what the work feels like, because you have already tried it.</li>
               <li>You choose once, deliberately, and can explain the reason.</li>
             </ul>
           </Reveal>

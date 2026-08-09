@@ -243,32 +243,17 @@
 }
 
 .quiz__result {
-  display: flex;
-  flex-wrap: wrap;
-  align-items: baseline;
-  gap: 0.2rem 0.9rem;
   margin-top: 0.5rem;
 }
 
-/* The Arabic is the name a student actually uses for this branch, so it leads
-   and gets the display size. dir is set on the element rather than inherited:
-   one RTL word inside an LTR line needs its own direction or the punctuation
-   around it lands on the wrong side. */
-.quiz__resultAr {
-  font-size: clamp(2rem, 7vw, 3rem);
-  line-height: 1.1;
-  color: var(--gold);
-}
-
-/* Two names instead of one, so the pair drops a size to keep them on a line
-   together at phone widths. */
-.quiz__result--even .quiz__resultAr {
-  font-size: clamp(1.7rem, 5.5vw, 2.4rem);
-}
-
+/* The verdict, and now the only thing in the heading, so it takes the display
+   size the branch's Arabic name used to carry. Gold because it is the one
+   line on this screen the reader came for. */
 .quiz__resultEn {
-  font-size: clamp(1.3rem, 3.6vw, 1.8rem);
-  line-height: 1.2;
+  font-size: clamp(1.9rem, 6vw, 2.8rem);
+  line-height: 1.12;
+  color: var(--gold);
+  text-wrap: balance;
 }
 
 .quiz__meter {
