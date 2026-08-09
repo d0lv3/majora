@@ -64,6 +64,30 @@
   align-items: center;
 }
 
+/* The brand mark above the headline, on phones only — the nav carries it
+   everywhere else. Same disc as the nav's: purple ground, thin ink ring, and
+   the mark scaled a touch past its padding box so it reads at this size
+   rather than floating in the middle of a large circle. */
+.hero__mark {
+  display: none;
+  width: 62px;
+  height: 62px;
+  margin: 0 auto 1.15rem;
+  padding: 2px;
+  border-radius: 50%;
+  background: var(--purple-600);
+  box-shadow: 0 0 0 2px var(--ink);
+  object-fit: contain;
+  transform: scale(1.02);
+  animation: heroIn 1s var(--ease-out) both;
+}
+
+@media (max-width: 768px), (pointer: coarse) and (max-height: 520px) {
+  .hero__mark {
+    display: block;
+  }
+}
+
 /* The upper bound is set by the first line, not by taste: the copy column stops
    growing once the shell caps at 1240px, so past roughly 1250px viewport the
    headline would keep scaling into a fixed 523px measure and "Majora -
@@ -248,12 +272,23 @@
 
 /* Stacked: the artwork drops to a band under the copy, because `cover` on a
    phone-shaped viewport would crop this 16:9 file down to one figure's
-   shoulder. Sized and biased right so the three students and the subject
-   icons above them are what actually shows. */
+   shoulder.
+
+   Anchored hard right, not 72%. The drawing's ground is empty until 40% of
+   the way across the file, and at 72% the visible band opened on that empty
+   ground — a quarter of the picture was blank — while running off the right
+   edge and cutting the busiest fifth of it, which is where the students are.
+   Right-anchored, the window lands on columns 677..1672, and because the
+   size is a percentage of the same viewport, it stays there at every phone
+   width instead of drifting.
+
+   Lifted clear of the nav, too: the bar floats over the bottom of the screen
+   now, and the bottom of this file is its densest band, so anchoring at the
+   true bottom parked the students behind the bar. */
 @media (max-width: 900px) {
   .hero {
     justify-content: flex-start;
-    padding-bottom: clamp(13rem, 34vh, 19rem);
+    padding-bottom: calc(clamp(13rem, 34vh, 19rem) + var(--nav-clear));
     background-image:
       linear-gradient(
         to bottom,
@@ -262,7 +297,7 @@
         rgba(251, 250, 255, 0) 60%
       ),
       url('../assets/hero-bg.png');
-    background-position: center, 72% bottom;
+    background-position: center, right 0 bottom var(--nav-clear);
     background-size: cover, 168% auto;
   }
 

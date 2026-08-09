@@ -347,9 +347,17 @@
   position: relative;
   border-radius: var(--r-lg);
   overflow: hidden;
-  /* sticky so the map stays put while a long college list scrolls past it */
+  /* Leaflet numbers its own furniture from 400 (tile panes) to 1000 (controls),
+     against a nav bar at 95. Left alone those compete in the root stacking
+     context and win, so scrolling the map past the bar on a phone painted
+     markers and the attribution links on top of it. Isolating the stage keeps
+     Leaflet's scale inside the stage, where it was only ever meant to apply. */
+  isolation: isolate;
+  /* sticky so the map stays put while a long college list scrolls past it,
+     stopping where the nav overhead does — the same measurement the anchors
+     use, rather than a second copy of the number */
   position: sticky;
-  top: clamp(84px, 11vh, 104px);
+  top: var(--anchor-offset);
   box-shadow:
     inset 0 0 0 1px rgba(65, 43, 99, 0.12),
     0 30px 60px -44px rgba(21, 13, 33, 0.4);

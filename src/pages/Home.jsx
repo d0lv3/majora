@@ -10,6 +10,7 @@ import About from '../sections/About.jsx'
 import Contact from '../sections/Contact.jsx'
 import { useAuth } from '../context/AuthContext.jsx'
 import { MAJORS, FIELDS, countByField, availableMajors } from '../data/majors.js'
+import logo from '../assets/visual-identity/logo-web.png'
 import './Home.css'
 
 /**
@@ -80,6 +81,13 @@ export default function Home() {
 
         <div className="shell hero__inner">
           <div className="hero__copy">
+            {/* The mark, for phones only. It rides in the nav bar on a desktop,
+                but the nav is at the foot of the screen there and carries four
+                destinations across it — so the brand opens the page instead,
+                which is where you look first anyway. Decorative: the headline
+                below it already says the name. */}
+            <img className="hero__mark" src={logo} alt="" width="800" height="800" />
+
             <h1 className="hero__title">
               Majora - Discover
               <br />

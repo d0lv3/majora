@@ -362,6 +362,11 @@
     --pill-gap: 2px;
     width: 100%;
     padding: 0;
+    /* The desktop shadow throws 18px downward, which is right for a bar at
+       the top of the page and wrong for one at the bottom: the whole cast
+       falls off the screen, leaving weight with nothing to explain it. Here
+       it lifts the bar off the page instead, upward and much shorter. */
+    filter: drop-shadow(0 -6px 18px rgba(0, 0, 0, 0.3));
   }
 
   /* The disc is branding, and branding is not worth a quarter of the bar
@@ -393,10 +398,17 @@
   /* The label tracks the viewport because the longest one decides the bar.
      At a flat 0.9rem "Open app" overruns its pill at 360px — the width half
      of Android sits at — and .pill clips rather than wraps, so it would have
-     silently lost its last letters on a very ordinary phone. */
+     silently lost its last letters on a very ordinary phone.
+
+     Lighter than the desktop 600, too. Four labels sitting shoulder to
+     shoulder across a solid bar read heavier than the same four spaced out
+     under a logo, and at this size the extra weight is closing up the
+     counters rather than adding emphasis. */
   .majora-nav .pill {
     width: 100%;
     font-size: clamp(0.72rem, 3.2vw, 0.92rem);
+    font-weight: 500;
+    letter-spacing: 0;
   }
 
   /* The hairline before the account item marked it as the odd one out in a

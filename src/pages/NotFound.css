@@ -4,7 +4,9 @@
   place-items: center;
   min-height: 100svh;
   overflow: hidden;
-  padding: 8rem 0 5rem;
+  /* head room for a bar overhead; on a phone the bar is at the foot instead
+     and this collapses, the same as every other page */
+  padding: var(--nav-headroom) 0 5rem;
   background: var(--purple-600);
   background-image: radial-gradient(80% 70% at 50% 20%, rgba(107, 78, 148, 0.55), transparent 62%);
   color: var(--white);
