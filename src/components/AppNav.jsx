@@ -27,7 +27,6 @@ export default function AppNav() {
     () => [
       { label: 'Library', href: '/app' },
       { label: 'Map', href: '/app/map' },
-      { label: 'Site', href: '/', ariaLabel: 'Back to the public site' },
       { label: 'Log out', href: '/logout' },
     ],
     [],

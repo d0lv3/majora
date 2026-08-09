@@ -9,12 +9,18 @@ import { useAuth } from './context/AuthContext.jsx'
 import Home from './pages/Home.jsx'
 import Login from './pages/Login.jsx'
 import Signup from './pages/Signup.jsx'
-import Majors from './pages/Majors.jsx'
 import MajorDetail from './pages/MajorDetail.jsx'
 
-// Split off: Leaflet and its stylesheet are about 160 kB, and every visitor
-// who never opens the map would otherwise download them to read the landing
-// page. This is the only route that needs them.
+// Split off, both for the same reason: a visitor reading the landing page
+// should not download the signed-in half of the product to do it.
+//
+//   MajorMap   Leaflet and its stylesheet, about 160 kB.
+//   Majors     the library searches universities, which needs the department
+//              data — 40 kB of it — and this page is imported by no one else.
+//
+// Both import ./data/mapData.js, so that lands in a chunk of its own and is
+// fetched once however the reader arrives.
+const Majors = lazy(() => import('./pages/Majors.jsx'))
 const MajorMap = lazy(() => import('./pages/MajorMap.jsx'))
 import NotFound from './pages/NotFound.jsx'
 
@@ -89,7 +95,9 @@ export default function App() {
             path="/app"
             element={
               <RequireAuth>
-                <Majors />
+                <Suspense fallback={<div className="routeWait">Opening the library…</div>}>
+                  <Majors />
+                </Suspense>
               </RequireAuth>
             }
           />
