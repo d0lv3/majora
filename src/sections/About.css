@@ -760,14 +760,16 @@
   animation-delay: calc(var(--tag-i) * 0.35s + 1.6s);
 }
 
+/* The border carries pathLength="1", so one unit is the whole outline however
+   many vertices it happens to have. */
 @keyframes mapDraw {
   0% {
-    stroke-dasharray: 900;
-    stroke-dashoffset: 900;
+    stroke-dasharray: 1;
+    stroke-dashoffset: 1;
   }
   45%,
   100% {
-    stroke-dasharray: 900;
+    stroke-dasharray: 1;
     stroke-dashoffset: 0;
   }
 }

@@ -19,11 +19,32 @@
  * the map.
  */
 
+/**
+ * The border, clockwise from the Syria/Turkey tripoint in the north-west.
+ *
+ * Sampled closely enough that the four things which make Iraq recognisable
+ * survive: the long straight Saudi diagonal running north-west out of the
+ * desert, the western point where Jordan and Syria meet, the jagged Zagros
+ * edge down the Iranian side, and the narrow throat to the Gulf with Kuwait
+ * bitten out of it. The Syrian border is the piece that most needs the extra
+ * vertices — it is a north-east diagonal from Abu Kamal, not the vertical it
+ * collapses into when the outline is sampled coarsely.
+ */
 const OUTLINE =
-  'M84.7 10.4 94.6 5.2 110 6.5 127.6 11.7 138.6 7.8 151.8 26 156.2 44.2 167.2 59.8 ' +
-  '162.8 75.4 167.2 101.4 189.2 106.6 202.4 117 195.8 132.6 202.4 148.2 205.7 169 ' +
-  '209 182 222.2 193.7 209 196.3 202.4 192.4 187 195 177.1 218.4 136.4 215.8 79.2 166.4 ' +
-  '41.8 145.6 15.4 139.1 6.4 107.4 48.4 80.6 59.4 70.2 61.6 29.9 Z'
+  // Turkey, west to east, over the top of the Kurdistan Region
+  'M84.9 10.1 89.1 7 94.2 4.7 101.2 3.4 111.1 6.5 121 4.7 127.2 6.5 133.1 7.8 138.4 9.4 ' +
+  // Iran, down the Zagros
+  '141.9 15.6 145.2 21.3 149.6 28.6 152.2 37.4 157.9 43.7 166.1 50.7 169.4 59.8 167.2 67.6 ' +
+  '162.8 74.9 158.8 82.7 162.8 89.7 164.6 98.3 167.2 106.1 163.9 114.4 172.7 118.3 189.2 130.5 ' +
+  '194.7 137.8 196.2 146.9 201.9 158.6 205.7 169 209.4 178.9 213.4 187.2 218.2 192.4 221.8 195.5 ' +
+  // the Faw peninsula, the coast, then Kuwait cutting back inland
+  '218.9 197.1 213.4 195.5 209 194.2 202.4 192.7 196.2 194.5 190.3 201.5 184.8 209.3 177.1 218.4 ' +
+  // Saudi Arabia: flat along the south, then the long north-west diagonal
+  '167.2 218.7 151.8 219.4 136.4 215.8 110 197.6 83.6 179.4 59.4 163.8 35.2 150.8 10.8 143 ' +
+  // Jordan, up the western point
+  '7 124.8 5.9 107.1 ' +
+  // Syria, north-east from the Euphrates crossing back to the start
+  '17.6 101.4 37.4 89.7 53.5 80.1 59.4 70.7 67.1 55.9 73.7 37.7 79.2 23.4 Z'
 
 /** The cities, north to south, already projected. */
 const PINS = [
@@ -55,7 +76,10 @@ export default function IraqMapArt({ className = '' }) {
       aria-label="A map of Iraq with pins on the cities where different majors are taught"
     >
       <path className="mapArt__fill" d={OUTLINE} />
-      <path className="mapArt__border" d={OUTLINE} fill="none" />
+      {/* pathLength normalises the border to 1 unit, so the draw-on keyframes
+          can dash it without anyone having to measure the path by hand — and
+          without them silently breaking the next time a vertex moves. */}
+      <path className="mapArt__border" d={OUTLINE} fill="none" pathLength="1" />
 
       {TAGS.map((tag, i) => (
         <g className="mapArt__tag" key={tag.x} style={{ '--tag-i': i }}>

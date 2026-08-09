@@ -17,17 +17,16 @@
  * federal one, so the ministry list has no Salahaddin, no Sulaimani, no
  * Duhok. For a platform written for students in Kurdistan that is the more
  * important half, so those departments were gathered from each university's
- * own site and are marked `system: 'krg'`. They carry no ministry score,
- * because the KRG runs no equivalent classification.
+ * own site and are marked `system: 'krg'`.
  *
- * WHAT THE SCORE IS, AND IS NOT
+ * THE CLASSIFICATION SCORE IS NOT HERE, DELIBERATELY
  *
- * `score` is the department's 2025 classification score and `rank` its place
- * within its own college type. It measures the department, on the ministry's
- * own criteria. It is NOT an acceptance rate, NOT a minimum admission grade,
- * and NOT a fee. Nothing here says how hard a department is to get into.
- * Admission in federal Iraq runs on a central grade cut-off published
- * separately each year, and that number is not in this file.
+ * The ministry's table carries a rank and a quality score per department, and
+ * this file used to carry both. They are gone. Every student who read one
+ * read it as an admission chance, which is not what it measures — it rates
+ * the department on the ministry's criteria and says nothing about who gets
+ * in. A number that is wrong in the reader's head is worse than no number, so
+ * the table is now used only for which departments exist and where.
  *
  * HOW GOOD THE COORDINATES ARE
  *
@@ -38,115 +37,112 @@
 import { UNIVERSITIES } from './universities.js'
 
 /**
- * Each English department, as [universityId, college, rank, score].
+ * Each English department, as [universityId, college, category].
  *
- * `category` is which of the ministry's three college types the rank belongs
- * to. Ranks restart in each, so a department can be #1 in Arts while another
- * at the same university is #1 in Education; without the category, two rank-1
- * rows on one card look like a contradiction.
- *
- * `rank` and `score` are the ministry's 2025 classification, and are null for
- * the Kurdistan Region, which runs no equivalent. Ranks repeat where the
- * ministry ties departments on the same score.
+ * `category` is which of the ministry's three college types the department
+ * belongs to — Arts, Education or Basic Education. They are genuinely
+ * different degrees, not three names for one, so a university running English
+ * in two of them shows two rows. Kurdistan Region rows omit it: the KRG does
+ * not sort its colleges this way.
  */
 const DEPARTMENTS = [
   /* ---- federal: Arts, اداب/اللغة الانكليزية (26) ---- */
-  ['baghdad', 'College of Arts', 1, 42.45, 'Arts'],
-  ['mustaqbal', 'College of Arts & Humanities', 2, 37.91, 'Arts'],
-  ['iraqia', 'College of Arts', 3, 28.36, 'Arts'],
-  ['esraa', 'College of Arts', 4, 27.92, 'Arts'],
-  ['mosul', 'College of Arts', 5, 27.91, 'Arts'],
-  ['kufa', 'College of Arts', 6, 27.45, 'Arts'],
-  ['anbar', 'College of Arts', 6, 27.45, 'Arts'],
-  ['mustansiriyah', 'College of Arts', 7, 27.0, 'Arts'],
-  ['qadisiyah', 'College of Arts', 7, 27.0, 'Arts'],
-  ['turath', 'College of Arts', 7, 27.0, 'Arts'],
-  ['hadba', 'College of Arts', 7, 27.0, 'Arts'],
-  ['tikrit', 'College of Arts', 7, 27.0, 'Arts'],
-  ['dijlah', 'College of Arts', 7, 27.0, 'Arts'],
-  ['hikma', 'College of Arts', 8, 25.38, 'Arts'],
-  ['thiqar', 'College of Arts', 9, 25.0, 'Arts'],
-  ['nisour', 'College of Arts', 9, 25.0, 'Arts'],
-  ['biladrafidain', 'College of Arts', 9, 25.0, 'Arts'],
-  ['farqadain', 'College of Arts', 9, 25.0, 'Arts'],
-  ['salam', 'College of Arts', 9, 25.0, 'Arts'],
-  ['yarmouk', 'College of Arts', 10, 24.53, 'Arts'],
-  ['maaqal', 'College of Arts', 11, 24.01, 'Arts'],
-  ['qalam', 'College of Arts', 12, 17.32, 'Arts'],
-  ['mazaya', 'College of Arts', 13, 3.46, 'Arts'],
-  ['basrah', 'College of Arts', 14, 2.0, 'Arts'],
-  ['ahlbayt', 'College of Arts', 15, 1.0, 'Arts'],
-  ['maaref', 'College of Arts', 16, 0.0, 'Arts'],
+  ['baghdad', 'College of Arts', 'Arts'],
+  ['mustaqbal', 'College of Arts & Humanities', 'Arts'],
+  ['iraqia', 'College of Arts', 'Arts'],
+  ['esraa', 'College of Arts', 'Arts'],
+  ['mosul', 'College of Arts', 'Arts'],
+  ['kufa', 'College of Arts', 'Arts'],
+  ['anbar', 'College of Arts', 'Arts'],
+  ['mustansiriyah', 'College of Arts', 'Arts'],
+  ['qadisiyah', 'College of Arts', 'Arts'],
+  ['turath', 'College of Arts', 'Arts'],
+  ['hadba', 'College of Arts', 'Arts'],
+  ['tikrit', 'College of Arts', 'Arts'],
+  ['dijlah', 'College of Arts', 'Arts'],
+  ['hikma', 'College of Arts', 'Arts'],
+  ['thiqar', 'College of Arts', 'Arts'],
+  ['nisour', 'College of Arts', 'Arts'],
+  ['biladrafidain', 'College of Arts', 'Arts'],
+  ['farqadain', 'College of Arts', 'Arts'],
+  ['salam', 'College of Arts', 'Arts'],
+  ['yarmouk', 'College of Arts', 'Arts'],
+  ['maaqal', 'College of Arts', 'Arts'],
+  ['qalam', 'College of Arts', 'Arts'],
+  ['mazaya', 'College of Arts', 'Arts'],
+  ['basrah', 'College of Arts', 'Arts'],
+  ['ahlbayt', 'College of Arts', 'Arts'],
+  ['maaref', 'College of Arts', 'Arts'],
 
   /* ---- federal: Education, تربية/لغة انكليزية (34) ---- */
-  ['baghdad', 'College of Education Ibn Rushd for Human Sciences', 1, 76.5, 'Education'],
-  ['islamic', 'College of Education', 2, 59.92, 'Education'],
-  ['baghdad', 'College of Education for Women', 3, 52.0, 'Education'],
-  ['wasit', 'College of Education for Human Sciences', 4, 47.0, 'Education'],
-  ['kitab', 'College of Education', 4, 47.0, 'Education'],
-  ['alnoor', 'College of Education', 4, 47.0, 'Education'],
-  ['basrah', 'College of Education for Human Sciences', 5, 44.35, 'Education'],
-  ['anbar', 'College of Education for Human Sciences', 6, 40.25, 'Education'],
-  ['tikrit', 'College of Education for Women', 7, 37.0, 'Education'],
-  ['kerbala', 'College of Education for Human Sciences', 7, 37.0, 'Education'],
-  ['samarra', 'College of Education', 7, 37.0, 'Education'],
-  ['anbar', 'College of Education for Women', 8, 36.4, 'Education'],
-  ['kirkuk', 'College of Education for Human Sciences', 9, 36.24, 'Education'],
-  ['kufa', 'College of Education', 10, 36.0, 'Education'],
-  ['tikrit', 'College of Education for Human Sciences', 10, 36.0, 'Education'],
-  ['qadisiyah', 'College of Education', 10, 36.0, 'Education'],
-  ['thiqar', 'College of Education for Human Sciences', 10, 36.0, 'Education'],
-  ['hamdaniya', 'College of Education for Human Sciences', 10, 36.0, 'Education'],
-  ['kufa', 'College of Education for Women', 10, 36.0, 'Education'],
-  ['farahidi', 'College of Education', 11, 35.42, 'Education'],
-  ['diyala', 'College of Education for Human Sciences', 12, 35.0, 'Education'],
-  ['zahraa', 'College of Education', 13, 32.42, 'Education'],
-  ['mosul', 'College of Education for Human Sciences', 14, 30.64, 'Education'],
-  ['iraqia', 'College of Education for Women', 15, 27.63, 'Education'],
-  ['muthanna', 'College of Education for Human Sciences', 16, 27.0, 'Education'],
-  ['shattarab', 'College of Arts', 17, 25.0, 'Education'],
-  ['kadhim', 'College of Education', 18, 23.87, 'Education'],
-  ['babylon', 'College of Education for Human Sciences', 19, 22.0, 'Education'],
-  ['basrah', 'College of Education, Qurna', 20, 21.0, 'Education'],
-  ['mansour', 'College of Education', 21, 17.38, 'Education'],
-  ['hilla', 'College of Education', 22, 12.25, 'Education'],
-  ['mamoon', 'College of Education', 23, 4.47, 'Education'],
-  ['misan', 'College of Education', 24, 2.0, 'Education'],
-  ['sawa', 'College of Education', 25, 1.11, 'Education'],
+  ['baghdad', 'College of Education Ibn Rushd for Human Sciences', 'Education'],
+  ['islamic', 'College of Education', 'Education'],
+  ['baghdad', 'College of Education for Women', 'Education'],
+  ['wasit', 'College of Education for Human Sciences', 'Education'],
+  ['kitab', 'College of Education', 'Education'],
+  ['alnoor', 'College of Education', 'Education'],
+  ['basrah', 'College of Education for Human Sciences', 'Education'],
+  ['anbar', 'College of Education for Human Sciences', 'Education'],
+  ['tikrit', 'College of Education for Women', 'Education'],
+  ['kerbala', 'College of Education for Human Sciences', 'Education'],
+  ['samarra', 'College of Education', 'Education'],
+  ['anbar', 'College of Education for Women', 'Education'],
+  ['kirkuk', 'College of Education for Human Sciences', 'Education'],
+  ['kufa', 'College of Education', 'Education'],
+  ['tikrit', 'College of Education for Human Sciences', 'Education'],
+  ['qadisiyah', 'College of Education', 'Education'],
+  ['thiqar', 'College of Education for Human Sciences', 'Education'],
+  ['hamdaniya', 'College of Education for Human Sciences', 'Education'],
+  ['kufa', 'College of Education for Women', 'Education'],
+  ['farahidi', 'College of Education', 'Education'],
+  ['diyala', 'College of Education for Human Sciences', 'Education'],
+  ['zahraa', 'College of Education', 'Education'],
+  ['mosul', 'College of Education for Human Sciences', 'Education'],
+  ['iraqia', 'College of Education for Women', 'Education'],
+  ['muthanna', 'College of Education for Human Sciences', 'Education'],
+  ['shattarab', 'College of Arts', 'Education'],
+  ['kadhim', 'College of Education', 'Education'],
+  ['babylon', 'College of Education for Human Sciences', 'Education'],
+  ['basrah', 'College of Education, Qurna', 'Education'],
+  ['mansour', 'College of Education', 'Education'],
+  ['hilla', 'College of Education', 'Education'],
+  ['mamoon', 'College of Education', 'Education'],
+  ['misan', 'College of Education', 'Education'],
+  ['sawa', 'College of Education', 'Education'],
 
   /* ---- federal: Basic Education, تربية اساسية/اللغة الانكليزية (7) ---- */
-  ['babylon', 'College of Basic Education', 1, 47.0, 'Basic Education'],
-  ['kirkuk', 'College of Basic Education', 2, 37.4, 'Basic Education'],
-  ['tikrit', 'College of Basic Education, Shirqat', 3, 37.0, 'Basic Education'],
-  ['diyala', 'College of Basic Education', 4, 35.0, 'Basic Education'],
-  ['mosul', 'College of Basic Education', 5, 29.35, 'Basic Education'],
-  ['misan', 'College of Basic Education', 6, 26.0, 'Basic Education'],
-  ['mustansiriyah', 'College of Basic Education', 7, 25.07, 'Basic Education'],
+  ['babylon', 'College of Basic Education', 'Basic Education'],
+  ['kirkuk', 'College of Basic Education', 'Basic Education'],
+  ['tikrit', 'College of Basic Education, Shirqat', 'Basic Education'],
+  ['diyala', 'College of Basic Education', 'Basic Education'],
+  ['mosul', 'College of Basic Education', 'Basic Education'],
+  ['misan', 'College of Basic Education', 'Basic Education'],
+  ['mustansiriyah', 'College of Basic Education', 'Basic Education'],
 
   /* ---- Kurdistan Region: no ministry classification ---- */
-  ['salahaddin', 'College of Languages', null, null],
-  ['salahaddin', 'College of Education', null, null],
-  ['salahaddin', 'College of Basic Education', null, null],
-  ['sulaimani', 'College of Languages', null, null],
-  ['sulaimani', 'College of Basic Education', null, null],
-  ['duhok', 'College of Languages', null, null],
-  ['duhok', 'College of Basic Education', null, null],
-  ['zakho', 'College of Humanities', null, null],
-  ['zakho', 'College of Basic Education', null, null],
-  ['koya', 'Faculty of Humanities & Social Sciences', null, null],
-  ['koya', 'Faculty of Education', null, null],
-  ['halabja', 'College of Basic Education', null, null],
-  ['raparin', 'College of Education', null, null],
-  ['garmian', 'College of Education', null, null],
-  ['charmo', 'College of Education', null, null],
-  ['soran', 'Faculty of Arts', null, null],
-  ['ukh', 'School of Arts & Sciences', null, null],
-  ['auis', 'Department of English', null, null],
-  ['tishk', 'Faculty of Education, ELT', null, null],
-  ['cihanerbil', 'College of Languages', null, null],
-  ['knowledge', 'College of Arts', null, null],
-  ['lfu', 'College of Arts', null, null],
-  ['nawroz', 'College of Arts', null, null],
+  ['salahaddin', 'College of Languages'],
+  ['salahaddin', 'College of Education'],
+  ['salahaddin', 'College of Basic Education'],
+  ['sulaimani', 'College of Languages'],
+  ['sulaimani', 'College of Basic Education'],
+  ['duhok', 'College of Languages'],
+  ['duhok', 'College of Basic Education'],
+  ['zakho', 'College of Humanities'],
+  ['zakho', 'College of Basic Education'],
+  ['koya', 'Faculty of Humanities & Social Sciences'],
+  ['koya', 'Faculty of Education'],
+  ['halabja', 'College of Basic Education'],
+  ['raparin', 'College of Education'],
+  ['garmian', 'College of Education'],
+  ['charmo', 'College of Education'],
+  ['soran', 'Faculty of Arts'],
+  ['ukh', 'School of Arts & Sciences'],
+  ['auis', 'Department of English'],
+  ['tishk', 'Faculty of Education, ELT'],
+  ['cihanerbil', 'College of Languages'],
+  ['knowledge', 'College of Arts'],
+  ['lfu', 'College of Arts'],
+  ['nawroz', 'College of Arts'],
 ]
 
 /** The Kurdish universities, which the ministry table does not cover. */
@@ -158,7 +154,7 @@ const KRG_IDS = new Set([
 /** Expanded into one entry per university, each carrying its branches. */
 export const ENGLISH_COLLEGES = (() => {
   const byUni = new Map()
-  for (const [uniId, college, rank, score, category = null] of DEPARTMENTS) {
+  for (const [uniId, college, category = null] of DEPARTMENTS) {
     const u = UNIVERSITIES[uniId]
     if (!u) continue
     const [name, nameAr, city, governorate, kind, lat, lng] = u
@@ -176,32 +172,29 @@ export const ENGLISH_COLLEGES = (() => {
         branches: [],
       })
     }
-    byUni.get(uniId).branches.push({ college, rank, score, category, years: 4, degree: 'BA' })
+    byUni.get(uniId).branches.push({ college, category, years: 4, degree: 'BA' })
   }
-  // best-ranked branch first, then the rest; unranked keep their given order
-  for (const entry of byUni.values()) {
-    entry.branches.sort((a, b) => (b.score ?? -1) - (a.score ?? -1))
-  }
+  // Left in the order the list gives them, which groups Arts, then Education,
+  // then Basic Education. There is nothing left to sort them by: the ranking
+  // that used to decide this was the ministry's, and it is gone.
   return [...byUni.values()]
 })()
 
+/**
+ * Where the department list came from. Not read by any page — the map states
+ * no figures that need attributing now — but kept so the next person to touch
+ * this file knows which table these rows were transcribed out of.
+ */
 export const ENGLISH_SOURCES = [
   {
     label: 'Iraqi Ministry of Higher Education, 2025 departmental classification',
     href: 'https://iru.mohesr.gov.iq/dep',
-    covers: 'Federal Iraq: Arts, Education and Basic Education English departments, with rank and score.',
+    covers: 'Federal Iraq: which universities run an Arts, Education or Basic Education English department.',
   },
   {
     label: 'KRG universities, own published department pages',
     href: 'https://gov.krd/mohe-en/publications/universities/',
     covers:
-      'Kurdistan Region: the ministry table does not list these, so each department comes from its own university. No classification score exists for them.',
+      'Kurdistan Region: the ministry table does not list these, so each department comes from its own university.',
   },
 ]
-
-export const ENGLISH_STATS = {
-  departments: DEPARTMENTS.length,
-  universities: ENGLISH_COLLEGES.length,
-  federal: DEPARTMENTS.filter(([id]) => !KRG_IDS.has(id)).length,
-  krg: DEPARTMENTS.filter(([id]) => KRG_IDS.has(id)).length,
-}

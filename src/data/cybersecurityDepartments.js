@@ -15,9 +15,10 @@
  * WHAT THE NUMBER IS HERE
  *
  * `minScore` is the real thing this platform kept promising: the central
- * admission cut-off for 2025-2026, the grade a student actually needs. This
- * is a different quantity from the English file's `score`, which ranks a
- * department's quality. Do not average or compare them.
+ * admission cut-off for 2025-2026, the grade a student actually needs. It is
+ * now the only number the map shows anywhere — the ministry's classification
+ * score, which rated quality rather than entry, has been taken out of the
+ * English and dentistry files for being read as this one.
  *
  * Cut-offs for government universities are the published 2025-2026 minimums.
  * Where a department is confirmed to exist but its cut-off was not published
@@ -128,9 +129,3 @@ export const CYBER_SOURCES = [
   },
 ]
 
-export const CYBER_STATS = {
-  departments: DEPARTMENTS.length,
-  universities: CYBER_COLLEGES.length,
-  withCutoff: DEPARTMENTS.filter(([, , , s]) => s != null).length,
-  withoutCutoff: DEPARTMENTS.filter(([, , , s]) => s == null).length,
-}

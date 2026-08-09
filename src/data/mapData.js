@@ -1,17 +1,18 @@
 /**
- * What the map draws, from two sources that are not equally trustworthy.
+ * What the map draws.
  *
- * English is researched: real departments from the ministry's 2025
- * classification and from the Kurdish universities themselves. Dentistry and
- * cybersecurity are still the placeholder set, invented so the page could be
- * built before any real figures existed.
+ * All three plotted majors are researched now — real departments, from the
+ * ministry's list and from the Kurdish universities themselves. The `sample`
+ * flag survives so that adding a fourth major on invented figures still shows
+ * the warning banner rather than passing itself off as sourced.
  *
- * They are kept apart rather than blended so the page can say which is which.
- * A single `sample` flag per major drives the warning banner: it appears for
- * the majors that are still made up, and not for the one that is not. That is
- * the whole reason this module exists instead of the page reading both files.
+ * What the departments no longer carry is the ministry's classification rank
+ * and score. They rated a college's quality and every reader took them for an
+ * admission bar; on a page about where to apply, that is a number that misleads
+ * by simply existing. Only the real admission cut-offs remain, and only for the
+ * major that has them.
  *
- * Both sources normalise to the same shape:
+ * All three normalise to the same shape:
  *
  *   { id, university, city, governorate, kind, lat, lng, sample, system,
  *     branches: [ ... ] }
@@ -22,14 +23,9 @@
  */
 
 import { UNIVERSITIES } from './universities.js'
-import { ENGLISH_COLLEGES, ENGLISH_SOURCES, ENGLISH_STATS } from './englishDepartments.js'
-import { CYBER_COLLEGES, CYBER_SOURCES, CYBER_STATS } from './cybersecurityDepartments.js'
-import {
-  DENTISTRY_ADMISSION,
-  DENTISTRY_COLLEGES,
-  DENTISTRY_SOURCES,
-  DENTISTRY_STATS,
-} from './dentistryDepartments.js'
+import { ENGLISH_COLLEGES } from './englishDepartments.js'
+import { CYBER_COLLEGES } from './cybersecurityDepartments.js'
+import { DENTISTRY_COLLEGES } from './dentistryDepartments.js'
 
 const ENGLISH_SLUG = 'english-language-literature'
 const CYBER_SLUG = 'cybersecurity'
@@ -42,30 +38,12 @@ const DENTISTRY_SLUG = 'dentistry'
  * as sourced.
  */
 const RESEARCHED = {
-  [ENGLISH_SLUG]: { rows: ENGLISH_COLLEGES, sources: ENGLISH_SOURCES, stats: ENGLISH_STATS },
-  [CYBER_SLUG]: { rows: CYBER_COLLEGES, sources: CYBER_SOURCES, stats: CYBER_STATS },
-  [DENTISTRY_SLUG]: {
-    rows: DENTISTRY_COLLEGES,
-    sources: DENTISTRY_SOURCES,
-    stats: DENTISTRY_STATS,
-    admission: DENTISTRY_ADMISSION,
-  },
-}
-
-/** The national entry bar, where one exists instead of per-department cut-offs. */
-export function admissionFor(slug) {
-  return RESEARCHED[slug]?.admission ?? null
+  [ENGLISH_SLUG]: { rows: ENGLISH_COLLEGES },
+  [CYBER_SLUG]: { rows: CYBER_COLLEGES },
+  [DENTISTRY_SLUG]: { rows: DENTISTRY_COLLEGES },
 }
 
 export const isSampleMajor = (slug) => !RESEARCHED[slug]
-
-export function sourcesFor(slug) {
-  return RESEARCHED[slug]?.sources ?? []
-}
-
-export function statsFor(slug) {
-  return RESEARCHED[slug]?.stats ?? null
-}
 
 /** Every university teaching this major, northernmost first. */
 export function collegesFor(slug) {

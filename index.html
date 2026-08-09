@@ -18,8 +18,184 @@
     />
 
     <title>Majora: Discover Where You Fit</title>
+
+    <!--
+      THE SPLASH.
+
+      Markup and styles both inline, and both above the module script, because
+      the whole point is that this is on screen before anything else is: a
+      splash that arrives with the bundle it is covering for has missed its
+      job. Nothing here waits on the stylesheet, the fonts or the JS.
+
+      The mark is the logo redrawn as strokes so it can draw itself — the
+      frame, then the book, then the cap, then the M, then the gold tassel.
+      Every path carries pathLength="1", so one dash unit is the whole path
+      whatever its real length and no measurement has to be kept in sync.
+
+      main.jsx takes it down once React has mounted; see removeSplash() there.
+    -->
+    <style>
+      #splash {
+        position: fixed;
+        inset: 0;
+        z-index: 9999;
+        display: grid;
+        place-content: center;
+        justify-items: center;
+        gap: 1.4rem;
+        background: #412b63;
+        background-image: radial-gradient(
+          90% 70% at 50% 35%,
+          rgba(107, 78, 148, 0.7),
+          transparent 65%
+        );
+        transition:
+          opacity 0.45s ease,
+          visibility 0.45s ease;
+      }
+
+      #splash.is-done {
+        opacity: 0;
+        visibility: hidden;
+      }
+
+      .splash__mark {
+        width: clamp(120px, 26vmin, 190px);
+        height: clamp(120px, 26vmin, 190px);
+        overflow: visible;
+      }
+
+      /* Drawn is the resting state and the keyframes come from nowhere, not
+         the other way round. That ordering is what lets the reduced-motion
+         rule below cancel the animation and leave a finished logo rather than
+         a blank square. */
+      .splash__mark path {
+        fill: none;
+        stroke: #ffffff;
+        stroke-linecap: round;
+        stroke-linejoin: round;
+        stroke-dasharray: 1;
+        stroke-dashoffset: 0;
+        animation: splashDraw 0.42s cubic-bezier(0.65, 0, 0.35, 1) backwards;
+      }
+
+      .splash__frame {
+        stroke-width: 7;
+        animation-delay: 0.03s;
+      }
+
+      .splash__book {
+        stroke-width: 5.5;
+        stroke-opacity: 0.9;
+        animation-delay: 0.25s;
+      }
+
+      .splash__cap {
+        stroke-width: 5.5;
+        animation-delay: 0.42s;
+        animation-duration: 0.3s;
+      }
+
+      .splash__m {
+        stroke-width: 9;
+        animation-delay: 0.55s;
+        animation-duration: 0.24s;
+      }
+
+      /* The one gold thing on the screen, and the last to arrive, so the eye
+         finishes on it. An ellipse cannot be dash-drawn the way a line can,
+         so the tassel swings in instead of being traced. */
+      .splash__tassel {
+        transform-origin: 30px 112px;
+        animation: splashTassel 0.34s cubic-bezier(0.34, 1.4, 0.5, 1) 0.62s backwards;
+      }
+
+      .splash__knot {
+        fill: #eeaf16;
+      }
+
+      .splash__strands {
+        fill: none;
+        stroke: #eeaf16;
+        stroke-width: 5;
+        stroke-linecap: round;
+      }
+
+      .splash__word {
+        margin: 0;
+        font-family: 'Poppins', 'Segoe UI', system-ui, sans-serif;
+        font-size: clamp(1.1rem, 3.5vmin, 1.5rem);
+        font-weight: 700;
+        letter-spacing: 0.16em;
+        text-transform: uppercase;
+        color: rgba(255, 255, 255, 0.62);
+        animation: splashWord 0.4s ease 0.66s backwards;
+      }
+
+      @keyframes splashDraw {
+        from {
+          stroke-dashoffset: 1;
+        }
+      }
+
+      @keyframes splashTassel {
+        from {
+          opacity: 0;
+          transform: rotate(-14deg);
+        }
+      }
+
+      @keyframes splashWord {
+        from {
+          opacity: 0;
+          transform: translateY(6px);
+        }
+      }
+
+      /* No drawing, no swing, no fade — the logo is simply already there while
+         the app loads behind it. main.jsx reads the same query and drops its
+         minimum display time to match, so nobody is held on a still image. */
+      @media (prefers-reduced-motion: reduce) {
+        #splash,
+        .splash__mark path,
+        .splash__tassel,
+        .splash__word {
+          animation: none;
+          transition: none;
+        }
+      }
+    </style>
   </head>
   <body>
+    <div id="splash" role="status" aria-label="Loading Majora">
+      <svg class="splash__mark" viewBox="0 0 200 200" aria-hidden="true">
+        <!-- the outer frame, one stroke from the tassel point all the way
+             round to the stub at the bottom left, exactly as the logo breaks
+             it -->
+        <path
+          class="splash__frame"
+          pathLength="1"
+          d="M27 109V72Q27 66 32 62L100 13Q105 10 110 13L174 62Q179 66 179 72V158Q179 164 173 164H52Q46 164 46 158V150"
+        />
+        <!-- the open book: down the left page, across the fold, up the right -->
+        <path
+          class="splash__book"
+          pathLength="1"
+          d="M61 106V150Q83 155 105 174Q127 155 147 150V106"
+        />
+        <!-- the mortarboard -->
+        <path class="splash__cap" pathLength="1" d="M104 46 167 86 104 126 41 86Z" />
+        <path class="splash__m" pathLength="1" d="M84 100V75L105 92 126 75V100" />
+
+        <g class="splash__tassel">
+          <ellipse class="splash__knot" cx="30" cy="117" rx="8.5" ry="6.5" />
+          <path class="splash__strands" d="M30 123 22 151M30 124V153M30 123 38 150" />
+        </g>
+      </svg>
+
+      <p class="splash__word">Majora</p>
+    </div>
+
     <div id="root"></div>
     <script type="module" src="/src/main.jsx"></script>
   </body>

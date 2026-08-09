@@ -5,15 +5,7 @@ import 'leaflet/dist/leaflet.css'
 
 import FieldGlyph from '../components/decor/FieldGlyph.jsx'
 import { MAJORS, isAvailable, fieldLabel } from '../data/majors.js'
-import {
-  IRAQ_BOUNDS,
-  admissionFor,
-  collegesFor,
-  isSampleMajor,
-  mappedMajorSlugs,
-  sourcesFor,
-  statsFor,
-} from '../data/mapData.js'
+import { IRAQ_BOUNDS, collegesFor, isSampleMajor, mappedMajorSlugs } from '../data/mapData.js'
 import './MajorMap.css'
 
 /**
@@ -84,10 +76,6 @@ export default function MajorMap() {
   const major = useMemo(() => MAJORS.find((m) => m.slug === slug), [slug])
   const all = useMemo(() => (slug ? collegesFor(slug) : []), [slug])
   const sample = isSampleMajor(slug)
-  const sources = useMemo(() => sourcesFor(slug), [slug])
-  const stats = useMemo(() => statsFor(slug), [slug])
-  const admission = useMemo(() => admissionFor(slug), [slug])
-
   /**
    * Which of this major's colleges the reader is asking about.
    *
@@ -145,9 +133,15 @@ export default function MajorMap() {
       // A wheel that zooms the map instead of scrolling the page is a trap on
       // a long page. Ctrl+wheel and the +/- control still zoom.
       scrollWheelZoom: false,
-      zoomControl: true,
+      // Leaflet puts +/- in the top-left, which is where the major's own tag
+      // sits — the two overlapped, and the buttons won because Leaflet's
+      // controls sit at z-index 1000. Moved rather than restyled: the tag
+      // names what is on the map and wants that corner, and the buttons do
+      // not care which corner they are in.
+      zoomControl: false,
       attributionControl: true,
     })
+    L.control.zoom({ position: 'topright' }).addTo(map)
     map.fitBounds(IRAQ_BOUNDS)
     L.tileLayer(TILE_URL, {
       attribution: TILE_ATTRIBUTION,
@@ -231,64 +225,20 @@ export default function MajorMap() {
         </p>
       </header>
 
-      {/* Per major, not per page: English is researched, the other two are
-          not, and saying so only where it is true is the point. */}
-      <div className="shell">
-        {sample ? (
+      {/* Per major, not per page: the researched majors say nothing here, and
+          only the ones still running on invented figures carry a warning. */}
+      {sample && (
+        <div className="shell">
           <p className="mapPage__warning" role="note">
             <span className="mapPage__warningMark" aria-hidden="true" />
             <span>
               <strong>Sample figures, not real admission data.</strong> The universities and
-              places are real. The rates, scores and seat counts for {major?.name} are
-              placeholders while we gather the real ones, so do not plan around them.
+              places are real. The rates and seat counts for {major?.name} are placeholders while
+              we gather the real ones, so do not plan around them.
             </span>
           </p>
-        ) : (
-          <p className="mapPage__sourced" role="note">
-            <span className="mapPage__sourcedMark" aria-hidden="true" />
-            <span>
-              <strong>
-                {stats?.departments} departments at {stats?.universities} universities.
-              </strong>{' '}
-              {admission ? (
-                <>
-                  Entry is not decided per college here: government dentistry takes a national
-                  minimum of <strong>{admission.governmentMinimum}%</strong> for 2025-26 and then
-                  allocates seats by grade within each channel and governorate. The number on each
-                  card is the{' '}
-                  <a href={sources[0]?.href} target="_blank" rel="noreferrer noopener">
-                    ministry&rsquo;s 2025 classification
-                  </a>{' '}
-                  score, which rates the college, not your chances. {stats?.privateCount} of these
-                  are private and sit below that bar.
-                </>
-              ) : slug === 'cybersecurity' ? (
-                <>
-                  The cut-off is the real 2025-26{' '}
-                  <a href={sources[0]?.href} target="_blank" rel="noreferrer noopener">
-                    central admission minimum
-                  </a>
-                  , the grade you need. {stats?.withoutCutoff} departments are confirmed but
-                  have no published cut-off, and say so rather than showing a guess. The
-                  ministry&rsquo;s department classification does not cover cybersecurity at
-                  all, so none of this comes from there.
-                </>
-              ) : (
-                <>
-                  Federal figures come from the{' '}
-                  <a href={sources[0]?.href} target="_blank" rel="noreferrer noopener">
-                    ministry&rsquo;s 2025 classification
-                  </a>
-                  . The score ranks the department on the ministry&rsquo;s criteria; it is not
-                  an acceptance rate or a grade cut-off. Kurdistan Region universities sit
-                  outside that table and are listed from their own departments, without a
-                  score.
-                </>
-              )}
-            </span>
-          </p>
-        )}
-      </div>
+        </div>
+      )}
 
       {/* Three grid children rather than a left column and a right one, so a
           phone can put the picker, then the map, then the list, without the
@@ -388,14 +338,12 @@ export default function MajorMap() {
                       </span>
                     </span>
                     <span className="crow__meta">
-                      {/* whichever number this major actually has */}
+                      {/* The cut-off, where this major has one. Nothing else
+                          belongs in this slot: a number beside a college name
+                          gets read as "what you need to get in", which is only
+                          true of this one. */}
                       {best.minScore != null && (
                         <span className="crow__score">{best.minScore}%</span>
-                      )}
-                      {best.score != null && (
-                        <span className="crow__score" title="2025 ministry classification score">
-                          {best.score.toFixed(1)}
-                        </span>
                       )}
                       <span className="crow__kind">{college.kind}</span>
                     </span>
@@ -411,21 +359,6 @@ export default function MajorMap() {
                           <p className="cdetail__dept">{b.department ?? b.college}</p>
                           {b.department && <p className="cdetail__in">{b.college}</p>}
                           <dl className="cdetail__facts">
-                            {b.rank != null && (
-                              <div>
-                                {/* named, because ranks restart per college
-                                    type: one university can hold #1 in Arts
-                                    and #1 in Education at the same time */}
-                                <dt>Rank in {b.category ?? 'its college'}</dt>
-                                <dd>#{b.rank}</dd>
-                              </div>
-                            )}
-                            {b.score != null && (
-                              <div>
-                                <dt>2025 score</dt>
-                                <dd>{b.score.toFixed(2)}</dd>
-                              </div>
-                            )}
                             {b.minScore != null && (
                               <div>
                                 <dt>{college.sample ? 'Minimum score' : 'Cut-off 2025-26'}</dt>
@@ -480,7 +413,7 @@ export default function MajorMap() {
 
                       <p className="cdetail__where">
                         {college.governorate}
-                        {college.system === 'krg' && ' · Kurdistan Region, no ministry score'}
+                        {college.system === 'krg' && ' · Kurdistan Region'}
                       </p>
 
                       <Link to={`/app/${slug}`} className="cdetail__link">
