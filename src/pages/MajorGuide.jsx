@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
+import { useCallback, useEffect, useMemo, useState } from 'react'
 import { Link, useParams } from 'react-router-dom'
 
 import Lattice from '../components/decor/Lattice.jsx'
@@ -190,7 +190,6 @@ export default function MajorGuide() {
     typeof window === 'undefined' ? true : window.matchMedia(WIDE).matches,
   )
   const [active, setActive] = useState(sections[0]?.id ?? '')
-  const seen = useRef(new Set())
 
   /* The sidebar's default belongs to the viewport, not to the last thing the
      reader did on another screen size: rotating a phone into landscape should
@@ -202,33 +201,50 @@ export default function MajorGuide() {
     return () => mq.removeEventListener('change', sync)
   }, [])
 
-  /* Which section the reader is in front of. Tracked as a set of everything
-     currently on screen, so the answer is "the first visible one in document
-     order" rather than "whichever fired last", which flips around when two
-     sections cross the line in the same frame. */
+  /**
+   * Which section the reader is in front of.
+   *
+   * Measured on scroll rather than watched with an IntersectionObserver. An
+   * observer only reports the moment an edge crosses a band, so the answer
+   * depends on tuning that band against section heights nobody controls —
+   * short sections can pass through without ever being the answer, and the
+   * last one, sitting at the foot of the page, may never reach the band at
+   * all. Reading positions directly is the same approach the landing nav
+   * takes, and it cannot get stuck: the section whose top has most recently
+   * passed the reading line is the one you are in, always.
+   *
+   * rAF-throttled, so a fast scroll costs one measurement per frame.
+   */
   useEffect(() => {
     if (!sections.length) return undefined
-    const els = sections.map((s) => document.getElementById(s.id)).filter(Boolean)
-    if (!els.length) return undefined
 
-    const observer = new IntersectionObserver(
-      (entries) => {
-        for (const entry of entries) {
-          if (entry.isIntersecting) seen.current.add(entry.target.id)
-          else seen.current.delete(entry.target.id)
-        }
-        const first = sections.find((s) => seen.current.has(s.id))
-        if (first) setActive(first.id)
-      },
-      // a band across the upper third: the section under the heading you are
-      // reading, not the one merely poking into the bottom of the window
-      { rootMargin: '-12% 0px -72% 0px', threshold: 0 },
-    )
+    let frame = 0
+    const measure = () => {
+      frame = 0
+      const line = window.innerHeight * 0.3
+      let current = sections[0].id
+      for (const section of sections) {
+        const el = document.getElementById(section.id)
+        if (el && el.getBoundingClientRect().top <= line) current = section.id
+      }
+      // At the very bottom the last section wins whatever the line says: it is
+      // usually too short to reach it, and you are plainly reading it.
+      const atBottom =
+        window.innerHeight + window.scrollY >= document.documentElement.scrollHeight - 4
+      setActive(atBottom ? sections[sections.length - 1].id : current)
+    }
 
-    els.forEach((el) => observer.observe(el))
+    const onScroll = () => {
+      if (!frame) frame = window.requestAnimationFrame(measure)
+    }
+
+    measure()
+    window.addEventListener('scroll', onScroll, { passive: true })
+    window.addEventListener('resize', onScroll)
     return () => {
-      observer.disconnect()
-      seen.current.clear()
+      if (frame) window.cancelAnimationFrame(frame)
+      window.removeEventListener('scroll', onScroll)
+      window.removeEventListener('resize', onScroll)
     }
   }, [sections])
 

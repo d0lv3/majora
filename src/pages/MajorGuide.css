@@ -68,12 +68,17 @@
 /* =============================== LAYOUT ============================== */
 /* Named areas so the toggle button, the nav and the document can be three
    siblings: narrow, the bar sits above the document and the nav leaves the
-   flow entirely, which a two-column grid could not express. */
+   flow entirely, which a two-column grid could not express.
+
+   The bar spans both columns rather than sitting over the nav. It used to be
+   in column one, which is the column that collapses to zero — the button then
+   overflowed its own area and, on anything under about 1150px, printed itself
+   across the first lines of the document. Spanning, it never collapses. */
 .guide__body {
   display: grid;
   grid-template-columns: minmax(0, 260px) minmax(0, 1fr);
   grid-template-areas:
-    'bar  doc'
+    'bar  bar'
     'nav  doc';
   align-items: start;
   gap: 0 clamp(1.5rem, 3.5vw, 3.5rem);
@@ -95,12 +100,25 @@
   margin-bottom: 1rem;
 }
 
+/* Sticky against the grid area, which runs the full height of the document
+   column beside it — that is what gives it somewhere to travel. align-self is
+   stated rather than inherited from the container so the item keeps its own
+   height instead of stretching to the row, which would leave it nothing to
+   slide within.
+
+   overflow-y auto rather than hidden: a contents list longer than the screen
+   has to be able to scroll on its own, or its last entries are unreachable
+   once it sticks. x stays hidden, which is what clips it during the collapse. */
 .guide__nav {
   grid-area: nav;
   position: sticky;
   top: var(--anchor-offset);
+  align-self: start;
   min-width: 0;
-  overflow: hidden;
+  max-height: calc(100svh - var(--anchor-offset) - 2rem);
+  overflow-x: hidden;
+  overflow-y: auto;
+  overscroll-behavior: contain;
   transition:
     opacity 0.3s ease,
     visibility 0.3s ease;
@@ -700,6 +718,15 @@
     left: 0;
     z-index: 120;
     width: min(320px, 86vw);
+    /* top/bottom already give it the full height; the sticky ceiling from the
+       wide layout would leave a dead strip under the sheet.
+
+       align-self has to go back to stretch with it. The grid container sets
+       align-items: start, and Chrome applies that to a fixed-position grid
+       child too — which beat top:0/bottom:0 and left the sheet 483px tall in
+       an 812px window, floating with a gap under it. */
+    align-self: stretch;
+    max-height: none;
     padding: clamp(1.2rem, 4vw, 1.8rem) 1.1rem;
     overflow-y: auto;
     background: var(--white);
