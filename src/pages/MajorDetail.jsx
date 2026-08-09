@@ -6,6 +6,7 @@ import MajorCard from '../components/MajorCard.jsx'
 import SpecularButton from '../components/ui/SpecularButton.jsx'
 import SB from '../components/ui/buttonPresets.js'
 import { MAJORS, getMajor, fieldLabel, isAvailable } from '../data/majors.js'
+import { branchesFor } from '../data/branches.js'
 import './MajorDetail.css'
 
 export default function MajorDetail() {
@@ -39,6 +40,10 @@ export default function MajorDetail() {
   }
 
   const related = MAJORS.filter((m) => m.field === major.field && m.slug !== major.slug).slice(0, 4)
+  // Some majors are a department rather than one course; those list what is
+  // inside them. Most have no branches and this whole section disappears.
+  const branches = branchesFor(slug)
+  const readyBranches = branches.filter((b) => b.ready).length
 
   const blocks = [
     { key: 'studies', label: 'What you will study', items: major.studies },
@@ -101,6 +106,57 @@ export default function MajorDetail() {
           </Reveal>
         </div>
       </section>
+
+      {branches.length > 0 && (
+        <section className="section mdetail__branches">
+          <div className="shell">
+            <Reveal>
+              <span className="eyebrow eyebrow--dark">Inside the department</span>
+              <h2 className="mdetail__branchesTitle">
+                {major.name} is {branches.length} different courses wearing one name.
+              </h2>
+              <p className="mdetail__branchesLede">
+                You apply to the department, then spend four years inside one of these. They lead
+                to different work, so they are worth telling apart before you arrive.{' '}
+                {readyBranches === 1
+                  ? 'One is written up so far; the rest are listed because leaving them out would make the degree look smaller than it is.'
+                  : `${readyBranches} are written up so far.`}
+              </p>
+            </Reveal>
+
+            <ul className="branchList">
+              {branches.map((b, i) =>
+                b.ready ? (
+                  <Reveal as="li" key={b.slug} delay={i * 60}>
+                    <Link to={`/app/${slug}/${b.slug}`} className="branch branch--open">
+                      <span className="branch__head">
+                        <span className="branch__name">{b.name}</span>
+                        <span className="branch__tag">Open</span>
+                      </span>
+                      <span className="branch__blurb">{b.blurb}</span>
+                      <span className="branch__go">
+                        Read the guide<span aria-hidden="true"> →</span>
+                      </span>
+                    </Link>
+                  </Reveal>
+                ) : (
+                  <Reveal as="li" key={b.slug} delay={i * 60}>
+                    {/* Not a link, and not styled like one: a card that looks
+                        clickable and is not is worse than a plain panel. */}
+                    <div className="branch branch--soon">
+                      <span className="branch__head">
+                        <span className="branch__name">{b.name}</span>
+                        <span className="branch__tag branch__tag--soon">Coming soon</span>
+                      </span>
+                      <span className="branch__blurb">{b.blurb}</span>
+                    </div>
+                  </Reveal>
+                ),
+              )}
+            </ul>
+          </div>
+        </section>
+      )}
 
       {related.length > 0 && (
         <section className="section mdetail__related">

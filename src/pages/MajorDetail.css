@@ -24,8 +24,13 @@
   position: relative;
 }
 
+/* block, not inline-block: the eyebrow after it is inline-flex, so the two sat
+   on one line with the field label starting at the exact pixel the link ended
+   — and margin-bottom on an inline box does nothing to separate them. Width is
+   held to the text so the link's hit box does not run the shell's full width. */
 .mdetail__back {
-  display: inline-block;
+  display: block;
+  width: fit-content;
   margin-bottom: 1.8rem;
   font-size: 0.85rem;
   color: var(--text-on-dark-dim);
@@ -170,10 +175,15 @@
 }
 
 /* The way back out of a major, and it was a 22px target. The reduced margin
-   absorbs the added height, so the title below does not move down. */
+   absorbs the added height, so the title below does not move down.
+
+   flex rather than inline-flex: inline-flex is what put the link and the field
+   label on one line in the first place, and using it here brought the bug back
+   on every touch device while desktop looked fixed. Block-level flex still
+   centres the label vertically inside the 44px. */
 @media (pointer: coarse) {
   .mdetail__back {
-    display: inline-flex;
+    display: flex;
     align-items: center;
     min-height: 44px;
     margin-bottom: 0.9rem;
@@ -204,6 +214,125 @@
   display: flex;
   justify-content: center;
   margin-top: clamp(2.5rem, 5vw, 3.5rem);
+}
+
+/* ============================== BRANCHES ============================ */
+/* What is actually inside a department, on the pale ground the library uses,
+   so it reads as the reachable part of the page rather than more of the
+   dark-on-dark write-up above it. */
+.mdetail__branches {
+  background: var(--paper);
+  color: var(--text-on-light);
+}
+
+.mdetail__branchesTitle {
+  margin-top: 1.1rem;
+  font-size: var(--step-h2);
+  color: var(--purple-600);
+  text-wrap: balance;
+}
+
+.mdetail__branchesLede {
+  max-width: 66ch;
+  margin-top: 1.1rem;
+  font-size: 1.02rem;
+  line-height: 1.7;
+  color: var(--text-on-light-dim);
+}
+
+.branchList {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(min(100%, 270px), 1fr));
+  gap: clamp(0.8rem, 1.6vw, 1.1rem);
+  margin-top: clamp(2rem, 4vw, 2.8rem);
+  padding: 0;
+  list-style: none;
+}
+
+.branch {
+  display: flex;
+  flex-direction: column;
+  gap: 0.6rem;
+  height: 100%;
+  padding: clamp(1.1rem, 2.2vw, 1.5rem);
+  border-radius: var(--r-md);
+  background: var(--white);
+  box-shadow: inset 0 0 0 1px rgba(65, 43, 99, 0.12);
+}
+
+.branch--open {
+  transition:
+    transform 0.35s var(--ease),
+    box-shadow 0.35s ease;
+}
+
+.branch--open:hover {
+  transform: translateY(-3px);
+  box-shadow:
+    inset 0 0 0 1.5px var(--gold-600),
+    var(--shadow-card);
+}
+
+/* Written up and reachable is the difference this section exists to show, so
+   the ones that are not fade back rather than sitting at equal weight. */
+.branch--soon {
+  background: rgba(255, 255, 255, 0.55);
+  box-shadow: inset 0 0 0 1px var(--line);
+}
+
+.branch__head {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 0.8rem;
+}
+
+.branch__name {
+  font-family: var(--font-display);
+  font-size: 1.08rem;
+  font-weight: 600;
+  letter-spacing: -0.02em;
+  line-height: 1.25;
+  color: var(--purple-600);
+}
+
+.branch--soon .branch__name {
+  color: var(--text-on-light-dim);
+}
+
+.branch__tag {
+  flex: none;
+  padding: 0.2rem 0.6rem;
+  border-radius: var(--r-pill);
+  background: rgba(238, 175, 22, 0.2);
+  font-size: 0.62rem;
+  font-weight: 700;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--gold-700);
+}
+
+.branch__tag--soon {
+  background: rgba(65, 43, 99, 0.08);
+  color: var(--text-on-light-dim);
+}
+
+.branch__blurb {
+  flex: 1;
+  font-size: 0.9rem;
+  line-height: 1.6;
+  color: var(--text-on-light-dim);
+  text-wrap: pretty;
+}
+
+.branch__go {
+  font-size: 0.82rem;
+  font-weight: 600;
+  color: var(--gold-700);
+}
+
+.branch--open:hover .branch__go {
+  text-decoration: underline;
 }
 
 /* ============================== MISSING ============================= */

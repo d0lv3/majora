@@ -1,0 +1,770 @@
+/* =========================================================
+   A branch of a major, written out: contents left, document
+   right. Same pale ground as the library and the map, with
+   the purple head the major page uses, so a reader going
+   major -> branch does not feel handed to another product.
+   ========================================================= */
+.guide {
+  min-height: 100svh;
+  padding-bottom: calc(clamp(3rem, 6vw, 5rem) + var(--nav-clear));
+  background: #fbfaff;
+  color: var(--text-on-light);
+}
+
+/* ================================ HEAD =============================== */
+.guide__head {
+  position: relative;
+  overflow: hidden;
+  margin-bottom: clamp(1.6rem, 3vw, 2.6rem);
+  padding: var(--nav-headroom) 0 clamp(2.2rem, 4vw, 3.4rem);
+  background: var(--purple-600);
+  background-image: radial-gradient(85% 80% at 15% 0%, rgba(107, 78, 148, 0.55), transparent 60%);
+  color: var(--white);
+}
+
+.guide__lattice {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+}
+
+.guide__headInner {
+  position: relative;
+}
+
+/* block, and width-limited, for the same reason as the major page's: the
+   eyebrow under it is inline-flex and would otherwise share its line. */
+.guide__back {
+  display: block;
+  width: fit-content;
+  margin-bottom: 1.6rem;
+  font-size: 0.85rem;
+  color: var(--text-on-dark-dim);
+  transition: color 0.25s ease;
+}
+
+.guide__back:hover {
+  color: var(--gold);
+}
+
+.guide__title {
+  margin-top: 1rem;
+  font-size: clamp(2.1rem, 5vw, 3.6rem);
+  text-wrap: balance;
+}
+
+.guide__blurb {
+  max-width: 56ch;
+  margin-top: 1.1rem;
+  font-family: var(--font-display);
+  font-size: var(--step-lead);
+  font-weight: 400;
+  line-height: 1.55;
+  color: rgba(255, 255, 255, 0.84);
+}
+
+/* =============================== LAYOUT ============================== */
+/* Named areas so the toggle button, the nav and the document can be three
+   siblings: narrow, the bar sits above the document and the nav leaves the
+   flow entirely, which a two-column grid could not express. */
+.guide__body {
+  display: grid;
+  grid-template-columns: minmax(0, 260px) minmax(0, 1fr);
+  grid-template-areas:
+    'bar  doc'
+    'nav  doc';
+  align-items: start;
+  gap: 0 clamp(1.5rem, 3.5vw, 3.5rem);
+}
+
+/* Collapsed: the nav keeps its row but gives up its column, and the document
+   takes the width. Transitioning grid-template-columns rather than hiding the
+   nav is what makes the collapse slide instead of jump. */
+.guide__body[data-open='false'] {
+  grid-template-columns: 0 minmax(0, 1fr);
+}
+
+.guide__body {
+  transition: grid-template-columns 0.35s var(--ease);
+}
+
+.guide__bar {
+  grid-area: bar;
+  margin-bottom: 1rem;
+}
+
+.guide__nav {
+  grid-area: nav;
+  position: sticky;
+  top: var(--anchor-offset);
+  min-width: 0;
+  overflow: hidden;
+  transition:
+    opacity 0.3s ease,
+    visibility 0.3s ease;
+}
+
+.guide__body[data-open='false'] .guide__nav {
+  opacity: 0;
+  visibility: hidden;
+}
+
+.guide__doc {
+  grid-area: doc;
+  min-width: 0;
+}
+
+/* Collapsed, the document keeps its 74ch measure but the column it sits in is
+   the whole shell, so without this it hugs the left edge and leaves 300px of
+   nothing beside it. Widening the measure instead would be the wrong fix — the
+   line length is what makes it readable. */
+.guide__body[data-open='false'] .guide__doc {
+  margin-inline: auto;
+}
+
+/* The scrim only exists on narrow screens; here it is inert and invisible. */
+.guide__scrim {
+  display: none;
+}
+
+/* ------------------------------- toggle ------------------------------ */
+.guide__toggle {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.7rem;
+  min-height: 44px;
+  padding: 0 1.1rem;
+  border-radius: var(--r-pill);
+  background: var(--white);
+  box-shadow: inset 0 0 0 1.5px rgba(65, 43, 99, 0.16);
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: var(--purple-600);
+  transition:
+    box-shadow 0.25s ease,
+    background-color 0.25s ease;
+}
+
+.guide__toggle:hover {
+  background: var(--paper);
+  box-shadow: inset 0 0 0 1.5px var(--purple-500);
+}
+
+.guide__toggleIcon {
+  display: grid;
+  gap: 3px;
+  width: 15px;
+}
+
+.guide__toggleIcon span {
+  height: 1.8px;
+  border-radius: 2px;
+  background: currentColor;
+  transition: transform 0.3s var(--ease);
+}
+
+/* Closed, the three rules pull together into a tighter stack — enough of a
+   change to read as a state without pretending to be an X. */
+.guide__body[data-open='false'] .guide__toggleIcon span:first-child {
+  transform: translateY(2px);
+}
+
+.guide__body[data-open='false'] .guide__toggleIcon span:last-child {
+  transform: translateY(-2px);
+}
+
+/* ------------------------------- the nav ----------------------------- */
+.guide__navTitle {
+  margin-bottom: 0.7rem;
+  font-size: 0.68rem;
+  font-weight: 700;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: var(--text-on-light-dim);
+}
+
+.guide__navList {
+  display: grid;
+  gap: 0.15rem;
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  counter-reset: none;
+}
+
+.gnav {
+  display: flex;
+  align-items: baseline;
+  gap: 0.65rem;
+  width: 100%;
+  padding: 0.6rem 0.75rem;
+  border-radius: var(--r-sm);
+  text-align: left;
+  font-size: 0.9rem;
+  line-height: 1.35;
+  color: var(--text-on-light-dim);
+  transition:
+    background-color 0.25s ease,
+    color 0.25s ease;
+}
+
+.gnav:hover {
+  background: rgba(65, 43, 99, 0.06);
+  color: var(--purple-600);
+}
+
+/* The current section, marked with the gold rule the rest of the site uses
+   for "you are here" rather than a heavier background. */
+.gnav.is-on {
+  background: var(--white);
+  box-shadow: inset 0 0 0 1px rgba(65, 43, 99, 0.1);
+  color: var(--purple-600);
+  font-weight: 600;
+}
+
+.gnav__n {
+  flex: none;
+  font-family: var(--font-display);
+  font-size: 0.68rem;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  color: var(--gold-600);
+}
+
+.gnav__label {
+  min-width: 0;
+}
+
+/* ============================= THE DOCUMENT ========================== */
+/* min(), not a bare 74ch. This is a grid item, and a grid item is free to
+   grow past its track to fit content that will not shrink — the career table
+   sets a 640px floor, which dragged the whole document out to 642px inside a
+   335px column on a phone. body has overflow-x hidden, so nothing scrolled and
+   nothing looked wrong: the right third of every line was simply gone. The
+   100% term is what forbids that; the 74ch term is the reading measure. */
+.gdoc {
+  max-width: min(74ch, 100%);
+}
+
+.gdoc__section {
+  padding-block: clamp(1.6rem, 3vw, 2.4rem);
+  /* the nav floats over the page, so a jump has to stop short of it */
+  scroll-margin-top: var(--anchor-offset);
+}
+
+.gdoc__section + .gdoc__section {
+  border-top: 1px solid var(--line);
+}
+
+.gdoc__section:first-child {
+  padding-top: 0;
+}
+
+.gdoc__num {
+  font-family: var(--font-display);
+  font-size: 0.7rem;
+  font-weight: 700;
+  letter-spacing: 0.2em;
+  color: var(--gold-600);
+}
+
+.gdoc__title {
+  margin-top: 0.5rem;
+  font-size: clamp(1.5rem, 3vw, 2.05rem);
+  color: var(--purple-600);
+  letter-spacing: -0.03em;
+  text-wrap: balance;
+}
+
+.gdoc__lead {
+  margin-top: 0.7rem;
+  font-family: var(--font-display);
+  font-size: clamp(1rem, 1.5vw, 1.14rem);
+  font-weight: 500;
+  line-height: 1.5;
+  color: var(--text-on-light-dim);
+}
+
+.gdoc__lede {
+  margin-top: 1.2rem;
+  font-family: var(--font-display);
+  font-size: clamp(1.15rem, 2.2vw, 1.5rem);
+  font-weight: 500;
+  line-height: 1.4;
+  letter-spacing: -0.02em;
+  color: var(--purple-600);
+  text-wrap: pretty;
+}
+
+.gdoc__text {
+  margin-top: 1.1rem;
+  font-size: 1rem;
+  line-height: 1.75;
+  color: var(--text-on-light-dim);
+  text-wrap: pretty;
+}
+
+.gdoc__text strong {
+  color: var(--text-on-light);
+  font-weight: 600;
+}
+
+.gdoc__list {
+  display: grid;
+  gap: 0.55rem;
+  margin-top: 1.1rem;
+  padding-left: 0;
+  list-style: none;
+}
+
+.gdoc__list li {
+  position: relative;
+  padding-left: 1.4rem;
+  font-size: 0.96rem;
+  line-height: 1.65;
+  color: var(--text-on-light-dim);
+}
+
+.gdoc__list li::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 0.62em;
+  width: 7px;
+  height: 7px;
+  background: var(--gold-600);
+  transform: rotate(45deg);
+}
+
+.gdoc__note {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.8rem;
+  margin-top: 1.2rem;
+  padding: 0.9rem 1.1rem;
+  border-radius: var(--r-md);
+  background: rgba(65, 43, 99, 0.05);
+  box-shadow: inset 0 0 0 1px rgba(65, 43, 99, 0.12);
+  font-size: 0.88rem;
+  line-height: 1.6;
+  color: var(--text-on-light-dim);
+}
+
+.gdoc__noteMark {
+  width: 9px;
+  height: 9px;
+  margin-top: 0.45rem;
+  flex: none;
+  background: var(--purple-400);
+  transform: rotate(45deg);
+}
+
+.gdoc__foot {
+  padding-top: clamp(1.6rem, 3vw, 2.4rem);
+  border-top: 1px solid var(--line);
+}
+
+/* ------------------------------ arrow flow --------------------------- */
+/* Read -> Analyze -> Interpret. The arrows are drawn in ::after so they are
+   not read out as text, and the last step does not get one. */
+.gflow {
+  margin-top: 1.3rem;
+}
+
+.gflow__label {
+  display: block;
+  margin-bottom: 0.55rem;
+  font-size: 0.68rem;
+  font-weight: 700;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--text-on-light-dim);
+}
+
+.gflow__steps {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.4rem 0.2rem;
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.gflow__steps li {
+  display: inline-flex;
+  align-items: center;
+  padding: 0.35rem 0.8rem;
+  border-radius: var(--r-pill);
+  background: rgba(238, 175, 22, 0.16);
+  font-family: var(--font-display);
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: var(--gold-700);
+}
+
+.gflow__steps li:not(:last-child)::after {
+  content: '→';
+  margin: 0 -0.15rem 0 0.65rem;
+  color: var(--gold-600);
+  font-weight: 400;
+}
+
+/* ----------------------------- quick facts --------------------------- */
+.gfacts {
+  margin-top: 1.4rem;
+  padding: clamp(1.1rem, 2.2vw, 1.5rem);
+  border-radius: var(--r-md);
+  background: var(--white);
+  box-shadow: inset 0 0 0 1px rgba(65, 43, 99, 0.12);
+}
+
+.gfacts__title {
+  margin-bottom: 0.9rem;
+  font-size: 0.68rem;
+  font-weight: 700;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: var(--purple-500);
+}
+
+.gfacts__list {
+  display: grid;
+  gap: 0.85rem;
+  margin: 0;
+}
+
+.gfacts__list > div {
+  display: grid;
+  grid-template-columns: minmax(0, 9.5rem) minmax(0, 1fr);
+  gap: 0.3rem 1.2rem;
+  align-items: baseline;
+}
+
+.gfacts__list dt {
+  font-size: 0.68rem;
+  font-weight: 700;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--text-on-light-dim);
+}
+
+.gfacts__list dd {
+  margin: 0;
+  font-size: 0.95rem;
+  line-height: 1.55;
+  color: var(--text-on-light);
+}
+
+.gfacts__note {
+  margin-top: 1rem;
+  padding-top: 0.85rem;
+  border-top: 1px solid var(--line);
+  font-size: 0.8rem;
+  line-height: 1.55;
+  color: var(--text-on-light-dim);
+}
+
+/* ---------------------------- term + text ---------------------------- */
+.gdefs {
+  display: grid;
+  margin: 1.3rem 0 0;
+  border-radius: var(--r-md);
+  border: 1px solid var(--line);
+  overflow: hidden;
+}
+
+.gdefs__row {
+  display: grid;
+  grid-template-columns: minmax(0, 12rem) minmax(0, 1fr);
+  gap: 0.3rem 1.4rem;
+  padding: clamp(0.85rem, 1.6vw, 1.1rem) clamp(1rem, 2vw, 1.3rem);
+  background: var(--white);
+  transition: background-color 0.3s ease;
+}
+
+.gdefs__row + .gdefs__row {
+  border-top: 1px solid var(--line);
+}
+
+.gdefs__row:hover {
+  background: var(--paper);
+}
+
+.gdefs dt {
+  font-family: var(--font-display);
+  font-size: 0.98rem;
+  font-weight: 600;
+  letter-spacing: -0.015em;
+  color: var(--purple-600);
+}
+
+.gdefs dd {
+  margin: 0;
+  font-size: 0.93rem;
+  line-height: 1.65;
+  color: var(--text-on-light-dim);
+}
+
+/* ------------------------------- years ------------------------------- */
+.gyears {
+  display: grid;
+  gap: clamp(0.8rem, 1.6vw, 1.1rem);
+  margin: 1.3rem 0 0;
+  padding: 0;
+  list-style: none;
+}
+
+.gyear {
+  padding: clamp(1.1rem, 2.2vw, 1.6rem);
+  border-radius: var(--r-md);
+  background: var(--white);
+  box-shadow: inset 0 0 0 1px rgba(65, 43, 99, 0.12);
+  transition: box-shadow 0.35s ease;
+}
+
+.gyear:hover {
+  box-shadow: inset 0 0 0 1.5px rgba(238, 175, 22, 0.55);
+}
+
+.gyear__n {
+  font-family: var(--font-body);
+  font-size: 0.68rem;
+  font-weight: 700;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: var(--gold-600);
+}
+
+.gyear__title {
+  margin-top: 0.35rem;
+  font-size: 1.14rem;
+  color: var(--purple-600);
+  letter-spacing: -0.02em;
+}
+
+.gyear__label {
+  margin-top: 1rem;
+  font-size: 0.68rem;
+  font-weight: 700;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--text-on-light-dim);
+}
+
+.gyear__list {
+  display: grid;
+  gap: 0.45rem;
+  margin-top: 0.5rem;
+  padding-left: 0;
+  list-style: none;
+}
+
+.gyear__list li {
+  position: relative;
+  padding-left: 1.3rem;
+  font-size: 0.92rem;
+  line-height: 1.6;
+  color: var(--text-on-light-dim);
+}
+
+.gyear__list li::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 0.6em;
+  width: 6px;
+  height: 6px;
+  background: var(--purple-300);
+  transform: rotate(45deg);
+}
+
+.gyear__purpose {
+  margin-top: 1rem;
+  padding-top: 0.85rem;
+  border-top: 1px solid var(--line);
+  font-size: 0.92rem;
+  line-height: 1.6;
+  color: var(--text-on-light);
+}
+
+/* ------------------------------- table ------------------------------- */
+.gtable {
+  margin-top: 1.3rem;
+  border-radius: var(--r-md);
+  border: 1px solid var(--line);
+  overflow-x: auto;
+  background: var(--white);
+}
+
+.gtable:focus-visible {
+  outline: 2px solid var(--gold);
+  outline-offset: 2px;
+}
+
+.gtable table {
+  width: 100%;
+  min-width: 640px;
+  border-collapse: collapse;
+  text-align: left;
+}
+
+.gtable th,
+.gtable td {
+  padding: 0.85rem 1rem;
+  vertical-align: top;
+  font-size: 0.9rem;
+  line-height: 1.6;
+}
+
+.gtable thead th {
+  position: sticky;
+  top: 0;
+  background: var(--paper);
+  font-size: 0.68rem;
+  font-weight: 700;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--purple-500);
+  white-space: nowrap;
+}
+
+.gtable tbody tr + tr {
+  border-top: 1px solid var(--line);
+}
+
+.gtable tbody th {
+  font-family: var(--font-display);
+  font-weight: 600;
+  color: var(--purple-600);
+  white-space: nowrap;
+}
+
+.gtable tbody td {
+  color: var(--text-on-light-dim);
+}
+
+.gtable tbody td:first-of-type {
+  color: var(--text-on-light);
+}
+
+/* ============================== MISSING ============================== */
+.guide--missing {
+  display: grid;
+  place-items: center;
+  text-align: center;
+  padding-top: var(--nav-headroom);
+}
+
+.guide--missing h1 {
+  margin-top: 1.1rem;
+  font-size: var(--step-h2);
+  color: var(--purple-600);
+  text-wrap: balance;
+}
+
+.guide__missingText {
+  max-width: 52ch;
+  margin: 1.2rem auto 2rem;
+  font-size: 1.02rem;
+  line-height: 1.7;
+  color: var(--text-on-light-dim);
+}
+
+.guide--missing .btn--ghost {
+  --btn-fg: var(--purple-600);
+  box-shadow: inset 0 0 0 1.5px var(--line-strong);
+}
+
+/* ============================== NARROW =============================== */
+/* Under two columns' worth of room the nav stops being a column and becomes a
+   sheet over the document: fixed, off to the left, slid in when open. The
+   document keeps the full width either way, so opening the contents never
+   reflows the text you were reading. */
+@media (max-width: 999px) {
+  .guide__body,
+  .guide__body[data-open='false'] {
+    grid-template-columns: minmax(0, 1fr);
+    grid-template-areas:
+      'bar'
+      'doc';
+    transition: none;
+  }
+
+  .guide__nav {
+    position: fixed;
+    top: 0;
+    bottom: 0;
+    left: 0;
+    z-index: 120;
+    width: min(320px, 86vw);
+    padding: clamp(1.2rem, 4vw, 1.8rem) 1.1rem;
+    overflow-y: auto;
+    background: var(--white);
+    box-shadow: 0 30px 60px -30px rgba(21, 13, 33, 0.55);
+    transform: translateX(-102%);
+    visibility: hidden;
+    transition:
+      transform 0.35s var(--ease),
+      visibility 0.35s ease;
+  }
+
+  .guide__body[data-open='true'] .guide__nav {
+    transform: none;
+    visibility: visible;
+    opacity: 1;
+  }
+
+  .guide__scrim {
+    display: block;
+    position: fixed;
+    inset: 0;
+    z-index: 110;
+    background: rgba(21, 13, 33, 0.45);
+    opacity: 0;
+    visibility: hidden;
+    transition:
+      opacity 0.3s ease,
+      visibility 0.3s ease;
+  }
+
+  .guide__body[data-open='true'] .guide__scrim {
+    opacity: 1;
+    visibility: visible;
+  }
+
+  /* The reading measure is the column here, but the ceiling stays: see the
+     note on .gdoc above for what "none" cost. */
+  .gdoc {
+    max-width: 100%;
+  }
+}
+
+/* One column for the term lists and the facts panel: at this width a 12rem
+   term track leaves the explanation beside it about 150px wide. */
+@media (max-width: 700px) {
+  .gdefs__row,
+  .gfacts__list > div {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}
+
+/* Everything tappable on this page clears 44px; these two do not get there on
+   their own padding. The back link stays block-level flex — inline-flex would
+   put it back on the eyebrow's line, which is the bug this page's head was
+   written to avoid. */
+@media (pointer: coarse) {
+  .gnav {
+    min-height: 44px;
+    align-items: center;
+  }
+
+  .guide__back {
+    display: flex;
+    align-items: center;
+    min-height: 44px;
+    margin-bottom: 0.8rem;
+  }
+}

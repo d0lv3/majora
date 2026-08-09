@@ -21,8 +21,11 @@ import MajorDetail from './pages/MajorDetail.jsx'
 //
 // Both import ./data/mapData.js, so that lands in a chunk of its own and is
 // fetched once however the reader arrives.
+//   MajorGuide a branch write-up and its course content — long, and read by
+//              whoever opened that one branch, not by the library above it.
 const Majors = lazy(() => import('./pages/Majors.jsx'))
 const MajorMap = lazy(() => import('./pages/MajorMap.jsx'))
+const MajorGuide = lazy(() => import('./pages/MajorGuide.jsx'))
 import NotFound from './pages/NotFound.jsx'
 
 /**
@@ -134,6 +137,19 @@ export default function App() {
             element={
               <RequireAuth>
                 <MajorDetail />
+              </RequireAuth>
+            }
+          />
+          {/* A branch inside a major — English Literature inside the English
+              department. Ranked more specific than /app/:slug, so the order
+              here is for reading rather than for routing. */}
+          <Route
+            path="/app/:slug/:branch"
+            element={
+              <RequireAuth>
+                <Suspense fallback={<div className="routeWait">Opening the guide…</div>}>
+                  <MajorGuide />
+                </Suspense>
               </RequireAuth>
             }
           />
