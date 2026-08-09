@@ -9,6 +9,7 @@ import { useAuth } from './context/AuthContext.jsx'
 import Home from './pages/Home.jsx'
 import Login from './pages/Login.jsx'
 import Signup from './pages/Signup.jsx'
+import TrackTest from './pages/TrackTest.jsx'
 import MajorDetail from './pages/MajorDetail.jsx'
 
 // Split off, both for the same reason: a visitor reading the landing page
@@ -72,8 +73,11 @@ function RequireAuth({ children }) {
 export default function App() {
   const { pathname } = useLocation()
 
-  // The auth screens are full-bleed split layouts — they bring their own chrome.
-  const bareLayout = ['/login', '/signup'].includes(pathname)
+  // The auth screens are full-bleed split layouts — they bring their own
+  // chrome. The track test joins them: it sits between registering and the
+  // library, and a nav bar across it would be three more ways to leave a
+  // screen that already offers one.
+  const bareLayout = ['/login', '/signup', '/quiz'].includes(pathname)
   // The app is its own place: its header, and no marketing footer under it.
   const inApp = pathname === '/app' || pathname.startsWith('/app/')
   const landingChrome = !bareLayout && !inApp
@@ -90,6 +94,18 @@ export default function App() {
           <Route path="/login" element={<Login />} />
           <Route path="/signup" element={<Signup />} />
           <Route path="/logout" element={<Logout />} />
+
+          {/* Where /signup sends a new account. Guarded like the app itself,
+              since it writes the result onto the signed-in user, and reachable
+              again afterwards for anyone who wants to retake it. */}
+          <Route
+            path="/quiz"
+            element={
+              <RequireAuth>
+                <TrackTest />
+              </RequireAuth>
+            }
+          />
 
           <Route
             path="/app"

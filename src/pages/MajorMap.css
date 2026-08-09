@@ -172,11 +172,118 @@
   box-shadow: 0 0 0 4px rgba(65, 43, 99, 0.12);
 }
 
+/* ----------------------------- college search ------------------------- */
+/* The same pill the library search uses, so the two app pages keep one idea
+   of what a search box looks like. */
+.mapSearch {
+  display: flex;
+  align-items: center;
+  gap: 0.7rem;
+  padding: 0.15rem 0.3rem 0.15rem 0.95rem;
+  border-radius: var(--r-pill);
+  background: var(--white);
+  box-shadow: inset 0 0 0 1.5px rgba(65, 43, 99, 0.14);
+  transition: box-shadow 0.3s ease;
+}
+
+.mapSearch:focus-within {
+  box-shadow:
+    inset 0 0 0 1.5px var(--purple-500),
+    0 0 0 4px rgba(65, 43, 99, 0.1);
+}
+
+.mapSearch__icon {
+  width: 18px;
+  height: 18px;
+  flex: none;
+  color: rgba(65, 43, 99, 0.45);
+}
+
+.mapSearch input {
+  flex: 1;
+  min-width: 0;
+  padding: 0.7rem 0;
+  border: 0;
+  background: none;
+  color: var(--text-on-light);
+  /* 1rem exactly: iOS Safari zooms the viewport when a focused field is under
+     16px, and there is no way back from that but a pinch. */
+  font-size: 1rem;
+}
+
+.mapSearch input::placeholder {
+  color: rgba(92, 81, 112, 0.65);
+  /* the placeholder names the major, which can be long — better clipped than
+     wrapped into a two-line field */
+  text-overflow: ellipsis;
+}
+
+.mapSearch input:focus {
+  outline: none;
+}
+
+.mapSearch input::-webkit-search-cancel-button {
+  display: none;
+}
+
+.mapSearch__clear {
+  flex: none;
+  padding: 0.5rem 0.9rem;
+  border-radius: var(--r-pill);
+  background: rgba(65, 43, 99, 0.08);
+  font-size: 0.8rem;
+  font-weight: 600;
+  color: var(--purple-600);
+  transition:
+    background-color 0.25s ease,
+    color 0.25s ease;
+}
+
+.mapSearch__clear:hover {
+  background: var(--gold);
+  color: var(--purple-950);
+}
+
 .mapControls__count {
   font-size: 0.8rem;
   letter-spacing: 0.1em;
   text-transform: uppercase;
   color: var(--text-on-light-dim);
+}
+
+/* Sits in the list's slot rather than under it, so the map keeps its column. */
+.mapEmpty {
+  grid-area: list;
+  display: grid;
+  justify-items: start;
+  gap: 0.7rem;
+  padding: clamp(1.2rem, 2.4vw, 1.6rem);
+  border-radius: var(--r-md);
+  background: var(--white);
+  box-shadow: inset 0 0 0 1px rgba(65, 43, 99, 0.12);
+}
+
+.mapEmpty__mark {
+  width: 11px;
+  height: 11px;
+  background: var(--gold-600);
+  transform: rotate(45deg);
+}
+
+.mapEmpty__title {
+  font-size: 1.05rem;
+  color: var(--purple-600);
+  text-wrap: balance;
+}
+
+.mapEmpty__text {
+  font-size: 0.88rem;
+  line-height: 1.6;
+  color: var(--text-on-light-dim);
+}
+
+.mapEmpty .btn {
+  margin-top: 0.3rem;
 }
 
 /* ----------------------------- college list --------------------------- */
@@ -529,5 +636,19 @@
     height: 44px;
     line-height: 44px;
     font-size: 1.35rem;
+  }
+
+  /* Clear measured 33px, and it sits inside the field it empties — a miss
+     lands in the input and opens the keyboard instead. The pill around it is
+     58px tall, so a full 44px target fits with room to spare. */
+  .mapSearch__clear {
+    display: inline-flex;
+    align-items: center;
+    min-height: 44px;
+    padding-inline: 1rem;
+  }
+
+  .mapSearch input {
+    padding-block: 0.85rem;
   }
 }

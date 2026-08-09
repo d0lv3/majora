@@ -44,16 +44,43 @@ export function AuthProvider({ children }) {
   }, [])
 
   const signup = useCallback(async ({ name, email, grade }) => {
-    const nextUser = { name, email, grade, joinedAt: new Date().toISOString() }
+    const nextUser = {
+      name,
+      email,
+      grade,
+      joinedAt: new Date().toISOString(),
+      // The track test comes straight after this, so a new account starts out
+      // with no leaning and the test still owed. Both are set by /quiz.
+      track: null,
+      trackTestDone: false,
+    }
     setUser(nextUser)
     return nextUser
+  }, [])
+
+  /**
+   * Records the outcome of the track test.
+   *
+   * `track` is null when the reader skipped it, and `trackTestDone` is set
+   * either way: a skip is an answer — "do not ask me again" — and storing it
+   * as one is what stops the test from reappearing on every visit.
+   */
+  const completeTrackTest = useCallback((track = null) => {
+    setUser((u) => (u ? { ...u, track, trackTestDone: true } : u))
   }, [])
 
   const logout = useCallback(() => setUser(null), [])
 
   const value = useMemo(
-    () => ({ user, isAuthenticated: Boolean(user), login, signup, logout }),
-    [user, login, signup, logout],
+    () => ({
+      user,
+      isAuthenticated: Boolean(user),
+      login,
+      signup,
+      logout,
+      completeTrackTest,
+    }),
+    [user, login, signup, logout, completeTrackTest],
   )
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>

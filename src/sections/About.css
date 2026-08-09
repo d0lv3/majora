@@ -5,14 +5,18 @@
   scroll-margin-top: var(--anchor-offset);
 
   /* ---------------------------------------------------------------
-     Definition rows — the shared geometry behind the term+text lists
-     in this section (the three results, the steps, the major-page
-     panels). Each row is: marker | term | explanation, running the
-     full width instead of stacking inside a tall card.
+     Definition rows — the geometry behind the three results in the
+     problem section. Each row is: marker | term | explanation,
+     running the full width instead of stacking inside a tall card.
 
      The term track is a fixed width rather than content-sized: every
      row is its own grid, so an auto track would let each row pick a
      different width and the explanations would not line up.
+
+     Held as tokens on the section rather than written into .cons
+     because the row and the figure column beside it are built from
+     the same measurements, and the narrow layout below has to move
+     both of them together.
      --------------------------------------------------------------- */
   --def-cols: 2.8rem clamp(8.5rem, 17vw, 15rem) minmax(0, 1fr);
   --def-gap: clamp(0.9rem, 2.2vw, 2.4rem);
@@ -29,9 +33,7 @@
     --def-gap: 0.45rem 0.9rem;
   }
 
-  .cons__text,
-  .step__text,
-  .ipanel__text {
+  .cons__text {
     grid-column: 2;
   }
 }
@@ -242,95 +244,71 @@
   position: relative;
 }
 
-/* One full-width column: the heading and its lede both run across the page
-   rather than stacking inside a half-width column. Sizes are tuned so each
-   fills the measure instead of leaving a short trailing line. */
+/* The whole section is now one statement under the mark, so it is centred and
+   held to a reading measure rather than run across the full shell. */
 .solution__head {
   display: grid;
-  grid-template-columns: 1fr;
-  gap: clamp(1.1rem, 2.2vw, 1.7rem);
-  margin-bottom: clamp(3rem, 6vw, 4.5rem);
+  justify-items: center;
+  gap: clamp(1.4rem, 3vw, 2.2rem);
+  text-align: center;
 }
 
-.solution__title {
-  margin-top: 1.3rem;
-  max-width: none;
-  font-size: clamp(1.5rem, 3.1vw, 2.6rem);
-  line-height: 1.14;
-}
-
-/* Kept as an <em> for the meaning, but it inherits the heading's white: the
-   clause is the second half of a sentence, not a separate label. */
-.solution__title em {
-  font-style: normal;
-  color: inherit;
-}
-
-.solution__lede {
-  max-width: none;
-  font-size: clamp(0.98rem, 1.15vw, 1.12rem);
-  line-height: 1.7;
-  color: rgba(255, 255, 255, 0.82);
-}
-
-.pillars {
-  display: grid;
-  grid-template-columns: repeat(2, 1fr);
-  gap: clamp(1rem, 2vw, 1.6rem);
-}
-
-.pillar {
+.solution__brand {
   display: flex;
-  gap: 1.3rem;
-  padding: clamp(1.5rem, 2.6vw, 2rem);
-  border-radius: var(--r-md);
-  background: rgba(21, 13, 33, 0.42);
-  box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.1);
-  transition:
-    transform 0.45s var(--ease),
-    box-shadow 0.45s ease;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.9rem;
 }
 
-.pillar:hover {
-  transform: translateY(-4px);
-  box-shadow: inset 0 0 0 1px rgba(238, 175, 22, 0.45);
+/* Same disc as the nav's and the hero's: purple ground, thin ink ring, the
+   mark scaled a touch past its padding box so it fills the circle instead of
+   floating in the middle of one. */
+.solution__logo {
+  width: clamp(88px, 13vw, 132px);
+  height: clamp(88px, 13vw, 132px);
+  padding: 3px;
+  border-radius: 50%;
+  background: var(--purple-600);
+  box-shadow:
+    0 0 0 2px var(--ink),
+    0 26px 50px -30px rgba(0, 0, 0, 0.9);
+  object-fit: contain;
+  transform: scale(1.02);
 }
 
-/* An odd final pillar runs the full row instead of leaving a gap beside it. */
-.pillar:last-child:nth-child(odd) {
-  grid-column: 1 / -1;
-}
-
-.pillar__index {
-  flex: none;
+.solution__wordmark {
   font-family: var(--font-display);
-  font-size: 0.85rem;
+  font-size: clamp(1.5rem, 3vw, 2.1rem);
   font-weight: 700;
-  letter-spacing: 0.1em;
-  color: var(--gold);
-  padding-top: 0.2rem;
+  letter-spacing: -0.035em;
+  line-height: 1;
 }
 
-.pillar__title {
-  font-size: 1.14rem;
-  margin-bottom: 0.6rem;
-  text-wrap: balance;
+/* The sentence the section exists for. Display type, because it is the claim
+   and not a paragraph about one. */
+.solution__statement {
+  max-width: 26ch;
+  font-family: var(--font-display);
+  font-size: clamp(1.25rem, 2.9vw, 2.3rem);
+  font-weight: 500;
+  line-height: 1.3;
+  letter-spacing: -0.028em;
+  text-wrap: pretty;
 }
 
-.pillar__text {
-  font-size: 0.94rem;
-  line-height: 1.68;
-  color: rgba(255, 255, 255, 0.75);
+/* Marked for weight, not colour — a sentence that changes colour halfway
+   through reads as two sentences. Same treatment as the problem statement. */
+.solution__statement mark {
+  background: none;
+  color: inherit;
+  font-weight: 700;
 }
 
-@media (max-width: 960px) {
-  .solution__head {
-    grid-template-columns: 1fr;
-    align-items: start;
-  }
-
-  .pillars {
-    grid-template-columns: 1fr;
+/* Under about 420px the 26ch measure is wider than the column, so the
+   statement is what sets the section's width instead of the shell. */
+@media (max-width: 460px) {
+  .solution__statement {
+    max-width: none;
   }
 }
 
@@ -429,15 +407,15 @@
   }
 }
 
-/* =============================== HOW =============================== */
-.how {
+/* ============================== OFFERS ============================= */
+.offers {
   position: relative;
   background: var(--purple-950);
   color: var(--white);
   overflow: hidden;
 }
 
-.how__lattice {
+.offers__lattice {
   position: absolute;
   inset: 0;
   width: 100%;
@@ -446,62 +424,58 @@
   pointer-events: none;
 }
 
-.how .shell {
+.offers .shell {
   position: relative;
 }
 
-/* Same full-width treatment as the solution head above. */
-.how__head {
-  display: grid;
-  grid-template-columns: 1fr;
-  gap: clamp(1.1rem, 2.2vw, 1.7rem);
-  padding-bottom: clamp(3rem, 6vw, 5rem);
+.offers__head {
+  padding-bottom: clamp(2.5rem, 5vw, 4rem);
 }
 
-.how__title {
+.offers__title {
   margin-top: 1.2rem;
-  max-width: none;
+  max-width: 24ch;
   font-size: clamp(1.5rem, 3.1vw, 2.6rem);
   line-height: 1.14;
 }
 
-/* Same as the solution heading: one sentence, one colour. */
-.how__title em {
+/* One sentence, one colour — same as the statement above. */
+.offers__title em {
   font-style: normal;
   color: inherit;
 }
 
-.how__lede p {
-  max-width: none;
-  font-size: clamp(0.98rem, 1.15vw, 1.12rem);
-  line-height: 1.7;
-  color: var(--text-on-dark-dim);
-}
-
-.steps {
+.offers__list {
   display: grid;
-  grid-template-columns: 1fr;
+  gap: clamp(1rem, 2vw, 1.6rem);
   list-style: none;
   padding: 0;
   margin: 0;
-  border-top: 1px solid rgba(255, 255, 255, 0.12);
 }
 
-.step {
+/* Copy beside its drawing, and the second row mirrored, so the two do not
+   read as one list of pictures down a column. */
+.offer {
   display: grid;
-  grid-template-columns: var(--def-cols);
-  gap: var(--def-gap);
-  align-items: baseline;
-  padding: var(--def-pad-y) 0.3rem;
-  border-bottom: 1px solid rgba(255, 255, 255, 0.12);
-  transition: background-color 0.35s ease;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 0.95fr);
+  gap: clamp(1.5rem, 4vw, 3.5rem);
+  align-items: center;
+  padding: clamp(1.6rem, 3.4vw, 2.8rem);
+  border-radius: var(--r-lg);
+  background: rgba(21, 13, 33, 0.42);
+  box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.1);
+  transition: box-shadow 0.45s ease;
 }
 
-.step:hover {
-  background: rgba(255, 255, 255, 0.03);
+.offer:hover {
+  box-shadow: inset 0 0 0 1px rgba(238, 175, 22, 0.4);
 }
 
-.step__marker {
+.offer:nth-child(even) .offer__copy {
+  order: 2;
+}
+
+.offer__num {
   display: flex;
   align-items: center;
   gap: 0.7rem;
@@ -512,7 +486,7 @@
   color: var(--gold);
 }
 
-.step__diamond {
+.offer__diamond {
   width: 9px;
   height: 9px;
   flex: none;
@@ -521,103 +495,324 @@
   transition: transform 0.4s var(--ease);
 }
 
-.step:hover .step__diamond {
+.offer:hover .offer__diamond {
   transform: rotate(45deg) scale(1.3);
 }
 
-.step__title {
-  margin: 0;
-  font-size: var(--def-term);
-  letter-spacing: -0.015em;
+.offer__title {
+  margin: 0.85rem 0 0.7rem;
+  font-size: clamp(1.5rem, 2.6vw, 2.1rem);
+  letter-spacing: -0.03em;
 }
 
-.step__text {
-  font-size: var(--def-text);
-  line-height: 1.6;
+.offer__text {
+  font-size: clamp(0.92rem, 1.1vw, 1.04rem);
+  line-height: 1.72;
   color: var(--text-on-dark-dim);
+  text-wrap: pretty;
 }
 
-@media (max-width: 960px) {
-  .how__head {
+/* The drawings sit on their own faint ground so they read as a panel inside
+   the card rather than as marks floating on it. */
+.offer__art {
+  display: grid;
+  place-items: center;
+  padding: clamp(0.9rem, 2vw, 1.4rem);
+  border-radius: var(--r-md);
+  background: radial-gradient(70% 70% at 50% 40%, rgba(107, 78, 148, 0.35), transparent 70%);
+}
+
+.offer__art svg {
+  width: 100%;
+  height: auto;
+  max-width: 380px;
+  overflow: visible;
+}
+
+/* The map is nearly square where the library drawing is 3:2, so at a shared
+   width the two rows come out 130px apart in height. Capping the narrower of
+   the two brings the pair back into the same range. */
+.offer__art .mapArt {
+  max-width: 320px;
+}
+
+/* Stacked, copy first: the sentence is what a reader on a phone needs, and
+   the drawing is what illustrates it. `order` is reset so the mirrored row
+   does not put its picture above its own heading. */
+@media (max-width: 820px) {
+  .offer {
     grid-template-columns: 1fr;
-    align-items: start;
+    gap: clamp(1.2rem, 4vw, 1.8rem);
+  }
+
+  .offer:nth-child(even) .offer__copy {
+    order: 0;
+  }
+
+  .offer__art svg {
+    max-width: 320px;
   }
 }
 
-/* ============================== INSIDE ============================= */
-.inside {
-  background: var(--paper);
-  color: var(--text-on-light);
+/* ------------------------- the library drawing ------------------------ */
+/* Both drawings paint from the section's own palette rather than a hard-coded
+   one: they only ever appear on this purple, and a token they share with the
+   cards around them is what keeps them from drifting into a second scheme. */
+.libArt__ring {
+  stroke: rgba(255, 255, 255, 0.1);
+  stroke-width: 1.5;
+  stroke-dasharray: 3 7;
+  stroke-linecap: round;
 }
 
-/* one column, so the rows below get the full width to run across */
-.inside__grid {
-  display: grid;
-  grid-template-columns: 1fr;
-  gap: clamp(2rem, 4vw, 3rem);
-  align-items: start;
+.libArt__page {
+  fill: rgba(255, 255, 255, 0.055);
+  stroke: rgba(255, 255, 255, 0.16);
+  stroke-width: 1.5;
 }
 
-.inside__intro {
-  max-width: 46ch;
+.libArt__eyebrow {
+  fill: var(--gold);
 }
 
-.inside__title {
-  margin-top: 1.2rem;
-  font-size: var(--step-h2);
-  color: var(--purple-600);
-  text-wrap: balance;
+.libArt__title {
+  fill: rgba(255, 255, 255, 0.82);
 }
 
-.inside__text {
-  margin-top: 1.2rem;
-  font-size: 1.05rem;
-  line-height: 1.75;
-  color: var(--text-on-light-dim);
+.libArt__line {
+  fill: rgba(255, 255, 255, 0.24);
 }
 
-.inside__items {
-  display: grid;
-  grid-template-columns: 1fr;
-  border: 1px solid var(--line);
-  border-radius: var(--r-md);
-  overflow: hidden;
+.libArt__simBox {
+  fill: rgba(238, 175, 22, 0.09);
+  stroke: rgba(238, 175, 22, 0.4);
+  stroke-width: 1.4;
 }
 
-.ipanel {
-  display: grid;
-  grid-template-columns: var(--def-cols);
-  gap: var(--def-gap);
-  align-items: baseline;
-  padding: var(--def-pad-y) clamp(1.1rem, 2.2vw, 1.8rem);
-  background: var(--white);
-  transition: background-color 0.4s ease;
+.libArt__trace {
+  stroke: var(--gold);
+  stroke-width: 2.2;
+  stroke-linecap: round;
+  stroke-linejoin: round;
 }
 
-.ipanel + .ipanel {
-  border-top: 1px solid var(--line);
+.libArt__scan {
+  fill: rgba(255, 255, 255, 0.55);
+  opacity: 0;
 }
 
-.ipanel:hover {
-  background: var(--paper-warm);
+.libArt__chipDisc {
+  fill: rgba(21, 13, 33, 0.75);
+  stroke: rgba(255, 255, 255, 0.2);
+  stroke-width: 1.4;
 }
 
-.ipanel__index {
-  font-size: 0.7rem;
-  font-weight: 700;
-  letter-spacing: 0.18em;
-  color: var(--gold-600);
+.libArt__chipGlyph {
+  stroke: rgba(255, 255, 255, 0.75);
+  stroke-width: 1.7;
+  stroke-linecap: round;
+  stroke-linejoin: round;
 }
 
-.ipanel__title {
-  margin: 0;
-  font-size: var(--def-term);
-  letter-spacing: -0.015em;
-  color: var(--purple-600);
+/* The motion, all of it optional. Base styles above are the finished drawing,
+   so the reduced-motion rule in index.css can flatten these to nothing and
+   still leave a page that reads. */
+.libArt__card {
+  animation: libFloat 7s ease-in-out infinite;
+  transform-origin: 160px 105px;
 }
 
-.ipanel__text {
-  font-size: var(--def-text);
-  line-height: 1.6;
-  color: var(--text-on-light-dim);
+/* fill-box so each chip scales about its own centre; the default origin is
+   the viewBox's, which would swing them around the drawing. */
+.libArt__chip {
+  transform-box: fill-box;
+  transform-origin: center;
+  animation: libChip 5.4s var(--ease) infinite;
+  animation-delay: calc(var(--chip-i) * 0.45s);
+}
+
+.libArt__trace {
+  animation: libDraw 4.5s var(--ease) infinite;
+}
+
+.libArt__scan {
+  animation: libScan 4.5s linear infinite;
+}
+
+@keyframes libFloat {
+  0%,
+  100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-6px);
+  }
+}
+
+/* Each chip brightens in turn, so the ring reads as "and all the others" and
+   not as six lights on at once. */
+@keyframes libChip {
+  0%,
+  70%,
+  100% {
+    opacity: 0.55;
+    transform: scale(1);
+  }
+  12% {
+    opacity: 1;
+    transform: scale(1.12);
+  }
+  30% {
+    opacity: 0.72;
+    transform: scale(1);
+  }
+}
+
+@keyframes libDraw {
+  0% {
+    stroke-dasharray: 200;
+    stroke-dashoffset: 200;
+  }
+  55%,
+  100% {
+    stroke-dasharray: 200;
+    stroke-dashoffset: 0;
+  }
+}
+
+@keyframes libScan {
+  0% {
+    opacity: 0;
+    transform: translateX(0);
+  }
+  8%,
+  48% {
+    opacity: 0.5;
+  }
+  60%,
+  100% {
+    opacity: 0;
+    transform: translateX(90px);
+  }
+}
+
+/* --------------------------- the map drawing -------------------------- */
+.mapArt__fill {
+  fill: rgba(255, 255, 255, 0.055);
+}
+
+.mapArt__border {
+  stroke: rgba(255, 255, 255, 0.4);
+  stroke-width: 2;
+  stroke-linejoin: round;
+}
+
+.mapArt__leader {
+  stroke: rgba(238, 175, 22, 0.4);
+  stroke-width: 1.2;
+  stroke-dasharray: 3 4;
+}
+
+.mapArt__tagDisc {
+  fill: rgba(21, 13, 33, 0.85);
+  stroke: rgba(238, 175, 22, 0.55);
+  stroke-width: 1.4;
+}
+
+.mapArt__tagGlyph {
+  stroke: var(--gold);
+  stroke-width: 1.7;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+.mapArt__dot {
+  fill: var(--gold);
+  stroke: var(--purple-950);
+  stroke-width: 1.6;
+}
+
+.mapArt__pulse {
+  fill: none;
+  stroke: var(--gold);
+  stroke-width: 1.6;
+  opacity: 0;
+}
+
+.mapArt__border {
+  animation: mapDraw 6s var(--ease) infinite;
+}
+
+.mapArt__pin {
+  animation: mapPin 5.6s var(--ease) infinite;
+  animation-delay: calc(var(--pin-i) * 0.2s + 0.6s);
+}
+
+.mapArt__pulse {
+  animation: mapPulse 5.6s var(--ease) infinite;
+  animation-delay: calc(var(--pin-i) * 0.2s + 0.9s);
+  transform-box: fill-box;
+  transform-origin: center;
+}
+
+.mapArt__tag {
+  animation: mapTag 5.6s var(--ease) infinite;
+  animation-delay: calc(var(--tag-i) * 0.35s + 1.6s);
+}
+
+@keyframes mapDraw {
+  0% {
+    stroke-dasharray: 900;
+    stroke-dashoffset: 900;
+  }
+  45%,
+  100% {
+    stroke-dasharray: 900;
+    stroke-dashoffset: 0;
+  }
+}
+
+/* transform-box keeps the scale about each pin's own centre rather than the
+   svg's origin, which would fling them across the country. */
+@keyframes mapPin {
+  0% {
+    opacity: 0;
+    transform: scale(0.2);
+  }
+  14%,
+  100% {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+@keyframes mapPulse {
+  0%,
+  60%,
+  100% {
+    opacity: 0;
+    transform: scale(1);
+  }
+  8% {
+    opacity: 0.65;
+  }
+  40% {
+    opacity: 0;
+    transform: scale(3.4);
+  }
+}
+
+@keyframes mapTag {
+  0% {
+    opacity: 0;
+  }
+  25%,
+  100% {
+    opacity: 1;
+  }
+}
+
+.mapArt__pin {
+  transform-box: fill-box;
+  transform-origin: center;
 }

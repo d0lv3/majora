@@ -1,0 +1,400 @@
+/* =========================================================
+   The track test at /quiz.
+
+   Its own place: the purple of the auth aside, no nav bar
+   and no footer, because the one thing this screen must not
+   feel like is a step you cannot leave. The way out sits in
+   the header instead.
+   ========================================================= */
+.quiz {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  min-height: 100svh;
+  overflow: hidden;
+  padding: clamp(1rem, 3vw, 2rem) 0 clamp(2rem, 5vh, 3.5rem);
+  background: var(--purple-600);
+  background-image: radial-gradient(90% 70% at 20% 15%, rgba(107, 78, 148, 0.65), transparent 62%);
+  color: var(--white);
+}
+
+.quiz__lattice,
+.quiz__lines {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+}
+
+/* -------------------------------- bar -------------------------------- */
+.quiz__bar {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  width: 100%;
+  max-width: 760px;
+  margin-inline: auto;
+  padding-inline: var(--gutter);
+}
+
+.quiz__brand {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.65rem;
+  font-family: var(--font-display);
+  font-size: 1.15rem;
+  font-weight: 700;
+  letter-spacing: -0.03em;
+}
+
+.quiz__brand img {
+  width: 40px;
+  height: 40px;
+  object-fit: contain;
+}
+
+/* The way out, and it stays in the same corner on every question so a reader
+   who wants it does not have to hunt for it twice. */
+.quiz__skipAll {
+  flex: none;
+  display: inline-flex;
+  align-items: center;
+  min-height: 44px;
+  padding: 0 1.1rem;
+  border-radius: var(--r-pill);
+  box-shadow: inset 0 0 0 1.5px rgba(255, 255, 255, 0.28);
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: var(--text-on-dark-dim);
+  transition:
+    color 0.25s ease,
+    box-shadow 0.25s ease,
+    background-color 0.25s ease;
+}
+
+.quiz__skipAll:hover {
+  color: var(--white);
+  background: rgba(255, 255, 255, 0.08);
+  box-shadow: inset 0 0 0 1.5px rgba(255, 255, 255, 0.5);
+}
+
+/* ------------------------------- stage ------------------------------- */
+.quiz__stage {
+  position: relative;
+  flex: 1;
+  display: grid;
+  place-items: center;
+  width: 100%;
+  padding: clamp(1.5rem, 4vh, 3rem) var(--gutter) 0;
+}
+
+.quiz__card {
+  width: 100%;
+  max-width: 640px;
+  padding: clamp(1.5rem, 4vw, 2.6rem);
+  border-radius: var(--r-lg);
+  background: rgba(21, 13, 33, 0.45);
+  box-shadow:
+    inset 0 0 0 1px rgba(255, 255, 255, 0.12),
+    var(--shadow-card);
+  backdrop-filter: blur(10px);
+}
+
+/* ------------------------------ progress ----------------------------- */
+.quiz__progress {
+  display: grid;
+  gap: 0.6rem;
+  margin-bottom: clamp(1.4rem, 3vw, 2rem);
+}
+
+.quiz__step {
+  font-size: 0.72rem;
+  font-weight: 700;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: var(--gold);
+}
+
+.quiz__track {
+  height: 4px;
+  border-radius: var(--r-pill);
+  background: rgba(255, 255, 255, 0.16);
+  overflow: hidden;
+}
+
+/* Scaled rather than sized: the bar animates on the compositor, and a width
+   transition on eight steps is the one thing on this screen that would jank. */
+.quiz__fill {
+  display: block;
+  height: 100%;
+  border-radius: inherit;
+  background: var(--gold);
+  transform-origin: left;
+  transition: transform 0.5s var(--ease);
+}
+
+.quiz__intro {
+  margin-bottom: 1.4rem;
+  font-size: 0.92rem;
+  line-height: 1.65;
+  color: var(--text-on-dark-dim);
+  text-wrap: pretty;
+}
+
+.quiz__prompt {
+  font-size: clamp(1.35rem, 3.6vw, 1.95rem);
+  line-height: 1.2;
+  text-wrap: balance;
+}
+
+/* ------------------------------ options ------------------------------ */
+.quiz__options {
+  display: grid;
+  gap: 0.7rem;
+  margin-top: clamp(1.3rem, 3vw, 1.8rem);
+}
+
+.quizOpt {
+  display: flex;
+  align-items: center;
+  gap: 0.9rem;
+  width: 100%;
+  min-height: 56px;
+  padding: 0.95rem 1.15rem;
+  border-radius: var(--r-md);
+  background: rgba(255, 255, 255, 0.06);
+  box-shadow: inset 0 0 0 1.5px rgba(255, 255, 255, 0.16);
+  text-align: left;
+  transition:
+    background-color 0.25s ease,
+    box-shadow 0.25s ease,
+    transform 0.25s var(--ease);
+}
+
+.quizOpt:hover {
+  background: rgba(255, 255, 255, 0.11);
+  box-shadow: inset 0 0 0 1.5px rgba(238, 175, 22, 0.6);
+  transform: translateX(3px);
+}
+
+.quizOpt.is-on {
+  background: rgba(238, 175, 22, 0.16);
+  box-shadow: inset 0 0 0 1.5px var(--gold);
+}
+
+.quizOpt__mark {
+  width: 11px;
+  height: 11px;
+  flex: none;
+  background: rgba(255, 255, 255, 0.35);
+  transform: rotate(45deg);
+  transition:
+    background-color 0.25s ease,
+    transform 0.35s var(--ease);
+}
+
+.quizOpt:hover .quizOpt__mark,
+.quizOpt.is-on .quizOpt__mark {
+  background: var(--gold);
+  transform: rotate(45deg) scale(1.25);
+}
+
+.quizOpt__label {
+  font-size: clamp(0.95rem, 2.4vw, 1.05rem);
+  line-height: 1.45;
+  text-wrap: pretty;
+}
+
+/* -------------------------------- foot ------------------------------- */
+.quiz__foot {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  margin-top: clamp(1.2rem, 3vw, 1.6rem);
+}
+
+.quiz__back,
+.quiz__pass {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  min-height: 44px;
+  padding-inline: 0.6rem;
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: var(--text-on-dark-faint);
+  transition: color 0.25s ease;
+}
+
+.quiz__back:hover,
+.quiz__pass:hover {
+  color: var(--gold);
+}
+
+/* ------------------------------- result ------------------------------ */
+.quiz__card--result {
+  display: grid;
+  justify-items: start;
+  gap: 0.9rem;
+}
+
+.quiz__result {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: 0.2rem 0.9rem;
+  margin-top: 0.5rem;
+}
+
+/* The Arabic is the name a student actually uses for this branch, so it leads
+   and gets the display size. dir is set on the element rather than inherited:
+   one RTL word inside an LTR line needs its own direction or the punctuation
+   around it lands on the wrong side. */
+.quiz__resultAr {
+  font-size: clamp(2rem, 7vw, 3rem);
+  line-height: 1.1;
+  color: var(--gold);
+}
+
+/* Two names instead of one, so the pair drops a size to keep them on a line
+   together at phone widths. */
+.quiz__result--even .quiz__resultAr {
+  font-size: clamp(1.7rem, 5.5vw, 2.4rem);
+}
+
+.quiz__resultEn {
+  font-size: clamp(1.3rem, 3.6vw, 1.8rem);
+  line-height: 1.2;
+}
+
+.quiz__meter {
+  width: 100%;
+  height: 8px;
+  margin-top: 0.4rem;
+  border-radius: var(--r-pill);
+  background: rgba(255, 255, 255, 0.16);
+  overflow: hidden;
+}
+
+.quiz__meterFill {
+  display: block;
+  height: 100%;
+  border-radius: inherit;
+  background: var(--gold);
+  transform-origin: left;
+  animation: quizMeter 0.9s var(--ease) both;
+}
+
+/* Grows from nothing to whatever the inline transform sets, so the bar is
+   read as a measurement being taken rather than a decoration that was
+   already there. */
+@keyframes quizMeter {
+  from {
+    transform: scaleX(0);
+  }
+}
+
+.quiz__meterLabel {
+  font-size: 0.78rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--text-on-dark-faint);
+}
+
+.quiz__text {
+  font-size: clamp(0.95rem, 2.2vw, 1.05rem);
+  line-height: 1.7;
+  color: var(--text-on-dark-dim);
+  text-wrap: pretty;
+}
+
+.quiz__text--subjects strong {
+  color: var(--white);
+  font-weight: 600;
+}
+
+.quiz__caveat {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.8rem;
+  padding: 0.9rem 1.1rem;
+  border-radius: var(--r-md);
+  background: rgba(238, 175, 22, 0.12);
+  box-shadow: inset 0 0 0 1.5px rgba(238, 175, 22, 0.4);
+  font-size: 0.9rem;
+  line-height: 1.6;
+  color: rgba(255, 255, 255, 0.86);
+}
+
+.quiz__caveatMark {
+  width: 11px;
+  height: 11px;
+  margin-top: 0.4rem;
+  flex: none;
+  background: var(--gold);
+  transform: rotate(45deg);
+}
+
+.quiz__actions {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.9rem 1.4rem;
+  margin-top: 0.6rem;
+}
+
+.quiz__retake {
+  display: inline-flex;
+  align-items: center;
+  min-height: 44px;
+  padding-inline: 0.5rem;
+  font-size: 0.9rem;
+  font-weight: 600;
+  color: var(--text-on-dark-dim);
+  transition: color 0.25s ease;
+}
+
+.quiz__retake:hover {
+  color: var(--gold);
+}
+
+.quiz__note {
+  font-size: 0.8rem;
+  line-height: 1.6;
+  color: var(--text-on-dark-faint);
+}
+
+/* ----------------------------- narrow -------------------------------- */
+/* The card stops being a card: on a phone it is the screen, so the panel
+   edges and the extra inset only cost reading width. */
+@media (max-width: 620px) {
+  .quiz__stage {
+    place-items: start center;
+    padding-top: clamp(1rem, 3vh, 1.6rem);
+  }
+
+  .quiz__card {
+    padding: clamp(1.1rem, 4vw, 1.5rem);
+  }
+
+  .quiz__brand span {
+    /* the mark carries it; the word costs a line beside a 44px control */
+    display: none;
+  }
+
+  .quiz__actions {
+    flex-direction: column;
+    align-items: stretch;
+    text-align: center;
+  }
+
+  /* The button paints its rim in a canvas sized to the element, so it has to
+     be told to fill the column rather than shrink-wrap its label. */
+  .quiz__actions .specular-button {
+    width: 100%;
+  }
+}

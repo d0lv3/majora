@@ -1,14 +1,16 @@
 import Reveal from '../components/Reveal.jsx'
 import Lattice from '../components/decor/Lattice.jsx'
+import IraqMapArt from '../components/decor/IraqMapArt.jsx'
+import LibraryArt from '../components/decor/LibraryArt.jsx'
 import CountUp from '../components/ui/CountUp.jsx'
-import { MAJORS, FIELDS } from '../data/majors.js'
+import logo from '../assets/visual-identity/logo-web.png'
 import './About.css'
 
 /**
  * The "why this exists" stretch of the landing page (#about).
  *
  * Reads as one argument, in order: the problem → the solution → what changes →
- * how it works → what a major page holds. It is a section, not a route, so it
+ * what the platform actually gives you. It is a section, not a route, so it
  * owns no CTA of its own; the page closes with one shared call to action.
  *
  * Kept deliberately short: the landing page earns a click, it does not have to
@@ -46,60 +48,24 @@ const CONSEQUENCES = [
   },
 ]
 
-const PILLARS = [
-  {
-    title: 'A complete library, not a highlight reel',
-    text: `All ${MAJORS.length} majors across ${FIELDS.length} fields get the same treatment, so nothing looks second-tier by omission.`,
-  },
-  {
-    title: 'Written to be understood at 14',
-    text: 'Plain language, no admissions jargon, no prestige signalling.',
-  },
-  {
-    title: 'Honest about the hard parts',
-    text: 'Every major says who it suits and who it does not. A page that only sells the field is marketing, not preparation.',
-  },
-]
-
-const STEPS = [
+/**
+ * The two halves of the product, each drawn rather than described twice: the
+ * library answers what a major is, the map answers where it is taught. Each
+ * carries its own animated drawing, which is the only picture of either that
+ * a visitor gets before signing in.
+ */
+const OFFERS = [
   {
     n: '01',
-    title: 'Open the library',
-    text: 'Every major offered in the region, in plain language instead of a prospectus.',
+    title: 'Library',
+    text: 'Full of all the majors you need. Pick whichever might interest you and learn what it actually is — not only in theory, but in practice, with hands-on simulations of the work itself.',
+    art: LibraryArt,
   },
   {
     n: '02',
-    title: 'See the real work',
-    text: 'What the four to six years actually contain: the subjects, the labs, the hospital shifts.',
-  },
-  {
-    n: '03',
-    title: 'Compare honestly',
-    text: 'Two majors side by side: workload, skills, and where each one leads.',
-  },
-  {
-    n: '04',
-    title: 'Decide with reasons',
-    text: 'Arrive at the application form able to say why.',
-  },
-]
-
-const INSIDE = [
-  {
-    title: 'What you will study',
-    text: 'The actual subjects, year by year — the syllabus, not the slogan.',
-  },
-  {
-    title: 'Skills you will build',
-    text: 'What you will be good at, whether or not you stay in the field.',
-  },
-  {
-    title: 'Where it leads',
-    text: 'The jobs this degree opens here, and the ones that need more.',
-  },
-  {
-    title: 'Whether it fits you',
-    text: 'Who thrives in it, and who quietly regrets choosing it.',
+    title: 'Map',
+    text: 'Find where your major is taught, university by university, and everything that comes with it: acceptance rates, entry scores, and what genuinely differs between one campus and the next.',
+    art: IraqMapArt,
   },
 ]
 
@@ -173,32 +139,29 @@ export default function About() {
           <div className="solution__head">
             <Reveal>
               <span className="eyebrow">02 / The solution</span>
-              <h3 className="solution__title">
-                A platform dedicated to one job:{' '}
-                <em>teaching you what each major actually is.</em>
-              </h3>
             </Reveal>
-            <Reveal delay={120}>
-              <p className="solution__lede">
-                Not a ranking, and not a quiz that hands you an answer. Every major explains itself
-                in the same four terms, so you can compare them honestly — before you choose, and
-                after, when you want to understand the one you are already in.
+
+            {/* The mark itself, at the size a logo is meant to be read at.
+                Decorative: the sentence under it says the name. */}
+            <Reveal delay={90} className="solution__brand">
+              <img
+                className="solution__logo"
+                src={logo}
+                alt=""
+                width="800"
+                height="800"
+                loading="lazy"
+              />
+              <span className="solution__wordmark">Majora</span>
+            </Reveal>
+
+            <Reveal delay={160}>
+              <p className="solution__statement">
+                Majora is a platform dedicated to{' '}
+                <mark>expose students to different majors</mark> and what they&rsquo;re all about,
+                comprehensively.
               </p>
             </Reveal>
-          </div>
-
-          <div className="pillars">
-            {PILLARS.map((pillar, i) => (
-              <Reveal className="pillar" key={pillar.title} delay={i * 90}>
-                <span className="pillar__index" aria-hidden="true">
-                  0{i + 1}
-                </span>
-                <div>
-                  <h4 className="pillar__title">{pillar.title}</h4>
-                  <p className="pillar__text">{pillar.text}</p>
-                </div>
-              </Reveal>
-            ))}
           </div>
         </div>
       </div>
@@ -230,65 +193,42 @@ export default function About() {
         </div>
       </div>
 
-      {/* ============================== HOW ============================ */}
-      <div className="section how" id="how">
-        <Lattice className="how__lattice" size={84} color="rgba(255,255,255,0.05)" />
+      {/* ============================= OFFERS ========================== */}
+      {/* Still #how: the hero's second button points here, and this is what
+          that button was always promising to explain. */}
+      <div className="section offers" id="how">
+        <Lattice className="offers__lattice" size={84} color="rgba(255,255,255,0.05)" />
         <div className="shell">
-          <div className="how__head">
+          <div className="offers__head">
             <Reveal>
-              <span className="eyebrow">03 / How Majora works</span>
-              <h3 className="how__title">
-                The choice arrives on a form.{' '}
-                <em>The preparation should arrive years earlier.</em>
+              <span className="eyebrow">03 / What Majora Offers</span>
+              <h3 className="offers__title">
+                Two halves of the same answer.{' '}
+                <em>What a major is, and where you would study it.</em>
               </h3>
             </Reveal>
-            <Reveal delay={120} className="how__lede">
-              <p>
-                Most students meet a major for the first time in the week they apply for it. Majora
-                moves that meeting forward, into the years when there is still time to change your
-                mind.
-              </p>
-            </Reveal>
           </div>
 
-          <ol className="steps">
-            {STEPS.map((step, i) => (
-              <Reveal as="li" className="step" key={step.n} delay={i * 90}>
-                <span className="step__marker" aria-hidden="true">
-                  <span className="step__diamond" />
-                  {step.n}
-                </span>
-                <h4 className="step__title">{step.title}</h4>
-                <p className="step__text">{step.text}</p>
-              </Reveal>
-            ))}
+          <ol className="offers__list">
+            {OFFERS.map((offer, i) => {
+              const Art = offer.art
+              return (
+                <Reveal as="li" className="offer" key={offer.title} delay={i * 90}>
+                  <div className="offer__copy">
+                    <span className="offer__num" aria-hidden="true">
+                      <span className="offer__diamond" />
+                      {offer.n}
+                    </span>
+                    <h4 className="offer__title">{offer.title}</h4>
+                    <p className="offer__text">{offer.text}</p>
+                  </div>
+                  <div className="offer__art">
+                    <Art />
+                  </div>
+                </Reveal>
+              )
+            })}
           </ol>
-        </div>
-      </div>
-
-      {/* ============================ INSIDE =========================== */}
-      <div className="section inside">
-        <div className="shell inside__grid">
-          <Reveal className="inside__intro">
-            <span className="eyebrow eyebrow--dark">04 / Inside a major page</span>
-            <h3 className="inside__title">Four answers, for every single major in the library.</h3>
-            <p className="inside__text">
-              The same four questions, asked of Medicine and of Interior Design alike, so two majors
-              can genuinely be compared.
-            </p>
-          </Reveal>
-
-          <div className="inside__items">
-            {INSIDE.map((item, i) => (
-              <Reveal className="ipanel" key={item.title} delay={i * 80}>
-                <span className="ipanel__index" aria-hidden="true">
-                  0{i + 1}
-                </span>
-                <h4 className="ipanel__title">{item.title}</h4>
-                <p className="ipanel__text">{item.text}</p>
-              </Reveal>
-            ))}
-          </div>
         </div>
       </div>
     </section>

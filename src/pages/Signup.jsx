@@ -35,7 +35,10 @@ export default function Signup() {
 
     setBusy(true)
     await signup(values)
-    navigate('/app', { replace: true })
+    // Straight into the track test rather than the library: it is eight
+    // questions with a skip in the header, and this is the one moment a reader
+    // has not yet started looking for something specific.
+    navigate('/quiz', { replace: true })
   }
 
   return (

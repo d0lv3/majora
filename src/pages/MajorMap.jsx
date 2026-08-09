@@ -65,19 +65,65 @@ export default function MajorMap() {
     return MAJORS.filter((m) => isAvailable(m) && slugs.has(m.slug))
   }, [])
 
+  // The picker groups by field, so a reader who knows they want something in
+  // Computing can find it without reading past Health. Insertion order, which
+  // is the order FIELDS declares — the same order the library filters use.
+  const byField = useMemo(() => {
+    const groups = new Map()
+    for (const m of plottable) {
+      if (!groups.has(m.field)) groups.set(m.field, [])
+      groups.get(m.field).push(m)
+    }
+    return [...groups.entries()]
+  }, [plottable])
+
   const [slug, setSlug] = useState(plottable[0]?.slug ?? '')
+  const [query, setQuery] = useState('')
   const [selectedId, setSelectedId] = useState(null)
 
   const major = useMemo(() => MAJORS.find((m) => m.slug === slug), [slug])
-  const colleges = useMemo(() => (slug ? collegesFor(slug) : []), [slug])
+  const all = useMemo(() => (slug ? collegesFor(slug) : []), [slug])
   const sample = isSampleMajor(slug)
   const sources = useMemo(() => sourcesFor(slug), [slug])
   const stats = useMemo(() => statsFor(slug), [slug])
   const admission = useMemo(() => admissionFor(slug), [slug])
+
+  /**
+   * Which of this major's colleges the reader is asking about.
+   *
+   * Searched inside the chosen major rather than across the whole country:
+   * the question this page answers is "who teaches dentistry", so narrowing it
+   * to "who teaches dentistry in Duhok" is the same question with one more
+   * word. A search that reached across majors would quietly change the subject.
+   *
+   * Four things match, because a student naming a college could mean any of
+   * them: the university, the department inside it, the city, or the
+   * governorate. The Arabic name is matched on the raw query rather than the
+   * folded one — Arabic and Kurdish have no letter case to fold, and a student
+   * typing جامعة بغداد should not have to know the English spelling first.
+   */
+  const colleges = useMemo(() => {
+    const raw = query.trim()
+    if (!raw) return all
+    const q = raw.toLowerCase()
+    return all.filter(
+      (c) =>
+        c.university.toLowerCase().includes(q) ||
+        (c.universityAr ?? '').includes(raw) ||
+        c.city.toLowerCase().includes(q) ||
+        c.governorate.toLowerCase().includes(q) ||
+        c.branches.some((b) =>
+          `${b.department ?? ''} ${b.college ?? ''}`.toLowerCase().includes(q),
+        ),
+    )
+  }, [all, query])
+
   const branchCount = useMemo(
     () => colleges.reduce((n, c) => n + c.branches.length, 0),
     [colleges],
   )
+  // Read from the filtered set on purpose: a college the search has hidden
+  // should not keep an open detail panel, nor hold the map at its coordinates.
   const selected = useMemo(
     () => colleges.find((c) => c.id === selectedId) ?? null,
     [colleges, selectedId],
@@ -169,6 +215,9 @@ export default function MajorMap() {
   const onPick = (next) => {
     setSlug(next)
     setSelectedId(null)
+    // A query typed against dentistry means nothing against cybersecurity, and
+    // leaving it on would show an empty list as if the major had no colleges.
+    setQuery('')
   }
 
   return (
@@ -253,23 +302,72 @@ export default function MajorMap() {
               value={slug}
               onChange={(e) => onPick(e.target.value)}
             >
-              {plottable.map((m) => (
-                <option key={m.slug} value={m.slug}>
-                  {m.name}
-                </option>
+              {byField.map(([field, majors]) => (
+                <optgroup key={field} label={fieldLabel(field)}>
+                  {majors.map((m) => (
+                    <option key={m.slug} value={m.slug}>
+                      {m.name}
+                    </option>
+                  ))}
+                </optgroup>
               ))}
             </select>
           </label>
 
+          {/* Search inside the chosen major, not across the library — the
+              label says which, because a bare magnifier on a page with a map
+              on it reads as "search anywhere". */}
+          <div className="mapSearch">
+            <svg viewBox="0 0 24 24" aria-hidden="true" className="mapSearch__icon">
+              <circle cx="11" cy="11" r="7" fill="none" stroke="currentColor" strokeWidth="2" />
+              <path d="M16.5 16.5 21 21" stroke="currentColor" strokeWidth="2" strokeLinecap="round" />
+            </svg>
+            <input
+              type="search"
+              value={query}
+              onChange={(e) => setQuery(e.target.value)}
+              placeholder={major ? `Find a college in ${major.name}…` : 'Find a college…'}
+              aria-label={
+                major
+                  ? `Search the universities, departments and cities teaching ${major.name}`
+                  : 'Search colleges'
+              }
+            />
+            {query && (
+              <button type="button" className="mapSearch__clear" onClick={() => setQuery('')}>
+                Clear
+              </button>
+            )}
+          </div>
+
           {major && (
             <p className="mapControls__count" aria-live="polite">
-              {colleges.length} {colleges.length === 1 ? 'university' : 'universities'}
+              {query.trim()
+                ? `${colleges.length} of ${all.length} ${all.length === 1 ? 'university' : 'universities'}`
+                : `${colleges.length} ${colleges.length === 1 ? 'university' : 'universities'}`}
               {branchCount > colleges.length && `, ${branchCount} departments`}
             </p>
           )}
         </div>
 
-        <ul className="clist">
+        {/* Nothing found is about the query, not about the major: the count
+            above still says how many colleges teach it, so this only has to
+            explain what did not match and offer the way back. */}
+        {query.trim() && colleges.length === 0 ? (
+          <div className="mapEmpty">
+            <span className="mapEmpty__mark" aria-hidden="true" />
+            <h2 className="mapEmpty__title">No college matches “{query.trim()}”</h2>
+            <p className="mapEmpty__text">
+              {all.length} {all.length === 1 ? 'university teaches' : 'universities teach'}{' '}
+              {major?.name}. Try the university&rsquo;s name, its city or governorate, or the
+              department itself.
+            </p>
+            <button type="button" className="btn btn--outline-dark" onClick={() => setQuery('')}>
+              Show all {all.length}
+            </button>
+          </div>
+        ) : (
+          <ul className="clist">
             {colleges.map((college) => {
               const on = college.id === selectedId
               const best = college.branches[0]
@@ -394,7 +492,8 @@ export default function MajorMap() {
                 </li>
               )
             })}
-        </ul>
+          </ul>
+        )}
 
         <div className="mapStage">
           {major && (
