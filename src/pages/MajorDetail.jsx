@@ -3,10 +3,12 @@ import { Link, useParams, useNavigate } from 'react-router-dom'
 import Reveal from '../components/Reveal.jsx'
 import Lattice from '../components/decor/Lattice.jsx'
 import MajorCard from '../components/MajorCard.jsx'
+import MajorLanding from '../components/MajorLanding.jsx'
 import SpecularButton from '../components/ui/SpecularButton.jsx'
 import SB from '../components/ui/buttonPresets.js'
 import { MAJORS, getMajor, fieldLabel, isAvailable } from '../data/majors.js'
 import { branchesFor } from '../data/branches.js'
+import { landingFor } from '../data/landings.js'
 import './MajorDetail.css'
 
 export default function MajorDetail() {
@@ -44,6 +46,9 @@ export default function MajorDetail() {
   // inside them. Most have no branches and this whole section disappears.
   const branches = branchesFor(slug)
   const readyBranches = branches.filter((b) => b.ready).length
+  // And some are written out in full underneath the head. Most are not, and
+  // then the page runs straight from the head to whatever comes next.
+  const landing = landingFor(slug)
 
   return (
     <div className="mdetail">
@@ -75,6 +80,8 @@ export default function MajorDetail() {
           </dl>
         </div>
       </header>
+
+      {landing && <MajorLanding landing={landing} />}
 
       {branches.length > 0 && (
         <section className="section mdetail__branches">

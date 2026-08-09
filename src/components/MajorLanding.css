@@ -1,0 +1,195 @@
+/* The written body of a major's page. Pale, like the branch list, so it reads
+   as the part of the page you sit down with. */
+.mland {
+  background: var(--paper);
+  color: var(--text-on-light);
+}
+
+/* ============================== OPENING ============================= */
+/* Matches the branch section's head: eyebrow, then a purple headline that
+   wraps to two lines at most widths, then the definition under it. */
+.mland__title {
+  margin-top: 1.1rem;
+  font-size: var(--step-h2);
+  line-height: 1.16;
+  color: var(--purple-600);
+  text-wrap: balance;
+}
+
+.mland__lede {
+  max-width: 66ch;
+  margin-top: 1.1rem;
+  font-size: 1.02rem;
+  line-height: 1.7;
+  color: var(--text-on-light-dim);
+}
+
+/* ============================= SECTIONS ============================= */
+.mland__sections {
+  margin-top: clamp(2.5rem, 5vw, 4rem);
+  padding: 0;
+  list-style: none;
+}
+
+/* Question on the left, answer on the right, with a rule between rows. The
+   left column is fixed rather than fractional: it holds a heading of three or
+   four words and has no reason to grow with the page. */
+.mland__section {
+  display: grid;
+  grid-template-columns: 15rem minmax(0, 1fr);
+  gap: clamp(1.5rem, 4vw, 3.5rem);
+  padding-block: clamp(1.8rem, 3.5vw, 2.6rem);
+  border-top: 1px solid var(--line);
+}
+
+.mland__sectionHead {
+  display: flex;
+  align-items: baseline;
+  gap: 0.8rem;
+}
+
+.mland__num {
+  font-family: var(--font-display);
+  font-size: 0.8rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  color: var(--gold-700);
+}
+
+.mland__sectionTitle {
+  font-size: var(--step-h3);
+  line-height: 1.2;
+  color: var(--purple-600);
+  text-wrap: balance;
+}
+
+.mland__text {
+  max-width: 66ch;
+  font-size: 1.02rem;
+  line-height: 1.7;
+  color: var(--text-on-light-dim);
+}
+
+.mland__text + .mland__text {
+  margin-top: 1rem;
+}
+
+/* --- chips: the subjects, the skills, the job titles --- */
+/* White on the pale ground with the same hairline ring the branch cards
+   carry, so a run of them reads as one family of small cards. */
+.mland__tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  margin-block: 1.15rem;
+  padding: 0;
+  list-style: none;
+}
+
+.mland__tag {
+  padding: 0.42rem 0.9rem;
+  border-radius: var(--r-pill);
+  background: var(--white);
+  box-shadow: inset 0 0 0 1px rgba(65, 43, 99, 0.12);
+  font-family: var(--font-display);
+  font-size: 0.85rem;
+  font-weight: 500;
+  letter-spacing: -0.01em;
+  color: var(--purple-600);
+}
+
+/* ================================ CTA =============================== */
+.mland__cta {
+  margin-top: clamp(2.5rem, 5vw, 4rem);
+  padding: clamp(1.8rem, 3.5vw, 3rem);
+  border-radius: var(--r-lg);
+  background: linear-gradient(120deg, var(--purple-700), var(--purple-800));
+  box-shadow: inset 0 0 0 1px rgba(238, 175, 22, 0.35);
+  color: var(--white);
+}
+
+.mland__ctaLede {
+  max-width: 26ch;
+  margin-top: 1rem;
+  font-family: var(--font-display);
+  font-size: clamp(1.35rem, 2.6vw, 2rem);
+  font-weight: 600;
+  line-height: 1.3;
+  letter-spacing: -0.02em;
+  text-wrap: balance;
+}
+
+.mland__ctaText {
+  max-width: 62ch;
+  margin-top: 1rem;
+  font-size: 1rem;
+  line-height: 1.7;
+  color: var(--text-on-dark-dim);
+}
+
+/* The three simulations, in the order the document walks them. Same arrow
+   chain the guide uses, repainted for a dark panel. */
+.mland__flow {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.4rem 0.2rem;
+  margin-top: 1.4rem;
+  padding: 0;
+  list-style: none;
+}
+
+.mland__flow li {
+  display: inline-flex;
+  align-items: center;
+  padding: 0.35rem 0.85rem;
+  border-radius: var(--r-pill);
+  background: rgba(238, 175, 22, 0.16);
+  font-family: var(--font-display);
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: var(--gold-400);
+}
+
+.mland__flow li:not(:last-child)::after {
+  content: '→';
+  margin: 0 -0.15rem 0 0.65rem;
+  color: rgba(245, 195, 63, 0.7);
+  font-weight: 400;
+}
+
+.mland__ctaAction {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.9rem 1.2rem;
+  margin-top: clamp(1.6rem, 3vw, 2.2rem);
+}
+
+/* Disabled, and it has to look it: the gold button is the loudest thing on
+   the page, and a reader who presses it should already know why nothing
+   happens. */
+.mland__ctaBtn:disabled {
+  cursor: not-allowed;
+  background: rgba(238, 175, 22, 0.28);
+  color: rgba(255, 255, 255, 0.72);
+}
+
+.mland__ctaBtn:disabled:hover {
+  transform: none;
+  box-shadow: none;
+}
+
+.mland__ctaNote {
+  font-size: 0.85rem;
+  color: var(--text-on-dark-faint);
+}
+
+/* One column: two columns of prose do not fit, and the heading belongs above
+   the text it introduces rather than beside a narrow strip of it. */
+@media (max-width: 900px) {
+  .mland__section {
+    grid-template-columns: 1fr;
+    gap: 1rem;
+  }
+}
