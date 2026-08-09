@@ -111,6 +111,16 @@
 }
 
 .consequences {
+  /* The definition rows plus a figure column. Held in its own variable rather
+     than appending a fourth track to --def-cols, because that token is shared
+     with the steps and the major-page panels, which have no figure. */
+  --cons-cols: var(--def-cols) minmax(0, clamp(9rem, 14vw, 12rem));
+
+  /* 0.45 white is the section's usual faint tone, but it lands at 4.4:1 here,
+     under AA for text this small. 0.58 clears it at 6.6:1 and still reads as
+     secondary against the 0.68 of the explanations. */
+  --cons-faint: rgba(255, 255, 255, 0.58);
+
   display: grid;
   grid-template-columns: 1fr;
   border: 1px solid rgba(255, 255, 255, 0.1);
@@ -120,7 +130,7 @@
 
 .cons {
   display: grid;
-  grid-template-columns: var(--def-cols);
+  grid-template-columns: var(--cons-cols);
   gap: var(--def-gap);
   align-items: baseline;
   padding: var(--def-pad-y) clamp(1.1rem, 2.2vw, 1.8rem);
@@ -153,6 +163,62 @@
   font-size: var(--def-text);
   line-height: 1.6;
   color: var(--text-on-dark-dim);
+}
+
+/* The survey figure that measures this result. Excluded from the row's
+   baseline group by align-self, so the large numeral hangs from the top of the
+   row instead of dragging the shared baseline down to meet it. */
+.cons__stat {
+  align-self: start;
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+  margin: 0;
+  text-align: right;
+}
+
+.cons__statValue {
+  font-family: var(--font-display);
+  font-size: clamp(1.75rem, 3.1vw, 2.6rem);
+  font-weight: 600;
+  line-height: 0.92;
+  letter-spacing: -0.035em;
+  color: var(--gold);
+}
+
+.cons__statCaption {
+  font-size: 0.72rem;
+  line-height: 1.45;
+  color: var(--cons-faint);
+  text-wrap: pretty;
+}
+
+.consequences__source {
+  margin-top: clamp(0.9rem, 1.8vw, 1.25rem);
+  font-size: 0.74rem;
+  line-height: 1.55;
+  color: rgba(255, 255, 255, 0.58);
+}
+
+/* Narrow: back to the two-track definition layout, with the figure turning
+   into a line of its own under the explanation — number, then caption beside
+   it. A third track here would leave the explanation about 180px wide. */
+@media (max-width: 760px) {
+  .consequences {
+    --cons-cols: var(--def-cols);
+  }
+
+  .cons__stat {
+    grid-column: 2;
+    flex-direction: row;
+    align-items: baseline;
+    gap: 0.65rem;
+    text-align: left;
+  }
+
+  .cons__statCaption {
+    flex: 1;
+  }
 }
 
 /* ============================== SOLUTION ============================ */

@@ -1,5 +1,6 @@
 import Reveal from '../components/Reveal.jsx'
 import Lattice from '../components/decor/Lattice.jsx'
+import CountUp from '../components/ui/CountUp.jsx'
 import { MAJORS, FIELDS } from '../data/majors.js'
 import './About.css'
 
@@ -15,18 +16,33 @@ import './About.css'
  * been cut rather than reworded.
  */
 
+/**
+ * The three results, each now carrying the survey figure that measures it.
+ *
+ * The populations differ — the first is school students, the other two are
+ * students already at university — so each figure names its own, rather than
+ * letting three numbers in a row imply one sample. The percentages are the
+ * whole reason this section is an argument instead of an assertion, so they
+ * are the loudest thing in the row.
+ */
 const CONSEQUENCES = [
   {
     label: 'Uncertainty',
     text: 'The deadline arrives before the understanding does, so the choice gets made under pressure.',
+    stat: 83,
+    caption: 'of school students say their guidance is not enough, or does not exist.',
   },
   {
     label: 'Uninformed choices',
     text: 'A major gets picked for its reputation or the score it accepts, rarely for what studying it is like.',
+    stat: 70,
+    caption: 'of university students began with little information about their major.',
   },
   {
     label: 'Unsuitable majors',
     text: 'Years, tuition and motivation go into a field that never fit, and switching late is expensive.',
+    stat: 60,
+    caption: 'of university students considered changing majors in year one or two.',
   },
 ]
 
@@ -124,9 +140,29 @@ export default function About() {
                 </span>
                 <h3 className="cons__label">{item.label}</h3>
                 <p className="cons__text">{item.text}</p>
+                <p className="cons__stat">
+                  {/* Staggered on the same 110ms step as the rows' reveal, with
+                      a head start so the fade is under way before the digits
+                      begin moving. The two are not synchronised — each watches
+                      the viewport on its own — so this is a look, not a lock. */}
+                  <CountUp
+                    className="cons__statValue"
+                    to={item.stat}
+                    suffix="%"
+                    delay={0.35 + i * 0.11}
+                  />
+                  <span className="cons__statCaption">{item.caption}</span>
+                </p>
               </Reveal>
             ))}
           </div>
+
+          <Reveal delay={180}>
+            <p className="consequences__source">
+              Majora survey of 187 students and graduates across Kurdistan, Iraq, alongside
+              interviews with four educators.
+            </p>
+          </Reveal>
         </div>
       </div>
 

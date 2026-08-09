@@ -1,0 +1,11 @@
+.countup {
+  display: inline-block;
+  /* Lining, fixed-width figures: proportional digits make a running counter
+     jitter as each frame swaps a 1 for a 7. */
+  font-variant-numeric: tabular-nums lining-nums;
+}
+
+.countup__digits {
+  display: inline-block;
+  text-align: right;
+}
