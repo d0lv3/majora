@@ -106,45 +106,87 @@ export default function CephTracing({ landmarks, placed, onPlace, nudge }) {
               <stop offset="0%" stopColor="rgba(255,255,255,0.42)" />
               <stop offset="100%" stopColor="rgba(255,255,255,0.16)" />
             </linearGradient>
+            <radialGradient id="cephVignette" cx="48%" cy="46%" r="62%">
+              <stop offset="55%" stopColor="rgba(0,0,0,0)" />
+              <stop offset="100%" stopColor="rgba(0,0,0,0.55)" />
+            </radialGradient>
           </defs>
 
           <rect width="420" height="400" fill="url(#cephGlow)" />
 
-          {/* cranial vault */}
+          {/* The vault images as two tables with the diploë between them, which
+              is the first thing that tells you this is bone and not a drawing
+              of a head. */}
           <path
             className="ceph__bone"
             d="M62 186q-6-70 52-108 58-38 116-14 34 14 42 62 4 24 0 44"
             fill="none"
           />
+          <path
+            className="ceph__bone ceph__bone--thin"
+            d="M78 190q-4-60 46-94 52-34 104-12 30 12 38 54"
+            fill="none"
+          />
+
+          {/* The cranial base — the floor Sella sits on, running back to the
+              ear and forward to Nasion. Both are points on this line, which is
+              why the line is worth drawing. */}
+          <path className="ceph__bone" d="M112 182q20 8 40 0 24-10 44-6 30 6 74-36" fill="none" />
+
+          {/* sella turcica — the saddle Sella sits in the middle of */}
+          <path className="ceph__bone" d="M132 172q6-16 20-16t18 16" fill="none" />
+          <ellipse cx="150" cy="160" rx="21" ry="15" className="ceph__sella" />
+
+          {/* the orbit, and the nasal bone running down from Nasion */}
+          <ellipse className="ceph__orbit" cx="256" cy="184" rx="26" ry="20" />
+          <path className="ceph__bone ceph__bone--thin" d="M270 146q12 12 20 28" fill="none" />
+
+          {/* the maxillary sinus, the dark space above the upper teeth */}
+          <path className="ceph__sinus" d="M224 194q26-10 46 2 8 18-4 28-26 8-42-4-6-14 0-26z" />
+
           {/* soft-tissue profile: forehead, nose, lips, chin */}
           <path
             className="ceph__soft"
             d="M268 96q10 22 4 44l-2 8q14 26 30 44-6 8-22 10-4 10-2 20 12 6 14 16-4 10-16 12 8 8 8 20-2 14-14 22-6 16-14 26"
             fill="none"
           />
+
           {/* maxilla and the alveolar concavity that Point A sits in */}
           <path className="ceph__bone" d="M232 196q26 4 38 14 10 8 12 20-24 6-50 4" fill="none" />
-          {/* mandible: symphysis, lower border, ramus */}
+
+          {/* mandible: symphysis, lower border, gonial angle, ramus */}
           <path
             className="ceph__bone"
             d="M246 252q14 6 18 20 4 16-8 34-8 12-20 18-34 8-70-2-30-8-42-30-8-16-6-38"
             fill="none"
           />
-          {/* sella turcica — the saddle Sella sits in the middle of */}
-          <path className="ceph__bone" d="M132 172q6-16 20-16t18 16" fill="none" />
-          <ellipse cx="150" cy="160" rx="21" ry="15" className="ceph__sella" />
+          {/* the ramus climbing to the condyle, and the notch in front of it */}
+          <path
+            className="ceph__bone ceph__bone--thin"
+            d="M120 202q-4 24 2 44M150 196q-8 18-4 40"
+            fill="none"
+          />
+
+          {/* the external auditory meatus — where the ear rod sat */}
+          <circle className="ceph__meatus" cx="126" cy="208" r="8" />
 
           {/* the teeth, faintly */}
           <g className="ceph__teeth">
             <rect x="254" y="208" width="9" height="22" rx="2" transform="rotate(14 258 219)" />
             <rect x="246" y="214" width="8" height="20" rx="2" transform="rotate(10 250 224)" />
             <rect x="248" y="238" width="8" height="20" rx="2" transform="rotate(-4 252 248)" />
+            <rect x="238" y="242" width="8" height="18" rx="2" transform="rotate(-8 242 251)" />
           </g>
+
           <g className="ceph__spine">
             <rect x="78" y="250" width="34" height="20" rx="5" />
             <rect x="76" y="278" width="34" height="20" rx="5" />
             <rect x="74" y="306" width="34" height="20" rx="5" />
           </g>
+
+          {/* A film is darker at its edges than in the middle. Drawn last so it
+              falls over the anatomy rather than under it. */}
+          <rect className="ceph__vignette" width="420" height="400" pointerEvents="none" />
 
           {/* tracing lines, drawn as their endpoints arrive */}
           <g className="ceph__lines">

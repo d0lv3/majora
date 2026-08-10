@@ -107,14 +107,35 @@
   padding-bottom: clamp(2rem, 4vw, 3rem);
 }
 
+/* Wide, because the instruments are the point of this simulation and a 72ch
+   card left five hundred pixels of empty page beside a radiograph the reader is
+   supposed to be tracing on.
+
+   Width and measure are separate problems, though: prose set to the full width
+   of this card would run past a hundred characters a line. So the card is wide
+   and the running text inside it is not — see the measure rules below. */
 .simScreen {
-  max-width: min(72ch, 100%);
-  padding: clamp(1.4rem, 3vw, 2.4rem);
+  max-width: min(1080px, 100%);
+  padding: clamp(1.4rem, 3vw, 2.6rem);
   border-radius: var(--r-lg);
   background: var(--white);
   box-shadow:
     inset 0 0 0 1px rgba(65, 43, 99, 0.1),
     var(--shadow-card);
+}
+
+/* Anything that is read line by line keeps a book's measure. Anything that is
+   looked at — a drawing, a grid of records, a radiograph — takes the width. */
+.simScreen__lede,
+.simScreen__footnote,
+.simBanner,
+.simScreen__body > .simText,
+.simScreen__body > .simLede,
+.simScreen__body > .simSay,
+.simScreen__body > .simLesson,
+.simScreen__body > .simTerm,
+.simScreen__body > * > .simText {
+  max-width: 66ch;
 }
 
 .simScreen__visit {
@@ -403,7 +424,7 @@
 /* ============================ SCREEN 04 ============================== */
 .mouth__stage {
   position: relative;
-  max-width: 420px;
+  max-width: 520px;
   margin: 0 auto;
 }
 
@@ -413,13 +434,47 @@
   border-radius: var(--r-md);
 }
 
-.mouth__arch rect {
+/* The arch dims until it has been looked at. On the group rather than on the
+   teeth, so the gingiva behind them fades with the crowns instead of glowing
+   through a half-faded arch. */
+.mouth__arch {
+  opacity: 0.55;
   transition: opacity 0.4s ease;
+}
+
+.mouth__arch.is-seen {
+  opacity: 1;
+}
+
+.mouth__tooth {
+  stroke: rgba(65, 43, 99, 0.16);
+  stroke-width: 0.6;
+}
+
+/* Enamel is the only thing in the mouth that catches light like this. */
+.mouth__gloss {
+  fill: none;
+  stroke: rgba(255, 255, 255, 0.75);
+  stroke-width: 1.6;
+  stroke-linecap: round;
   opacity: 0.55;
 }
 
-.mouth__arch.is-seen rect {
-  opacity: 1;
+.mouth__palate {
+  fill: rgba(168, 84, 108, 0.5);
+}
+
+.mouth__rugae {
+  fill: none;
+  stroke: rgba(255, 255, 255, 0.13);
+  stroke-width: 2.4;
+  stroke-linecap: round;
+}
+
+.mouth__tongueMid {
+  stroke: rgba(0, 0, 0, 0.22);
+  stroke-width: 2;
+  stroke-linecap: round;
 }
 
 .mouth__overjet line {
@@ -690,7 +745,11 @@
 }
 
 /* ============================ SCREEN 07 ============================== */
+/* Capped rather than filling the wide card: these are small viewBoxes, and a
+   cast blown up to a thousand pixels stops looking like an object on a bench
+   and starts looking like a diagram that got away. */
 .model__stage {
+  max-width: 640px;
   border-radius: var(--r-md);
   background: var(--paper);
   box-shadow: inset 0 0 0 1px var(--line);
@@ -699,6 +758,26 @@
 .model__svg {
   width: 100%;
   height: auto;
+}
+
+.model__tooth {
+  stroke: rgba(78, 62, 40, 0.3);
+  stroke-width: 0.7;
+  stroke-linejoin: round;
+}
+
+.model__base {
+  stroke: rgba(78, 62, 40, 0.28);
+  stroke-width: 1;
+}
+
+/* The grooves that name the tooth. Cut into plaster, so they read as shadow
+   rather than as ink. */
+.model__fissure {
+  fill: none;
+  stroke: rgba(78, 62, 40, 0.42);
+  stroke-width: 1.1;
+  stroke-linecap: round;
 }
 
 .model__controls {
@@ -748,6 +827,7 @@
 /* ============================ SCREEN 08 ============================== */
 .xray__room {
   position: relative;
+  max-width: 720px;
   border-radius: var(--r-md);
   background: #14111f;
   overflow: hidden;
@@ -758,31 +838,67 @@
   height: auto;
 }
 
-.xray__head circle,
-.xray__head rect {
-  fill: rgba(255, 255, 255, 0.14);
-}
-
+/* The patient, lit the way a body is in a darkened room: a soft mass rather
+   than an outline, brightening once the exposure has been made. */
 .xray__head path {
-  stroke: rgba(255, 255, 255, 0.28);
-  stroke-width: 3;
+  fill: rgba(255, 255, 255, 0.16);
+  stroke: rgba(255, 255, 255, 0.34);
+  stroke-width: 1.6;
+  stroke-linejoin: round;
+  transition: fill 0.6s ease;
 }
 
-.xray__plate {
-  fill: rgba(255, 255, 255, 0.3);
+.xray__neck {
+  fill: rgba(255, 255, 255, 0.1);
+}
+
+.xray.is-film .xray__head path {
+  fill: rgba(255, 255, 255, 0.36);
+}
+
+/* The cephalostat. Gold, because it is the only part of the room the reader is
+   meant to notice — it is what makes the image repeatable. */
+.xray__stat path,
+.xray__stat circle {
+  fill: none;
+  stroke: rgba(238, 175, 22, 0.75);
+  stroke-width: 2.5;
+  stroke-linecap: round;
+}
+
+.xray__post {
+  stroke: rgba(238, 175, 22, 0.32) !important;
+  stroke-width: 3 !important;
+}
+
+.xray__rod,
+.xray__nasionTip {
+  fill: var(--gold-500) !important;
+  stroke: none !important;
 }
 
 .xray__tube rect {
   fill: var(--purple-300);
 }
 
-.xray__tube path {
-  stroke: var(--purple-300);
-  stroke-width: 5;
+.xray__collimator {
+  fill: var(--purple-200);
+}
+
+.xray__tubeStem,
+.xray__stand,
+.xray__floor {
+  fill: none;
+  stroke: rgba(255, 255, 255, 0.22);
+  stroke-width: 4;
+  stroke-linecap: round;
+}
+
+.xray__floor {
+  stroke-width: 2;
 }
 
 .xray__beam path {
-  fill: var(--gold);
   opacity: 0;
 }
 
@@ -790,9 +906,18 @@
   animation: xrayPulse 0.9s ease-out;
 }
 
-.xray.is-film .xray__head circle,
-.xray.is-film .xray__head rect {
-  fill: rgba(255, 255, 255, 0.34);
+.xray__plate {
+  fill: rgba(255, 255, 255, 0.26);
+}
+
+/* The film is blank until the exposure has been made, then it is a film. */
+.xray__film {
+  opacity: 0;
+  transition: opacity 0.7s ease;
+}
+
+.xray.is-film .xray__film {
+  opacity: 1;
 }
 
 .xray__stageLabel {
@@ -817,6 +942,38 @@
 }
 
 /* ============================ SCREEN 09 ============================== */
+/* The film's own anatomy. Everything here is thinner and dimmer than the
+   structures the tracing runs between, so the landmarks stay the brightest
+   thing on the radiograph. */
+.ceph__bone--thin {
+  stroke-width: 1.4;
+  opacity: 0.55;
+}
+
+.ceph__orbit {
+  fill: rgba(10, 8, 16, 0.5);
+  stroke: rgba(255, 255, 255, 0.32);
+  stroke-width: 1.6;
+}
+
+.ceph__sinus {
+  fill: rgba(10, 8, 16, 0.45);
+  stroke: rgba(255, 255, 255, 0.22);
+  stroke-width: 1.2;
+}
+
+.ceph__meatus {
+  fill: rgba(10, 8, 16, 0.6);
+  stroke: rgba(255, 255, 255, 0.28);
+  stroke-width: 1.4;
+}
+
+/* A film is darker at its edges than in the middle. The gradient itself is a
+   def on the SVG — `fill` cannot take a CSS gradient. */
+.ceph__vignette {
+  fill: url(#cephVignette);
+}
+
 .ceph {
   display: grid;
   grid-template-columns: minmax(0, 1.4fr) minmax(0, 1fr);
