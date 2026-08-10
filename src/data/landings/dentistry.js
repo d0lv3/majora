@@ -399,5 +399,36 @@ export const DENTISTRY_LANDING = {
         },
       ],
     },
+
+    /* ---------------------------- the last level ------------------------ */
+    /* The simulation is the end of the curriculum above rather than a feature
+       beside it, so it closes the document: five years of reading, and then
+       the fifth year done rather than read. */
+    {
+      id: 'simulate',
+      title: 'Year 5, played out',
+      panel: true,
+      blocks: [
+        { type: 'lede', text: 'Don’t just read about it. Take the case yourself.' },
+        {
+          type: 'text',
+          text: 'The last level of this curriculum is a Year 5 orthodontic case. One patient, followed across eighteen months and five visits: you talk to her, examine her, collect the records, trace the radiograph yourself, plan the treatment, and then watch what the body does with your plan and change it when it disagrees.',
+        },
+        {
+          type: 'text',
+          text: 'There is nothing to get right. Every choice has a clinical consequence instead of a score.',
+        },
+        {
+          type: 'flow',
+          steps: ['Listen', 'Examine', 'Record', 'Analyse', 'Plan', 'Monitor', 'Adapt'],
+        },
+        {
+          type: 'action',
+          label: 'Start the case',
+          to: '/app/dentistry/simulation',
+          note: 'The Journey of a Smile · about 15 minutes',
+        },
+      ],
+    },
   ],
 }

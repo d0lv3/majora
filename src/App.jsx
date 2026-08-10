@@ -23,9 +23,13 @@ import MajorDetail from './pages/MajorDetail.jsx'
 // fetched once however the reader arrives.
 //   MajorGuide a branch write-up and its course content — long, and read by
 //              whoever opened that one branch, not by the library above it.
+//   Simulation a whole interactive case — twenty-five screens and the drawings
+//              that go with them. Opened by the reader who finished a major's
+//              write-up and wanted to try the work, which is not most of them.
 const Majors = lazy(() => import('./pages/Majors.jsx'))
 const MajorMap = lazy(() => import('./pages/MajorMap.jsx'))
 const MajorGuide = lazy(() => import('./pages/MajorGuide.jsx'))
+const Simulation = lazy(() => import('./pages/Simulation.jsx'))
 import NotFound from './pages/NotFound.jsx'
 
 /**
@@ -137,6 +141,19 @@ export default function App() {
             element={
               <RequireAuth>
                 <MajorDetail />
+              </RequireAuth>
+            }
+          />
+          {/* The last level of a major's curriculum. A static segment, so the
+              router ranks it above /app/:slug/:branch and "simulation" is
+              never mistaken for the name of a branch. */}
+          <Route
+            path="/app/:slug/simulation"
+            element={
+              <RequireAuth>
+                <Suspense fallback={<div className="routeWait">Preparing the clinic…</div>}>
+                  <Simulation />
+                </Suspense>
               </RequireAuth>
             }
           />

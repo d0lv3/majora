@@ -1,0 +1,1643 @@
+/* =========================================================
+   The Journey of a Smile — the Year 5 orthodontics case.
+
+   A clinic rather than a page of the library: paler and
+   cooler than the major pages, with the purple kept for the
+   things the reader acts on.
+   ========================================================= */
+.sim {
+  min-height: 100svh;
+  padding-bottom: calc(clamp(3rem, 6vw, 5rem) + var(--nav-clear));
+  background: #fbfaff;
+  color: var(--text-on-light);
+}
+
+/* ================================ HEAD =============================== */
+.sim__head {
+  position: relative;
+  overflow: hidden;
+  padding: var(--nav-headroom) 0 clamp(1.8rem, 3.5vw, 2.8rem);
+  background: var(--purple-600);
+  background-image: radial-gradient(85% 80% at 15% 0%, rgba(107, 78, 148, 0.55), transparent 60%);
+  color: var(--white);
+}
+
+.sim__back {
+  display: block;
+  width: fit-content;
+  margin-bottom: 1.6rem;
+  font-size: 0.85rem;
+  color: var(--text-on-dark-dim);
+  transition: color 0.25s ease;
+}
+
+.sim__back:hover {
+  color: var(--gold);
+}
+
+.sim__title {
+  margin-top: 1rem;
+  font-size: clamp(2rem, 4.6vw, 3.2rem);
+  text-wrap: balance;
+}
+
+.sim__subtitle {
+  max-width: 46ch;
+  margin-top: 0.9rem;
+  font-family: var(--font-display);
+  font-size: var(--step-lead);
+  font-weight: 400;
+  line-height: 1.5;
+  color: rgba(255, 255, 255, 0.84);
+}
+
+/* ================================ RAIL =============================== */
+.sim__rail {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.8rem 1.5rem;
+  padding-block: clamp(1rem, 2vw, 1.5rem);
+}
+
+.simActs {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.35rem;
+  padding: 0;
+  margin: 0;
+  list-style: none;
+  counter-reset: act;
+}
+
+.simActs li {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.35rem 0.85rem;
+  border-radius: var(--r-pill);
+  background: rgba(65, 43, 99, 0.06);
+  font-size: 0.78rem;
+  font-weight: 600;
+  color: var(--text-on-light-dim);
+  transition:
+    background-color 0.3s ease,
+    color 0.3s ease;
+}
+
+.simActs li.is-done {
+  background: rgba(238, 175, 22, 0.16);
+  color: var(--gold-700);
+}
+
+.simActs li.is-on {
+  background: var(--purple-600);
+  color: var(--white);
+}
+
+.sim__count {
+  font-size: 0.78rem;
+  font-variant-numeric: tabular-nums;
+  color: var(--text-on-light-dim);
+}
+
+/* =============================== SCREEN ============================== */
+.sim__stage {
+  padding-bottom: clamp(2rem, 4vw, 3rem);
+}
+
+.simScreen {
+  max-width: min(72ch, 100%);
+  padding: clamp(1.4rem, 3vw, 2.4rem);
+  border-radius: var(--r-lg);
+  background: var(--white);
+  box-shadow:
+    inset 0 0 0 1px rgba(65, 43, 99, 0.1),
+    var(--shadow-card);
+}
+
+.simScreen__visit {
+  font-size: 0.68rem;
+  font-weight: 700;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: var(--gold-700);
+}
+
+.simScreen__title {
+  margin-top: 0.6rem;
+  font-size: clamp(1.5rem, 3vw, 2.1rem);
+  line-height: 1.14;
+  color: var(--purple-600);
+  letter-spacing: -0.03em;
+  text-wrap: balance;
+}
+
+.simScreen__lede {
+  margin-top: 0.8rem;
+  font-family: var(--font-display);
+  font-size: clamp(1rem, 1.6vw, 1.16rem);
+  font-weight: 500;
+  line-height: 1.5;
+  color: var(--text-on-light-dim);
+}
+
+.simScreen__body {
+  margin-top: clamp(1.2rem, 2.5vw, 1.8rem);
+}
+
+.simText {
+  margin-top: 1.05rem;
+  font-size: 1rem;
+  line-height: 1.75;
+  color: var(--text-on-light-dim);
+  text-wrap: pretty;
+}
+
+.simLede {
+  font-family: var(--font-display);
+  font-size: clamp(1.1rem, 2vw, 1.35rem);
+  font-weight: 500;
+  line-height: 1.45;
+  letter-spacing: -0.02em;
+  color: var(--purple-600);
+}
+
+.simMeta {
+  font-size: 0.8rem;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  color: var(--text-on-light-dim);
+}
+
+/* --- the system banner --- */
+.simBanner {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.8rem;
+  margin-top: 1.2rem;
+  padding: 0.85rem 1.1rem;
+  border-radius: var(--r-md);
+  background: rgba(238, 175, 22, 0.12);
+  box-shadow: inset 0 0 0 1px rgba(238, 175, 22, 0.4);
+  font-size: 0.9rem;
+  line-height: 1.6;
+  color: var(--text-on-light);
+}
+
+.simBanner__mark {
+  width: 9px;
+  height: 9px;
+  margin-top: 0.5rem;
+  flex: none;
+  background: var(--gold-600);
+  transform: rotate(45deg);
+}
+
+/* --- what the patient says --- */
+.simSay {
+  margin: 1.2rem 0 0;
+  padding: 1.1rem 1.3rem;
+  border-radius: var(--r-md);
+  border-left: 3px solid var(--purple-300);
+  background: var(--paper);
+}
+
+.simSay__who {
+  font-size: 0.62rem;
+  font-weight: 700;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: var(--purple-400);
+}
+
+.simSay__line {
+  margin: 0.4rem 0 0;
+  font-family: var(--font-display);
+  font-size: clamp(1rem, 1.8vw, 1.18rem);
+  font-weight: 500;
+  line-height: 1.5;
+  color: var(--purple-600);
+}
+
+/* --- the aside that names what just happened --- */
+.simLesson {
+  margin-top: 1.4rem;
+  padding: 1rem 1.2rem;
+  border-radius: var(--r-md);
+  background: rgba(65, 43, 99, 0.05);
+  box-shadow: inset 0 0 0 1px rgba(65, 43, 99, 0.12);
+}
+
+.simLesson__tag {
+  display: block;
+  margin-bottom: 0.5rem;
+  font-size: 0.62rem;
+  font-weight: 700;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: var(--purple-500);
+}
+
+.simLesson p {
+  font-size: 0.92rem;
+  line-height: 1.7;
+  color: var(--text-on-light-dim);
+}
+
+/* --- actions --- */
+.simScreen__foot {
+  margin-top: clamp(1.6rem, 3vw, 2.2rem);
+  padding-top: clamp(1.2rem, 2.5vw, 1.6rem);
+  border-top: 1px solid var(--line);
+}
+
+.simScreen__actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.6rem;
+}
+
+.simBtn {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.55rem;
+  min-height: 44px;
+  padding: 0.7rem 1.2rem;
+  border-radius: var(--r-pill);
+  background: var(--white);
+  box-shadow: inset 0 0 0 1.5px var(--line-strong);
+  font-family: var(--font-display);
+  font-size: 0.92rem;
+  font-weight: 600;
+  letter-spacing: -0.01em;
+  color: var(--purple-600);
+  transition:
+    background-color 0.25s ease,
+    box-shadow 0.25s ease,
+    color 0.25s ease,
+    transform 0.25s var(--ease);
+}
+
+.simBtn:hover:not(:disabled) {
+  transform: translateY(-2px);
+  box-shadow: inset 0 0 0 1.5px var(--purple-500);
+}
+
+.simBtn--primary {
+  background: var(--purple-600);
+  box-shadow: none;
+  color: var(--white);
+}
+
+.simBtn--primary:hover:not(:disabled) {
+  background: var(--purple-500);
+  box-shadow: 0 16px 30px -18px rgba(65, 43, 99, 0.9);
+}
+
+.simBtn:disabled {
+  cursor: not-allowed;
+  background: rgba(65, 43, 99, 0.05);
+  box-shadow: none;
+  color: var(--text-on-light-dim);
+  opacity: 0.75;
+}
+
+.simBtn__done {
+  font-size: 0.8rem;
+  color: var(--gold-700);
+}
+
+.simBtn--primary .simBtn__done {
+  color: var(--gold-400);
+}
+
+.simScreen__footnote {
+  margin-top: 0.9rem;
+  font-size: 0.82rem;
+  color: var(--text-on-light-dim);
+}
+
+/* ============================ SCREEN 02 ============================== */
+.simChair {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: clamp(1rem, 3vw, 2rem);
+}
+
+.simChair__art {
+  flex: none;
+  width: clamp(140px, 30vw, 200px);
+}
+
+.simChair__art svg {
+  width: 100%;
+  height: auto;
+}
+
+.simChair__seat {
+  fill: var(--purple-100);
+}
+
+.simChair__head {
+  fill: var(--purple-300);
+}
+
+.simChair__arm {
+  stroke: var(--purple-200);
+  stroke-width: 6;
+  stroke-linecap: round;
+}
+
+.simChair__copy {
+  flex: 1 1 16rem;
+  min-width: 0;
+}
+
+/* ============================ SCREEN 03 ============================== */
+.simAsk {
+  display: grid;
+  gap: 0.7rem;
+  margin-top: 1.3rem;
+  padding: 0;
+  list-style: none;
+}
+
+.simAsk__q {
+  width: 100%;
+  min-height: 44px;
+  padding: 0.75rem 1.1rem;
+  border-radius: var(--r-md);
+  background: var(--white);
+  box-shadow: inset 0 0 0 1.5px var(--line-strong);
+  text-align: left;
+  font-size: 0.95rem;
+  line-height: 1.5;
+  color: var(--purple-600);
+  transition:
+    box-shadow 0.25s ease,
+    background-color 0.25s ease;
+}
+
+.simAsk__q:hover {
+  box-shadow: inset 0 0 0 1.5px var(--purple-500);
+}
+
+.simAsk__q.is-asked {
+  background: var(--paper);
+  box-shadow: inset 0 0 0 1px var(--line);
+  color: var(--text-on-light-dim);
+}
+
+.simAsk__reply {
+  margin: 0.55rem 0 0 1.1rem;
+  padding-left: 1rem;
+  border-left: 2px solid var(--gold);
+  font-size: 0.95rem;
+  line-height: 1.65;
+  color: var(--text-on-light);
+}
+
+/* ============================ SCREEN 04 ============================== */
+.mouth__stage {
+  position: relative;
+  max-width: 420px;
+  margin: 0 auto;
+}
+
+.mouth__svg {
+  width: 100%;
+  height: auto;
+  border-radius: var(--r-md);
+}
+
+.mouth__arch rect {
+  transition: opacity 0.4s ease;
+  opacity: 0.55;
+}
+
+.mouth__arch.is-seen rect {
+  opacity: 1;
+}
+
+.mouth__overjet line {
+  stroke: var(--gold);
+  stroke-width: 2;
+}
+
+.mouth__overjet text {
+  fill: var(--gold-400);
+  font-family: var(--font-display);
+  font-size: 13px;
+  font-weight: 700;
+}
+
+/* The three targets. Absolutely placed over the drawing, transparent until
+   they are hovered or focused, and labelled once explored. */
+.mouth__zone {
+  position: absolute;
+  border-radius: var(--r-pill);
+  background: transparent;
+  box-shadow: inset 0 0 0 2px transparent;
+  transition:
+    background-color 0.25s ease,
+    box-shadow 0.25s ease;
+}
+
+.mouth__zone span {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -50%);
+  padding: 0.25rem 0.7rem;
+  border-radius: var(--r-pill);
+  background: rgba(21, 13, 33, 0.78);
+  font-size: 0.7rem;
+  font-weight: 600;
+  white-space: nowrap;
+  color: #fff;
+  opacity: 0;
+  transition: opacity 0.25s ease;
+}
+
+.mouth__zone:hover,
+.mouth__zone:focus-visible {
+  background: rgba(238, 175, 22, 0.16);
+  box-shadow: inset 0 0 0 2px var(--gold);
+}
+
+.mouth__zone:hover span,
+.mouth__zone:focus-visible span,
+.mouth__zone.is-seen span {
+  opacity: 1;
+}
+
+.mouth__zone.is-seen {
+  box-shadow: inset 0 0 0 2px rgba(238, 175, 22, 0.5);
+}
+
+.mouth__zone--upper {
+  left: 14%;
+  top: 22%;
+  width: 72%;
+  height: 22%;
+}
+
+.mouth__zone--front {
+  left: 26%;
+  top: 45%;
+  width: 48%;
+  height: 12%;
+}
+
+.mouth__zone--lower {
+  left: 17%;
+  top: 58%;
+  width: 66%;
+  height: 22%;
+}
+
+.simFindings {
+  display: grid;
+  gap: 0.6rem;
+  margin-top: 1.4rem;
+  padding: 0;
+  list-style: none;
+}
+
+.simFindings li {
+  display: grid;
+  grid-template-columns: minmax(0, 8rem) minmax(0, 1fr);
+  gap: 0.2rem 1rem;
+  padding: 0.7rem 0.9rem;
+  border-radius: var(--r-sm);
+  background: var(--paper);
+  opacity: 0.55;
+  transition: opacity 0.3s ease;
+}
+
+.simFindings li.is-found {
+  opacity: 1;
+  background: var(--white);
+  box-shadow: inset 0 0 0 1px var(--line);
+}
+
+.simFindings__label {
+  font-family: var(--font-display);
+  font-size: 0.88rem;
+  font-weight: 600;
+  color: var(--purple-600);
+}
+
+.simFindings__text {
+  font-size: 0.9rem;
+  line-height: 1.6;
+  color: var(--text-on-light-dim);
+}
+
+/* the term, revealed after the thing it names */
+.simTerm {
+  margin-top: 1.4rem;
+  padding: 1.1rem 1.3rem;
+  border-radius: var(--r-md);
+  background: linear-gradient(120deg, var(--purple-700), var(--purple-800));
+  color: var(--white);
+}
+
+.simTerm__name {
+  font-family: var(--font-display);
+  font-size: 1.25rem;
+  font-weight: 700;
+  letter-spacing: -0.02em;
+  color: var(--gold-400);
+}
+
+.simTerm__def {
+  margin-top: 0.5rem;
+  font-size: 0.98rem;
+  line-height: 1.65;
+}
+
+.simTerm__note {
+  margin-top: 0.7rem;
+  font-size: 0.82rem;
+  color: var(--text-on-dark-faint);
+}
+
+/* ============================ SCREEN 05 ============================== */
+.simRecords {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 220px), 1fr));
+  gap: 0.7rem;
+  margin-top: 1.4rem;
+  padding: 0;
+  list-style: none;
+}
+
+.simRecord {
+  display: flex;
+  flex-direction: column;
+  gap: 0.45rem;
+  width: 100%;
+  height: 100%;
+  padding: 1rem 1.1rem;
+  border-radius: var(--r-md);
+  background: var(--white);
+  box-shadow: inset 0 0 0 1px rgba(65, 43, 99, 0.14);
+  text-align: left;
+  transition:
+    transform 0.3s var(--ease),
+    box-shadow 0.3s ease;
+}
+
+.simRecord:hover {
+  transform: translateY(-2px);
+  box-shadow: inset 0 0 0 1.5px var(--gold-600);
+}
+
+.simRecord__head {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 0.6rem;
+}
+
+.simRecord__label {
+  font-family: var(--font-display);
+  font-size: 1rem;
+  font-weight: 600;
+  color: var(--purple-600);
+}
+
+.simRecord__tag {
+  flex: none;
+  padding: 0.15rem 0.55rem;
+  border-radius: var(--r-pill);
+  background: rgba(238, 175, 22, 0.2);
+  font-size: 0.6rem;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--gold-700);
+}
+
+.simRecord__blurb {
+  font-size: 0.87rem;
+  line-height: 1.55;
+  color: var(--text-on-light-dim);
+}
+
+/* ============================ SCREEN 06 ============================== */
+.simPhotos {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 150px), 1fr));
+  gap: 0.7rem;
+  padding: 0;
+  list-style: none;
+}
+
+.simPhoto {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  width: 100%;
+  padding: 0.6rem;
+  border-radius: var(--r-md);
+  background: var(--white);
+  box-shadow: inset 0 0 0 1px var(--line);
+  text-align: left;
+}
+
+.simPhoto:hover {
+  box-shadow: inset 0 0 0 1.5px var(--gold-600);
+}
+
+/* Stand-ins for the clinical photographs: each one a different arrangement of
+   the same two tones, so the set reads as four views rather than four boxes. */
+.simPhoto__frame {
+  display: block;
+  aspect-ratio: 4 / 3;
+  border-radius: var(--r-sm);
+  background: var(--purple-100);
+  background-image: radial-gradient(60% 70% at 50% 60%, rgba(125, 53, 80, 0.55), transparent 70%);
+}
+
+.simPhoto__frame[data-kind='profile'] {
+  background-image: radial-gradient(50% 90% at 70% 50%, rgba(65, 43, 99, 0.45), transparent 72%);
+}
+
+.simPhoto__frame[data-kind='upper'] {
+  background-image: radial-gradient(70% 50% at 50% 30%, rgba(125, 53, 80, 0.55), transparent 70%);
+}
+
+.simPhoto__frame[data-kind='lower'] {
+  background-image: radial-gradient(70% 50% at 50% 74%, rgba(125, 53, 80, 0.55), transparent 70%);
+}
+
+.simPhoto__label {
+  font-family: var(--font-display);
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: var(--purple-600);
+}
+
+.simPhoto__note {
+  font-size: 0.82rem;
+  line-height: 1.55;
+  color: var(--text-on-light-dim);
+}
+
+/* ============================ SCREEN 07 ============================== */
+.model__stage {
+  border-radius: var(--r-md);
+  background: var(--paper);
+  box-shadow: inset 0 0 0 1px var(--line);
+}
+
+.model__svg {
+  width: 100%;
+  height: auto;
+}
+
+.model__controls {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 1rem 1.4rem;
+  margin-top: 1rem;
+}
+
+.model__group {
+  display: flex;
+  gap: 0.4rem;
+}
+
+.simChip {
+  min-height: 36px;
+  padding: 0.4rem 0.9rem;
+  border-radius: var(--r-pill);
+  background: var(--white);
+  box-shadow: inset 0 0 0 1.5px var(--line-strong);
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: var(--purple-600);
+}
+
+.simChip.is-on {
+  background: var(--purple-600);
+  box-shadow: none;
+  color: var(--white);
+}
+
+.model__slider {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  font-size: 0.8rem;
+  font-weight: 600;
+  color: var(--text-on-light-dim);
+}
+
+.model__slider input {
+  width: clamp(100px, 22vw, 160px);
+  accent-color: var(--purple-600);
+}
+
+/* ============================ SCREEN 08 ============================== */
+.xray__room {
+  position: relative;
+  border-radius: var(--r-md);
+  background: #14111f;
+  overflow: hidden;
+}
+
+.xray__svg {
+  width: 100%;
+  height: auto;
+}
+
+.xray__head circle,
+.xray__head rect {
+  fill: rgba(255, 255, 255, 0.14);
+}
+
+.xray__head path {
+  stroke: rgba(255, 255, 255, 0.28);
+  stroke-width: 3;
+}
+
+.xray__plate {
+  fill: rgba(255, 255, 255, 0.3);
+}
+
+.xray__tube rect {
+  fill: var(--purple-300);
+}
+
+.xray__tube path {
+  stroke: var(--purple-300);
+  stroke-width: 5;
+}
+
+.xray__beam path {
+  fill: var(--gold);
+  opacity: 0;
+}
+
+.xray.is-pulse .xray__beam path {
+  animation: xrayPulse 0.9s ease-out;
+}
+
+.xray.is-film .xray__head circle,
+.xray.is-film .xray__head rect {
+  fill: rgba(255, 255, 255, 0.34);
+}
+
+.xray__stageLabel {
+  padding: 0.7rem 1.1rem;
+  border-top: 1px solid rgba(255, 255, 255, 0.12);
+  font-size: 0.8rem;
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  color: rgba(255, 255, 255, 0.7);
+}
+
+@keyframes xrayPulse {
+  0% {
+    opacity: 0;
+  }
+  25% {
+    opacity: 0.5;
+  }
+  100% {
+    opacity: 0;
+  }
+}
+
+/* ============================ SCREEN 09 ============================== */
+.ceph {
+  display: grid;
+  grid-template-columns: minmax(0, 1.4fr) minmax(0, 1fr);
+  gap: clamp(1rem, 2.5vw, 1.8rem);
+  align-items: start;
+}
+
+.ceph__filmWrap {
+  position: relative;
+  border-radius: var(--r-md);
+  overflow: hidden;
+}
+
+.ceph__film {
+  display: block;
+  width: 100%;
+  height: auto;
+  cursor: crosshair;
+}
+
+.ceph__bone,
+.ceph__soft {
+  stroke: rgba(255, 255, 255, 0.5);
+  stroke-width: 3;
+  stroke-linecap: round;
+}
+
+.ceph__soft {
+  stroke: rgba(255, 255, 255, 0.32);
+  stroke-width: 2.5;
+}
+
+.ceph__sella {
+  fill: rgba(255, 255, 255, 0.1);
+  stroke: rgba(255, 255, 255, 0.35);
+  stroke-width: 2;
+}
+
+.ceph__teeth rect,
+.ceph__spine rect {
+  fill: rgba(255, 255, 255, 0.28);
+}
+
+.ceph__spine rect {
+  fill: rgba(255, 255, 255, 0.16);
+}
+
+.ceph__line {
+  stroke: var(--gold);
+  stroke-width: 2;
+  stroke-linecap: round;
+}
+
+.ceph__line--a,
+.ceph__line--b {
+  stroke: #7fd6ff;
+}
+
+.ceph__line--me {
+  stroke: rgba(255, 255, 255, 0.5);
+  stroke-dasharray: 5 4;
+}
+
+.ceph__point circle {
+  fill: var(--gold);
+  stroke: rgba(21, 13, 33, 0.7);
+  stroke-width: 2;
+}
+
+.ceph__point text {
+  fill: #fff;
+  font-family: var(--font-display);
+  font-size: 13px;
+  font-weight: 700;
+}
+
+.ceph__target {
+  fill: rgba(238, 175, 22, 0.1);
+  stroke: var(--gold);
+  stroke-width: 2;
+  stroke-dasharray: 5 5;
+  animation: cephRing 2.4s ease-in-out infinite;
+}
+
+.ceph__target.is-missed {
+  stroke: #ff9d6b;
+  fill: rgba(255, 157, 107, 0.12);
+}
+
+@keyframes cephRing {
+  50% {
+    opacity: 0.45;
+  }
+}
+
+/* The keyboard's target, sitting exactly on the ring. */
+.ceph__targetBtn {
+  position: absolute;
+  width: 44px;
+  height: 44px;
+  transform: translate(-50%, -50%);
+  border-radius: 50%;
+  background: transparent;
+}
+
+.ceph__targetBtn:focus-visible {
+  outline: 2px solid var(--gold);
+  outline-offset: 4px;
+}
+
+.ceph__side {
+  min-width: 0;
+}
+
+.ceph__list {
+  display: grid;
+  gap: 0.3rem;
+  padding: 0;
+  margin: 0;
+  list-style: none;
+}
+
+.ceph__list li {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  padding: 0.45rem 0.7rem;
+  border-radius: var(--r-sm);
+  font-size: 0.85rem;
+  color: var(--text-on-light-dim);
+}
+
+.ceph__list li.is-next {
+  background: rgba(238, 175, 22, 0.14);
+  color: var(--gold-700);
+  font-weight: 600;
+}
+
+.ceph__list li.is-done {
+  color: var(--purple-600);
+}
+
+.ceph__abbr {
+  flex: none;
+  width: 2rem;
+  font-family: var(--font-display);
+  font-weight: 700;
+}
+
+.ceph__name {
+  min-width: 0;
+}
+
+.ceph__tick {
+  margin-left: auto;
+  color: var(--gold-700);
+}
+
+.ceph__prompt {
+  margin-top: 1rem;
+  padding: 0.9rem 1rem;
+  border-radius: var(--r-md);
+  background: var(--paper);
+  box-shadow: inset 0 0 0 1px var(--line);
+}
+
+.ceph__promptName {
+  font-family: var(--font-display);
+  font-size: 1rem;
+  font-weight: 600;
+  color: var(--purple-600);
+}
+
+.ceph__promptWhere {
+  margin-top: 0.35rem;
+  font-size: 0.85rem;
+  line-height: 1.6;
+  color: var(--text-on-light-dim);
+}
+
+.ceph__nudge {
+  margin-top: 0.6rem;
+  font-size: 0.82rem;
+  font-weight: 600;
+  color: #a2521f;
+}
+
+.ceph__reading {
+  margin-top: 1rem;
+  padding: 1rem;
+  border-radius: var(--r-md);
+  background: var(--purple-600);
+  color: var(--white);
+}
+
+.ceph__readingTitle {
+  font-size: 0.62rem;
+  font-weight: 700;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: var(--gold-400);
+}
+
+.ceph__angles {
+  display: flex;
+  gap: 1.2rem;
+  margin: 0.7rem 0 0;
+}
+
+.ceph__angles dt {
+  font-size: 0.62rem;
+  font-weight: 700;
+  letter-spacing: 0.14em;
+  color: rgba(255, 255, 255, 0.6);
+}
+
+.ceph__angles dd {
+  margin: 0.1rem 0 0;
+  font-family: var(--font-display);
+  font-size: 1.15rem;
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
+}
+
+.ceph__class {
+  margin-top: 0.8rem;
+  padding-top: 0.7rem;
+  border-top: 1px solid rgba(255, 255, 255, 0.2);
+  font-family: var(--font-display);
+  font-weight: 600;
+  color: var(--gold-400);
+}
+
+/* ============================ SCREEN 10 ============================== */
+.simCards {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 220px), 1fr));
+  gap: 0.7rem;
+  padding: 0;
+  list-style: none;
+}
+
+.simCards li {
+  display: grid;
+  gap: 0.35rem;
+  padding: 1rem 1.1rem;
+  border-radius: var(--r-md);
+  background: var(--white);
+  box-shadow: inset 0 0 0 1px rgba(65, 43, 99, 0.14);
+}
+
+.simCards li.is-thin {
+  background: var(--paper);
+  box-shadow: inset 0 0 0 1px var(--line);
+  opacity: 0.75;
+}
+
+.simCards__label {
+  font-size: 0.62rem;
+  font-weight: 700;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--purple-500);
+}
+
+.simCards__value {
+  font-size: 0.95rem;
+  line-height: 1.55;
+  color: var(--text-on-light);
+}
+
+/* ============================ SCREEN 11 ============================== */
+.simGoals {
+  display: grid;
+  gap: 0.6rem;
+  padding: 0;
+  list-style: none;
+}
+
+.simGoal {
+  display: grid;
+  gap: 0.25rem;
+  width: 100%;
+  padding: 0.9rem 1.1rem;
+  border-radius: var(--r-md);
+  background: var(--white);
+  box-shadow: inset 0 0 0 1px rgba(65, 43, 99, 0.14);
+  text-align: left;
+}
+
+.simGoal:hover {
+  box-shadow: inset 0 0 0 1.5px var(--gold-600);
+}
+
+.simGoals li.is-read .simGoal {
+  background: var(--paper);
+}
+
+.simGoal__label {
+  font-family: var(--font-display);
+  font-size: 1rem;
+  font-weight: 600;
+  color: var(--purple-600);
+}
+
+.simGoal__short {
+  font-size: 0.88rem;
+  color: var(--text-on-light-dim);
+}
+
+.simGoal__text {
+  margin: 0.55rem 0 0 1.1rem;
+  padding-left: 1rem;
+  border-left: 2px solid var(--gold);
+  font-size: 0.9rem;
+  line-height: 1.7;
+  color: var(--text-on-light-dim);
+}
+
+/* ============================ SCREEN 12 ============================== */
+.simTrack {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  padding: 0;
+  list-style: none;
+}
+
+.simTrack__node {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  min-height: 44px;
+  padding: 0.5rem 0.9rem;
+  border-radius: var(--r-pill);
+  background: var(--white);
+  box-shadow: inset 0 0 0 1.5px var(--line-strong);
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: var(--text-on-light-dim);
+}
+
+.simTrack__node.is-read {
+  color: var(--purple-600);
+}
+
+.simTrack__node.is-on {
+  background: var(--purple-600);
+  box-shadow: none;
+  color: var(--white);
+}
+
+.simTrack__n {
+  font-family: var(--font-display);
+  font-size: 0.68rem;
+  letter-spacing: 0.1em;
+  color: var(--gold-600);
+}
+
+.simTrack__node.is-on .simTrack__n {
+  color: var(--gold-400);
+}
+
+.simTrack__note {
+  margin-top: 1.1rem;
+  padding: 0.9rem 1.1rem;
+  border-radius: var(--r-md);
+  background: var(--paper);
+  font-size: 0.92rem;
+  line-height: 1.7;
+  color: var(--text-on-light-dim);
+}
+
+/* ============================ SCREEN 13 ============================== */
+.simBraces svg {
+  width: 100%;
+  height: auto;
+  max-width: 420px;
+  margin-inline: auto;
+}
+
+.simBraces rect {
+  fill: var(--purple-200);
+}
+
+.simBraces__wire {
+  fill: none;
+  stroke: var(--gold-600);
+  stroke-width: 3;
+  stroke-linecap: round;
+}
+
+/* ============================ SCREENS 14-15 ========================== */
+.simCompare {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: center;
+  gap: clamp(1rem, 4vw, 2.5rem);
+  margin-top: 1.4rem;
+  padding: clamp(1.1rem, 3vw, 1.8rem);
+  border-radius: var(--r-md);
+  background: var(--paper);
+  box-shadow: inset 0 0 0 1px var(--line);
+  text-align: center;
+}
+
+.simCompare__when {
+  display: block;
+  font-size: 0.62rem;
+  font-weight: 700;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--text-on-light-dim);
+}
+
+.simCompare__mm {
+  display: block;
+  margin-top: 0.3rem;
+  font-family: var(--font-display);
+  font-size: clamp(1.6rem, 4vw, 2.4rem);
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
+  color: var(--purple-600);
+}
+
+.simCompare__arrow {
+  font-size: 1.4rem;
+  color: var(--gold-600);
+}
+
+.simObs {
+  display: grid;
+  gap: 0.55rem;
+  padding: 0;
+  list-style: none;
+}
+
+.simObs__btn {
+  width: 100%;
+  min-height: 44px;
+  padding: 0.75rem 1.05rem;
+  border-radius: var(--r-md);
+  background: var(--white);
+  box-shadow: inset 0 0 0 1.5px var(--line-strong);
+  text-align: left;
+  font-size: 0.92rem;
+  line-height: 1.6;
+  color: var(--purple-600);
+}
+
+.simObs__btn:hover {
+  box-shadow: inset 0 0 0 1.5px var(--purple-500);
+}
+
+.simObs__btn.is-seen {
+  background: var(--paper);
+  box-shadow: inset 0 0 0 1px var(--line);
+  color: var(--text-on-light-dim);
+  cursor: default;
+}
+
+/* ============================ SCREENS 16-17 ========================== */
+.simChoices {
+  display: grid;
+  gap: 0.6rem;
+  margin-top: 0.4rem;
+  padding: 0;
+  list-style: none;
+}
+
+.simChoice {
+  width: 100%;
+  min-height: 48px;
+  padding: 0.9rem 1.2rem;
+  border-radius: var(--r-md);
+  background: var(--white);
+  box-shadow: inset 0 0 0 1.5px var(--line-strong);
+  text-align: left;
+  font-family: var(--font-display);
+  font-size: 0.98rem;
+  font-weight: 600;
+  color: var(--purple-600);
+  transition:
+    transform 0.25s var(--ease),
+    box-shadow 0.25s ease;
+}
+
+.simChoice:hover {
+  transform: translateY(-2px);
+  box-shadow: inset 0 0 0 1.5px var(--gold-600);
+}
+
+.simChosen {
+  font-size: 0.72rem;
+  font-weight: 700;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--gold-700);
+}
+
+/* ============================ SCREEN 18 ============================== */
+.simProgress {
+  padding: clamp(1.1rem, 3vw, 1.8rem);
+  border-radius: var(--r-md);
+  background: var(--paper);
+  box-shadow: inset 0 0 0 1px var(--line);
+  text-align: center;
+}
+
+.simProgress__value {
+  display: block;
+}
+
+.simProgress__mm {
+  font-family: var(--font-display);
+  font-size: clamp(2.6rem, 8vw, 4.2rem);
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
+  line-height: 1;
+  color: var(--purple-600);
+}
+
+.simProgress__unit {
+  display: block;
+  margin-top: 0.3rem;
+  font-size: 0.72rem;
+  font-weight: 700;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--text-on-light-dim);
+}
+
+.simProgress__slider {
+  display: block;
+  margin-top: 1.4rem;
+}
+
+.simProgress__slider input {
+  width: 100%;
+  accent-color: var(--purple-600);
+}
+
+.simProgress__stops {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 0.4rem;
+  padding: 0;
+  list-style: none;
+  font-size: 0.72rem;
+  font-weight: 600;
+  color: var(--text-on-light-dim);
+}
+
+.simProgress__stops li.is-on {
+  color: var(--gold-700);
+}
+
+.simProgress__note {
+  margin-top: 1.1rem;
+  font-size: 0.92rem;
+  line-height: 1.65;
+  color: var(--text-on-light-dim);
+}
+
+/* ============================ SCREEN 20 ============================== */
+.simDone {
+  margin-top: 1.2rem;
+  padding: 0.85rem 1.1rem;
+  border-radius: var(--r-md);
+  background: rgba(238, 175, 22, 0.14);
+  box-shadow: inset 0 0 0 1px rgba(238, 175, 22, 0.4);
+  font-size: 0.92rem;
+  font-weight: 600;
+  color: var(--gold-700);
+}
+
+/* ============================ SCREEN 21 ============================== */
+.simBoard {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 220px), 1fr));
+  gap: 0.8rem;
+}
+
+.simBoard__side {
+  padding: 1.1rem 1.2rem;
+  border-radius: var(--r-md);
+  background: var(--paper);
+  box-shadow: inset 0 0 0 1px var(--line);
+}
+
+.simBoard__side--after {
+  background: linear-gradient(120deg, var(--purple-700), var(--purple-800));
+  box-shadow: inset 0 0 0 1px rgba(238, 175, 22, 0.35);
+  color: var(--white);
+}
+
+.simBoard__when {
+  font-size: 0.62rem;
+  font-weight: 700;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: var(--text-on-light-dim);
+}
+
+.simBoard__side--after .simBoard__when {
+  color: var(--gold-400);
+}
+
+.simBoard__mm {
+  display: block;
+  margin-top: 0.25rem;
+  font-family: var(--font-display);
+  font-size: 1.9rem;
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
+  color: var(--purple-600);
+}
+
+.simBoard__side--after .simBoard__mm {
+  color: var(--white);
+}
+
+.simBoard__side ul {
+  display: grid;
+  gap: 0.4rem;
+  margin-top: 0.8rem;
+  padding-left: 1.1rem;
+  font-size: 0.88rem;
+  line-height: 1.55;
+  color: var(--text-on-light-dim);
+}
+
+.simBoard__side--after ul {
+  color: var(--text-on-dark-dim);
+}
+
+/* ============================ SCREEN 22 ============================== */
+.simSteps {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.4rem 0.2rem;
+  padding: 0;
+  list-style: none;
+}
+
+.simSteps li {
+  display: inline-flex;
+  align-items: center;
+  padding: 0.35rem 0.85rem;
+  border-radius: var(--r-pill);
+  background: rgba(238, 175, 22, 0.16);
+  font-family: var(--font-display);
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: var(--gold-700);
+}
+
+.simSteps li:not(:last-child)::after {
+  content: '→';
+  margin: 0 -0.15rem 0 0.65rem;
+  color: var(--gold-600);
+  font-weight: 400;
+}
+
+/* ============================ SCREEN 23 ============================== */
+.simDeck {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 230px), 1fr));
+  gap: 0.7rem;
+  padding: 0;
+  list-style: none;
+}
+
+.simFlip {
+  display: grid;
+  gap: 0.5rem;
+  width: 100%;
+  height: 100%;
+  min-height: 8rem;
+  padding: 1.1rem;
+  border-radius: var(--r-md);
+  background: var(--white);
+  box-shadow: inset 0 0 0 1px rgba(65, 43, 99, 0.14);
+  text-align: left;
+  align-content: start;
+}
+
+.simFlip:hover {
+  box-shadow: inset 0 0 0 1.5px var(--gold-600);
+}
+
+.simFlip.is-open {
+  background: var(--paper);
+}
+
+.simFlip__term {
+  font-family: var(--font-display);
+  font-size: 1rem;
+  font-weight: 600;
+  color: var(--purple-600);
+}
+
+.simFlip__text {
+  font-size: 0.88rem;
+  line-height: 1.6;
+  color: var(--text-on-light-dim);
+}
+
+/* ============================ SCREEN 25 ============================== */
+.simRoad {
+  display: grid;
+  gap: 0.5rem;
+  padding: 0;
+  list-style: none;
+}
+
+.simRoad li {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: 0.4rem 0.9rem;
+  padding: 0.85rem 1.1rem;
+  border-radius: var(--r-md);
+  background: var(--paper);
+  box-shadow: inset 0 0 0 1px var(--line);
+}
+
+.simRoad li.is-done {
+  background: linear-gradient(120deg, var(--purple-700), var(--purple-800));
+  box-shadow: inset 0 0 0 1px rgba(238, 175, 22, 0.35);
+  color: var(--white);
+}
+
+.simRoad__year {
+  flex: none;
+  width: 4.2rem;
+  font-family: var(--font-display);
+  font-size: 0.7rem;
+  font-weight: 700;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--gold-700);
+}
+
+.simRoad li.is-done .simRoad__year {
+  color: var(--gold-400);
+}
+
+.simRoad__label {
+  flex: 1 1 12rem;
+  font-size: 0.95rem;
+  color: var(--text-on-light);
+}
+
+.simRoad li.is-done .simRoad__label {
+  color: var(--white);
+}
+
+.simRoad__tag {
+  padding: 0.15rem 0.6rem;
+  border-radius: var(--r-pill);
+  background: rgba(238, 175, 22, 0.24);
+  font-size: 0.6rem;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--gold-400);
+}
+
+/* ============================== MISSING ============================== */
+.sim--missing {
+  display: grid;
+  place-items: center;
+  text-align: center;
+  padding-top: var(--nav-headroom);
+}
+
+.sim--missing h1 {
+  margin-top: 1.1rem;
+  font-size: var(--step-h2);
+  color: var(--purple-600);
+}
+
+.sim__missingText {
+  max-width: 52ch;
+  margin: 1.2rem auto 2rem;
+  line-height: 1.7;
+  color: var(--text-on-light-dim);
+}
+
+/* ============================== NARROW =============================== */
+@media (max-width: 780px) {
+  .ceph {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}
+
+@media (max-width: 560px) {
+  .simFindings li {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .simScreen__actions .simBtn {
+    width: 100%;
+    justify-content: center;
+  }
+}
+
+@media (pointer: coarse) {
+  .sim__back {
+    display: flex;
+    align-items: center;
+    min-height: 44px;
+    margin-bottom: 0.8rem;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .ceph__target {
+    animation: none;
+  }
+}

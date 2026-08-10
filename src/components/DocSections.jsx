@@ -1,3 +1,5 @@
+import { Link } from 'react-router-dom'
+
 import './DocSections.css'
 
 /**
@@ -223,12 +225,21 @@ function Block({ block }) {
     case 'action':
       return (
         <div className="doc__action">
-          {/* Nothing to link to yet. A gold button that does nothing when you
-              press it is worse than one that says why, so it ships disabled
-              with the reason beside it. */}
-          <button type="button" className="btn doc__actionBtn" disabled={!block.ready}>
-            {block.label}
-          </button>
+          {/* A link when there is somewhere to go, and otherwise a button that
+              is plainly not ready. A gold button that does nothing when you
+              press it is worse than one that says why. */}
+          {block.to ? (
+            <Link to={block.to} className="btn doc__actionBtn">
+              {block.label}
+              <span className="btn__arrow" aria-hidden="true">
+                →
+              </span>
+            </Link>
+          ) : (
+            <button type="button" className="btn doc__actionBtn" disabled>
+              {block.label}
+            </button>
+          )}
           {block.note && <span className="doc__actionNote">{block.note}</span>}
         </div>
       )
