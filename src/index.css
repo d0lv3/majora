@@ -110,6 +110,13 @@
 html {
   -webkit-text-size-adjust: 100%;
   scroll-behavior: smooth;
+  /* Android paints a translucent blue rectangle over whatever you tap, and it
+     is the element's box rather than its shape — so a pill in the nav bar
+     flashes as a square, and a round toggle as a square. Off, because this
+     site already answers a tap: the pills run their own hover animation, the
+     buttons lift, and the contents entries light up. Inherited, so it is
+     stated once here rather than on every control. */
+  -webkit-tap-highlight-color: transparent;
 }
 
 /* ---------------------------------------------------------------------
