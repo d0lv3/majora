@@ -221,57 +221,68 @@ export default function StoryPlayer({ sim, state, dispatch }) {
             key={src}
           />
         )}
-        <div className="story__caption">
+      </div>
+
+      {/* The band. Everything the reader has to read or press is in here, in
+          one strip along the foot of the picture, so the frame above it is
+          never covered — including the scene title, which used to be a second
+          overlay of its own. */}
+      <div className="story__panel">
+        <header className="story__caption">
           <span className="story__eyebrow">{scene.visit}</span>
           <h2 className="story__title">{scene.title}</h2>
           {scene.lede && <p className="story__lede">{scene.lede}</p>}
+        </header>
+
+        <div className="story__prose">
+          {scene.blocks?.map((block, i) => (
+            <Block block={block} sim={sim} choices={choices} i={i} key={`${scene.id}-${i}`} />
+          ))}
         </div>
-      </div>
 
-      <div className="story__panel">
-        {scene.blocks?.map((block, i) => (
-          <Block block={block} sim={sim} choices={choices} i={i} key={`${scene.id}-${i}`} />
-        ))}
+        {/* What you do about it, in its own column beside the prose: it keeps
+            the band short, which is the whole point of a band. */}
+        <div className="story__decide">
+          {choice && (
+            <Choice
+              choice={choice}
+              onPick={(o) => dispatch({ type: 'choose', set: o.set, to: nextId })}
+            />
+          )}
 
-        {choice && (
-          <Choice
-            choice={choice}
-            onPick={(o) => dispatch({ type: 'choose', set: o.set, to: nextId })}
-          />
-        )}
+          {scene.question && (
+            <Question
+              q={scene.question}
+              answered={answered}
+              onAnswer={(o) =>
+                dispatch({ type: 'answer', scene: scene.id, id: o.id, correct: Boolean(o.correct) })
+              }
+            />
+          )}
 
-        {scene.question && (
-          <Question
-            q={scene.question}
-            answered={answered}
-            onAnswer={(o) =>
-              dispatch({ type: 'answer', scene: scene.id, id: o.id, correct: Boolean(o.correct) })
-            }
-          />
-        )}
-
-        {actions.length > 0 && (
-          <footer className="story__foot">
-            <div className="story__actions">
-              {actions.map((a) => (
-                <button
-                  type="button"
-                  key={a.label}
-                  className={`simBtn${a.primary ? ' simBtn--primary' : ''}`}
-                  onClick={a.onClick}
-                  disabled={a.disabled}
-                >
-                  {a.label}
-                </button>
-              ))}
-            </div>
-            {scene.question && !answered && (
-              <p className="story__footnote">
-                Choose an answer to carry on. Nothing is being scored.
-              </p>
-            )}
-          </footer>
-        )}
+          {actions.length > 0 && (
+            <footer className="story__foot">
+              <div className="story__actions">
+                {actions.map((a) => (
+                  <button
+                    type="button"
+                    key={a.label}
+                    className={`simBtn${a.primary ? ' simBtn--primary' : ''}`}
+                    onClick={a.onClick}
+                    disabled={a.disabled}
+                  >
+                    {a.label}
+                  </button>
+                ))}
+              </div>
+              {scene.question && !answered && (
+                <p className="story__footnote">
+                  Choose an answer to carry on. Nothing is being scored.
+                </p>
+              )}
+            </footer>
+          )}
+        </div>
       </div>
     </article>
   )
