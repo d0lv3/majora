@@ -19,7 +19,7 @@
  *   list    plain bullets
  *   years   one card per year of the degree
  *   table   head + rows, used once, for careers
- *   note    a quiet aside, for caveats about the sources
+ *   note    a quiet aside, for a claim the document wants to hedge
  *
  * Section ids are what the left-hand nav scrolls to, so they are stable names
  * rather than indexes: renumbering the document should not break a link.
@@ -353,25 +353,6 @@ export const ENGLISH_LITERATURE = {
               term: 'Shakespeare',
               text: 'For Shakespeare and *Macbeth*, the Folger Shakespeare Library is a reliable source for both the text and the teaching material around it.',
             },
-          ],
-        },
-      ],
-    },
-
-    /* ------------------------------ sources ------------------------------ */
-    {
-      id: 'sources',
-      title: 'Sources',
-      blocks: [
-        {
-          type: 'list',
-          items: [
-            'University of Cambridge',
-            'UCL — English BA',
-            'Queen Mary — English BA, English Literature & Linguistics',
-            'Prospects — What can I do with an English degree?',
-            'Folger Shakespeare Library — Macbeth',
-            'Supplied introduction to English Literature material',
           ],
         },
       ],

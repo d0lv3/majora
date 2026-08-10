@@ -18,7 +18,7 @@ import './DocSections.css'
  *   lede    the opening line of a section, set large
  *   text    a paragraph; **bold** and *italic* are honoured, nothing else is
  *   quote   a line the document wants to land on, ruled in gold
- *   note    a quiet aside, for caveats about the sources
+ *   note    a quiet aside, for a claim the document wants to hedge
  *   flow    an arrow chain — Read -> Analyze -> Interpret
  *   facts   label/value pairs, for an at-a-glance panel
  *   defs    term + explanation rows, the workhorse of both documents
