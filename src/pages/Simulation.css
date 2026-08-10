@@ -2153,6 +2153,46 @@
   opacity: 1;
 }
 
+/* ------------------------ the stage, side by side --------------------- */
+/* Wide enough for two columns: the still on the left, what happens next on the
+   right. Stacked, a scene is a picture and then a scroll to find out what you
+   can do about it. Side by side the reader sees the shot and the decision at
+   once, which is the point of showing them a scene before asking. */
+@media (min-width: 1000px) {
+  /* Head, rail and stage together, so the columns sit under the title rather
+     than beside it. The simulation is its own world and can be wider than the
+     rest of the site. */
+  .sim--story .shell {
+    max-width: 1440px;
+  }
+
+  .story {
+    display: grid;
+    grid-template-columns: minmax(0, 1.32fr) minmax(0, 1fr);
+    align-items: start;
+    max-width: 100%;
+  }
+
+  /* Sticky, so a long panel scrolls past a picture that stays where it is.
+     A grid item sticks inside its own row, which here is the whole stage. */
+  .story__frame {
+    position: sticky;
+    top: 1.25rem;
+    border-radius: var(--r-lg) 0 0 var(--r-lg);
+  }
+
+  /* A pause keeps the scene's shape here. Letterboxing it only ever bought
+     vertical room, and there is none to win when the prose is beside it. */
+  .story__frame--paused {
+    aspect-ratio: 16 / 9;
+  }
+
+  .story__panel {
+    min-height: 100%;
+    border-radius: 0 var(--r-lg) var(--r-lg) 0;
+  }
+}
+
 /* --------------------------- story on a phone ------------------------- */
 /* The picture is the screen here, so it runs edge to edge: a gutter either
    side of it would spend width the phone does not have. The 16:9 cap comes off
