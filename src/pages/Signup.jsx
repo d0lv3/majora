@@ -8,7 +8,7 @@ import { useAuth } from '../context/AuthContext.jsx'
 import { MAJORS } from '../data/majors.js'
 import './Auth.css'
 
-const STAGES = ['Middle school', 'Grade 10-11', 'Grade 12', 'Graduated', 'Parent or teacher']
+const STAGES = ['Middle school', 'Highschool', 'Graduated', 'Parent or teacher']
 
 export default function Signup() {
   const { signup } = useAuth()
