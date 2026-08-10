@@ -1,6 +1,5 @@
 import { useNavigate } from 'react-router-dom'
 
-import Screen from '../Screen.jsx'
 import { resolve } from './storyState.js'
 import { scenePhoto } from './scenePhotos.js'
 
@@ -13,25 +12,24 @@ import { scenePhoto } from './scenePhotos.js'
  * you click, a radiograph you trace, a slider that moves a tooth. A story
  * scene is a picture, some prose, and a fork, every time. Written as twenty
  * components they would be twenty copies of the same four lines, and the
- * branching — which is the only genuinely difficult part — would be spread out
- * where nobody could see it whole.
+ * branching — the only genuinely difficult part — would be spread out where
+ * nobody could see it whole.
  *
- * So the shape of the journey lives in the data and this file knows only how
- * to draw a scene and how to obey `next`.
+ * THE LAYOUT IS A FILM STILL, NOT A PAGE
+ *
+ * The photograph takes the screen and the prose sits under it, with the scene
+ * title lying across the bottom of the picture where a caption would. Reading
+ * about Macbeth on a white card with a thumbnail is a different experience
+ * from watching a scene and then being asked what you would do, and the second
+ * one is what this is for. It also means the pictures are worth the weight
+ * they cost.
+ *
+ * The screens that are not scenes — the three literature questions and the
+ * closing — keep the frame but wear it as a blurred band, so the film pauses
+ * rather than cuts. Which picture they pause on is `backdrop` in the data.
  */
 
 /* --------------------------------- parts -------------------------------- */
-
-function Photo({ name, alt }) {
-  const src = scenePhoto(name)
-  // No file yet: the scene plays without it rather than leaving a hole.
-  if (!src) return null
-  return (
-    <figure className="simShot">
-      <img className="simShot__img" src={src} alt={alt ?? ''} loading="lazy" />
-    </figure>
-  )
-}
 
 function Said({ who, lines }) {
   return (
@@ -176,10 +174,16 @@ export default function StoryPlayer({ sim, state, dispatch }) {
   const choice = scene.choice?.by ? resolve(scene.choice, choices) : scene.choice
   const answered = state.answers[scene.id]
 
+  /* A scene shows its own photograph; a pause shows the one it is pausing on,
+     blurred back. Either way the frame is there, so the page never jumps
+     between two different shapes. */
+  const paused = !scene.image && Boolean(scene.backdrop)
+  const src = scenePhoto(scene.image ?? scene.backdrop)
+
   /* A scene ends in exactly one of four ways, and the footer follows: a fork
      has its buttons in the body, a question waits to be answered before it
-     offers a way on, the last scene offers the way out, and everything else
-     is a single continue. */
+     offers a way on, the last scene offers the way out, and everything else is
+     a single continue. */
   const actions = []
   if (scene.restart) {
     actions.push({
@@ -204,43 +208,72 @@ export default function StoryPlayer({ sim, state, dispatch }) {
   }
 
   return (
-    <Screen
-      visit={scene.visit}
-      title={scene.title}
-      lede={scene.lede}
-      actions={actions}
-      footnote={
-        scene.question && !answered ? 'Choose an answer to carry on. Nothing is being scored.' : undefined
-      }
-    >
-      <Photo name={scene.image} alt={scene.imageAlt} />
+    <article className="story">
+      <div className={`story__frame${paused ? ' story__frame--paused' : ''}`}>
+        {src && (
+          <img
+            className="story__img"
+            src={src}
+            /* A paused frame is the picture you have already looked at, so it
+               is decoration the second time and describing it again would be
+               noise in a screen reader. */
+            alt={paused ? '' : (scene.imageAlt ?? '')}
+            key={src}
+          />
+        )}
+        <div className="story__caption">
+          <span className="story__eyebrow">{scene.visit}</span>
+          <h2 className="story__title">{scene.title}</h2>
+          {scene.lede && <p className="story__lede">{scene.lede}</p>}
+        </div>
+      </div>
 
-      {scene.blocks?.map((block, i) => (
-        <Block block={block} sim={sim} choices={choices} i={i} key={`${scene.id}-${i}`} />
-      ))}
+      <div className="story__panel">
+        {scene.blocks?.map((block, i) => (
+          <Block block={block} sim={sim} choices={choices} i={i} key={`${scene.id}-${i}`} />
+        ))}
 
-      {choice && (
-        <Choice
-          choice={choice}
-          onPick={(o) => dispatch({ type: 'choose', set: o.set, to: nextId })}
-        />
-      )}
+        {choice && (
+          <Choice
+            choice={choice}
+            onPick={(o) => dispatch({ type: 'choose', set: o.set, to: nextId })}
+          />
+        )}
 
-      {scene.question && (
-        <Question
-          q={scene.question}
-          answered={answered}
-          onAnswer={(o) =>
-            dispatch({
-              type: 'answer',
-              scene: scene.id,
-              id: o.id,
-              correct: Boolean(o.correct),
-            })
-          }
-        />
-      )}
-    </Screen>
+        {scene.question && (
+          <Question
+            q={scene.question}
+            answered={answered}
+            onAnswer={(o) =>
+              dispatch({ type: 'answer', scene: scene.id, id: o.id, correct: Boolean(o.correct) })
+            }
+          />
+        )}
+
+        {actions.length > 0 && (
+          <footer className="story__foot">
+            <div className="story__actions">
+              {actions.map((a) => (
+                <button
+                  type="button"
+                  key={a.label}
+                  className={`simBtn${a.primary ? ' simBtn--primary' : ''}`}
+                  onClick={a.onClick}
+                  disabled={a.disabled}
+                >
+                  {a.label}
+                </button>
+              ))}
+            </div>
+            {scene.question && !answered && (
+              <p className="story__footnote">
+                Choose an answer to carry on. Nothing is being scored.
+              </p>
+            )}
+          </footer>
+        )}
+      </div>
+    </article>
   )
 }
 

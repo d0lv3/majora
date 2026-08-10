@@ -1589,33 +1589,281 @@
 }
 
 /* =============================== STORY =============================== */
-/* Everything below belongs to the branching kind of simulation — the scene
-   photograph, the fork, the literature question and the path recap. The story
-   scenes reuse the screen chrome above rather than inventing their own, so a
-   reader moving between the two simulations is in the same product. */
+/* The branching kind of simulation, and it does not look like the clinic
+   above. A clinic is a bright room; this is a stage. The photograph takes the
+   screen, the scene title lies across the bottom of it where a caption would,
+   and the prose sits underneath — because reading about Macbeth on a white
+   card with a thumbnail beside it is a different experience from watching a
+   scene and then being asked what you would do. */
 
-/* Full bleed inside the card and always 16:9, so a scene that has no picture
-   yet and a scene that has one do not sit at different widths. */
-.simShot {
-  margin: 0 0 1.4rem;
-  overflow: hidden;
-  border-radius: var(--r-md);
-  background: var(--paper);
-  box-shadow: inset 0 0 0 1px rgba(65, 43, 99, 0.12);
+.sim--story {
+  background: var(--purple-950);
+  color: var(--white);
 }
 
-.simShot__img {
-  display: block;
+/* The head is a slim bar here rather than the clinic's title block. The cover
+   screen already says what the case is called, in bigger type, over its own
+   photograph — and a header deep enough to push the first picture below the
+   fold would undo the point of the layout. */
+.sim--story .sim__head {
+  /* The clinic's headroom is generous; here it is only what the floating nav
+     pill needs to clear, which is 84px at the widest. Every pixel saved above
+     is a pixel the first photograph gets. */
+  padding-top: max(6.5rem, calc(var(--nav-headroom) * 0.72));
+  padding-bottom: clamp(0.9rem, 2vw, 1.3rem);
+  background-image: none;
+}
+
+.sim--story .sim__back {
+  margin-bottom: 0.8rem;
+}
+
+.sim--story .sim__title {
+  margin-top: 0.5rem;
+  font-size: clamp(1.1rem, 2.2vw, 1.45rem);
+  letter-spacing: -0.02em;
+}
+
+.sim--story .sim__subtitle {
+  display: none;
+}
+
+.sim--story .sim__rail {
+  padding-block: clamp(0.7rem, 1.6vw, 1rem);
+}
+
+.sim--story .simActs li {
+  background: rgba(255, 255, 255, 0.07);
+  color: rgba(255, 255, 255, 0.55);
+}
+
+.sim--story .simActs li.is-done {
+  background: rgba(238, 175, 22, 0.18);
+  color: var(--gold-400);
+}
+
+.sim--story .simActs li.is-on {
+  background: var(--gold-500);
+  color: var(--purple-950);
+}
+
+/* ---------------------------- the curtain ---------------------------- */
+/* Held up until every scene has loaded. These are large stills and each one
+   now fills most of the screen, so fetching them one at a time means watching
+   a grey box resolve on every turn of the story. */
+.storyLoad {
+  display: grid;
+  place-items: center;
+  min-height: 100svh;
+  padding: var(--gutter);
+  background: var(--purple-950);
+  color: var(--white);
+}
+
+.storyLoad__inner {
+  display: grid;
+  justify-items: center;
+  width: min(320px, 100%);
+  text-align: center;
+}
+
+.storyLoad__mark {
+  width: clamp(74px, 17vw, 100px);
+  color: var(--gold-500);
+  animation: storyPulse 2.4s ease-in-out infinite;
+}
+
+.storyLoad__word {
+  margin-top: 0.55rem;
+  font-family: var(--font-display);
+  font-size: 1.3rem;
+  font-weight: 700;
+  letter-spacing: -0.02em;
+}
+
+.storyLoad__label {
+  margin-top: 1.7rem;
+  font-size: 0.66rem;
+  font-weight: 700;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  color: var(--gold-400);
+}
+
+.storyLoad__bar {
   width: 100%;
+  height: 4px;
+  margin-top: 0.9rem;
+  overflow: hidden;
+  border-radius: var(--r-pill);
+  background: rgba(255, 255, 255, 0.12);
+}
+
+/* Scaled rather than widthed: a transform is the one property that can move
+   every frame without the browser laying the bar out again. */
+.storyLoad__fill {
+  display: block;
+  height: 100%;
+  border-radius: inherit;
+  background: linear-gradient(90deg, var(--gold-600), var(--gold-400));
+  transform-origin: left center;
+  transition: transform 0.35s var(--ease);
+}
+
+.storyLoad__count {
+  margin-top: 0.7rem;
+  font-size: 0.78rem;
+  font-variant-numeric: tabular-nums;
+  color: rgba(255, 255, 255, 0.5);
+}
+
+@keyframes storyPulse {
+  0%,
+  100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.5;
+  }
+}
+
+/* ----------------------------- the stage ----------------------------- */
+/* Capped by height rather than by width, so the whole picture is on screen at
+   once and the reader never has to scroll to see the bottom of a shot. The
+   panel inherits the same cap, so picture and prose read as one object. */
+.story {
+  max-width: min(100%, calc(58svh * 16 / 9), 1040px);
+  margin-inline: auto;
+}
+
+.story__frame {
+  position: relative;
   aspect-ratio: 16 / 9;
+  overflow: hidden;
+  border-radius: var(--r-lg) var(--r-lg) 0 0;
+  background: var(--purple-900);
+}
+
+.story__img {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
   object-fit: cover;
+  animation: storyIn 0.7s var(--ease-out) backwards;
+}
+
+/* A pause rather than a cut. The three literature questions and the closing
+   screen are not scenes, so they keep the picture they are pausing on and push
+   it out of focus behind them. */
+.story__frame--paused {
+  aspect-ratio: 32 / 9;
+}
+
+.story__frame--paused .story__img {
+  filter: blur(7px) saturate(0.6) brightness(0.4);
+  transform: scale(1.09);
+}
+
+.story__caption {
+  position: absolute;
+  inset: auto 0 0 0;
+  padding: clamp(3rem, 9vw, 5.5rem) clamp(1.3rem, 3vw, 2.4rem) clamp(1.2rem, 2.5vw, 1.8rem);
+  background: linear-gradient(
+    to top,
+    rgba(21, 13, 33, 0.94) 0%,
+    rgba(21, 13, 33, 0.7) 42%,
+    rgba(21, 13, 33, 0) 100%
+  );
+}
+
+/* The paused frame is already dark enough to read on. */
+.story__frame--paused .story__caption {
+  background: none;
+}
+
+.story__eyebrow {
+  font-size: 0.66rem;
+  font-weight: 700;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: var(--gold-400);
+}
+
+.story__title {
+  margin-top: 0.45rem;
+  font-size: clamp(1.45rem, 3.3vw, 2.35rem);
+  line-height: 1.1;
+  letter-spacing: -0.03em;
+  color: var(--white);
+  text-wrap: balance;
+}
+
+.story__lede {
+  max-width: 46ch;
+  margin-top: 0.6rem;
+  font-family: var(--font-display);
+  font-size: clamp(0.95rem, 1.6vw, 1.08rem);
+  font-weight: 400;
+  line-height: 1.5;
+  color: rgba(255, 255, 255, 0.8);
+}
+
+.story__panel {
+  padding: clamp(1.3rem, 3vw, 2rem) clamp(1.3rem, 3vw, 2.4rem) clamp(1.5rem, 3vw, 2.2rem);
+  border-radius: 0 0 var(--r-lg) var(--r-lg);
+  background: rgba(255, 255, 255, 0.05);
+  box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.09);
+}
+
+@keyframes storyIn {
+  from {
+    opacity: 0;
+  }
+}
+
+/* --- the prose, on dark --- */
+.story__panel .simText {
+  color: rgba(255, 255, 255, 0.76);
+}
+
+/* Whatever opens the panel — prose on a scene, the question on a pause — sits
+   against the picture rather than a gap below it. */
+.story__panel > :first-child {
+  margin-top: 0;
+}
+
+.story__panel .simSay {
+  border-left-color: var(--gold-600);
+  background: rgba(255, 255, 255, 0.05);
+}
+
+.story__panel .simSay__who {
+  color: var(--gold-400);
+}
+
+.story__panel .simSay__line {
+  color: var(--white);
+}
+
+.story__panel .simLesson {
+  background: rgba(238, 175, 22, 0.08);
+  box-shadow: inset 0 0 0 1px rgba(238, 175, 22, 0.22);
+}
+
+.story__panel .simLesson__tag {
+  color: var(--gold-400);
+}
+
+.story__panel .simLesson p {
+  color: rgba(255, 255, 255, 0.72);
 }
 
 /* --- the fork --- */
 .simFork {
-  margin-top: clamp(1.6rem, 3vw, 2.2rem);
-  padding-top: clamp(1.2rem, 2.5vw, 1.6rem);
-  border-top: 1px solid var(--line);
+  margin-top: clamp(1.5rem, 3vw, 2rem);
+  padding-top: clamp(1.1rem, 2.5vw, 1.5rem);
+  border-top: 1px solid rgba(255, 255, 255, 0.12);
 }
 
 .simFork__prompt {
@@ -1624,7 +1872,7 @@
   font-weight: 600;
   line-height: 1.45;
   letter-spacing: -0.02em;
-  color: var(--purple-600);
+  color: var(--white);
 }
 
 .simFork__options {
@@ -1644,8 +1892,8 @@
   width: 100%;
   padding: 1rem 1.15rem;
   border-radius: var(--r-md);
-  background: var(--white);
-  box-shadow: inset 0 0 0 1.5px var(--line-strong);
+  background: rgba(255, 255, 255, 0.05);
+  box-shadow: inset 0 0 0 1.5px rgba(255, 255, 255, 0.16);
   text-align: left;
   transition:
     transform 0.3s var(--ease),
@@ -1656,10 +1904,8 @@
 .simPick:hover,
 .simPick:focus-visible {
   transform: translateY(-2px);
-  background: var(--paper-warm);
-  box-shadow:
-    inset 0 0 0 1.5px var(--gold-600),
-    var(--shadow-card);
+  background: rgba(238, 175, 22, 0.1);
+  box-shadow: inset 0 0 0 1.5px var(--gold-500);
 }
 
 .simPick__label {
@@ -1667,25 +1913,25 @@
   font-size: 1.02rem;
   font-weight: 600;
   letter-spacing: -0.02em;
-  color: var(--purple-600);
+  color: var(--white);
 }
 
 .simPick__text {
   font-size: 0.9rem;
   line-height: 1.65;
-  color: var(--text-on-light-dim);
+  color: rgba(255, 255, 255, 0.7);
   text-wrap: pretty;
 }
 
 /* --- the literature question --- */
-/* The one place on the site where something is right or wrong, so it is the
+/* The one place in the simulation where something is right or wrong, so the
    one place that needs a colour that is neither purple nor gold. Local rather
-   than added to the ramp: two uses do not earn a global token, and a ✓ or ✕
-   carries the same message for anyone who cannot see the colour. */
+   than added to the ramp: two uses do not earn a global token, and the tick or
+   cross carries the same message for anyone who cannot see the colour. */
 .simQuiz {
-  --right: #2e6f52;
-  --wrong: #9c3535;
-  margin-top: clamp(1.4rem, 3vw, 2rem);
+  --right: #6fd39b;
+  --wrong: #f08d8d;
+  margin-top: clamp(1.3rem, 3vw, 1.8rem);
 }
 
 .simQuiz__prompt {
@@ -1694,7 +1940,7 @@
   font-weight: 600;
   line-height: 1.5;
   letter-spacing: -0.02em;
-  color: var(--purple-600);
+  color: var(--white);
 }
 
 .simQuiz__options {
@@ -1713,20 +1959,20 @@
   min-height: 44px;
   padding: 0.8rem 1.1rem;
   border-radius: var(--r-md);
-  background: var(--white);
-  box-shadow: inset 0 0 0 1.5px var(--line-strong);
+  background: rgba(255, 255, 255, 0.05);
+  box-shadow: inset 0 0 0 1.5px rgba(255, 255, 255, 0.16);
   text-align: left;
   font-size: 0.94rem;
   line-height: 1.55;
-  color: var(--text-on-light);
+  color: rgba(255, 255, 255, 0.88);
   transition:
     box-shadow 0.25s ease,
     background-color 0.25s ease;
 }
 
 .simOpt:hover:not(:disabled) {
-  background: var(--paper-warm);
-  box-shadow: inset 0 0 0 1.5px var(--purple-500);
+  background: rgba(255, 255, 255, 0.09);
+  box-shadow: inset 0 0 0 1.5px rgba(255, 255, 255, 0.42);
 }
 
 .simOpt:disabled {
@@ -1736,7 +1982,7 @@
 /* Unpicked options fade once the answer is out, so the eye lands on the two
    that carry information: what you said and what the answer was. */
 .simOpt:disabled:not(.is-right):not(.is-wrong) {
-  opacity: 0.5;
+  opacity: 0.42;
 }
 
 .simOpt__label {
@@ -1750,13 +1996,13 @@
 }
 
 .simOpt.is-right {
-  background: rgba(46, 111, 82, 0.08);
+  background: rgba(111, 211, 155, 0.13);
   box-shadow: inset 0 0 0 1.5px var(--right);
   color: var(--right);
 }
 
 .simOpt.is-wrong {
-  background: rgba(156, 53, 53, 0.07);
+  background: rgba(240, 141, 141, 0.11);
   box-shadow: inset 0 0 0 1.5px var(--wrong);
   color: var(--wrong);
 }
@@ -1768,17 +2014,16 @@
 .simQuiz__verdict {
   font-size: 0.97rem;
   line-height: 1.7;
-  color: var(--text-on-light);
+  color: rgba(255, 255, 255, 0.86);
 }
 
 /* --- the path taken --- */
 .simPath {
   display: grid;
   gap: 0.5rem;
-  margin: 0 0 0.4rem;
+  margin: 0;
   padding: 0;
   list-style: none;
-  counter-reset: path;
 }
 
 .simPath li {
@@ -1788,8 +2033,8 @@
   gap: 0.3rem 0.9rem;
   padding: 0.85rem 1.1rem;
   border-radius: var(--r-md);
-  background: var(--paper);
-  box-shadow: inset 0 0 0 1px rgba(65, 43, 99, 0.1);
+  background: rgba(255, 255, 255, 0.05);
+  box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.1);
 }
 
 .simPath__when {
@@ -1799,7 +2044,7 @@
   font-weight: 700;
   letter-spacing: 0.16em;
   text-transform: uppercase;
-  color: var(--gold-700);
+  color: var(--gold-400);
 }
 
 .simPath__what {
@@ -1808,7 +2053,111 @@
   font-size: 1rem;
   font-weight: 600;
   letter-spacing: -0.01em;
-  color: var(--purple-600);
+  color: var(--white);
+}
+
+/* --- the way on --- */
+.story__foot {
+  margin-top: clamp(1.4rem, 3vw, 2rem);
+  padding-top: clamp(1.1rem, 2.5vw, 1.5rem);
+  border-top: 1px solid rgba(255, 255, 255, 0.12);
+}
+
+.story__actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.6rem;
+}
+
+.story__footnote {
+  margin-top: 0.9rem;
+  font-size: 0.82rem;
+  color: rgba(255, 255, 255, 0.5);
+}
+
+.story .simBtn {
+  background: rgba(255, 255, 255, 0.06);
+  box-shadow: inset 0 0 0 1.5px rgba(255, 255, 255, 0.24);
+  color: var(--white);
+}
+
+.story .simBtn:hover:not(:disabled) {
+  box-shadow: inset 0 0 0 1.5px var(--gold-500);
+}
+
+.story .simBtn--primary {
+  background: var(--gold-500);
+  box-shadow: none;
+  color: var(--purple-950);
+}
+
+.story .simBtn--primary:hover:not(:disabled) {
+  background: var(--gold-400);
+  box-shadow: 0 16px 30px -18px rgba(238, 175, 22, 0.85);
+}
+
+.story .simBtn:disabled {
+  background: rgba(255, 255, 255, 0.04);
+  box-shadow: none;
+  color: rgba(255, 255, 255, 0.35);
+  opacity: 1;
+}
+
+/* --------------------------- story on a phone ------------------------- */
+/* The picture is the screen here, so it runs edge to edge: a gutter either
+   side of it would spend width the phone does not have. The 16:9 cap comes off
+   and the frame takes a fixed slice of the viewport instead — cropping a wide
+   still is worth it for a picture that fills the top half of the screen. */
+@media (max-width: 760px) {
+  .sim--story .sim__stage {
+    padding-inline: 0;
+  }
+
+  .story {
+    max-width: 100%;
+  }
+
+  .story__frame {
+    aspect-ratio: auto;
+    height: clamp(250px, 45svh, 420px);
+    border-radius: 0;
+  }
+
+  .story__frame--paused {
+    aspect-ratio: auto;
+    height: clamp(140px, 21svh, 200px);
+  }
+
+  .story__caption,
+  .story__panel {
+    padding-inline: var(--gutter);
+  }
+
+  .story__panel {
+    border-radius: 0;
+    box-shadow: none;
+  }
+
+  .story__actions .simBtn {
+    width: 100%;
+    justify-content: center;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .story__img,
+  .storyLoad__mark {
+    animation: none;
+  }
+
+  .storyLoad__fill {
+    transition: none;
+  }
+
+  .simPick:hover,
+  .simPick:focus-visible {
+    transform: none;
+  }
 }
 
 /* ============================== MISSING ============================== */

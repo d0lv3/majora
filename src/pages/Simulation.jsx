@@ -6,7 +6,9 @@ import { simulationFor } from '../data/simulations.js'
 import { SCREENS, ACTS } from '../sim/Screens.jsx'
 import { initialState, reducer, LAST_SCREEN } from '../sim/state.js'
 import StoryPlayer, { storyAct } from '../sim/story/StoryPlayer.jsx'
+import StoryLoader from '../sim/story/StoryLoader.jsx'
 import { initialStoryState, storyReducer } from '../sim/story/storyState.js'
+import { useScenePreload } from '../sim/story/useScenePreload.js'
 import './Simulation.css'
 
 /**
@@ -65,7 +67,7 @@ export default function Simulation() {
  * for this kind of simulation — a screen number or a scene id — and changing
  * it puts the reader at the top of the new one.
  */
-function SimShell({ slug, major, sim, step, acts, act, count, children }) {
+function SimShell({ slug, major, sim, step, acts, act, count, variant, children }) {
   const first = useRef(true)
   const stage = useRef(null)
 
@@ -82,7 +84,7 @@ function SimShell({ slug, major, sim, step, acts, act, count, children }) {
   }, [step])
 
   return (
-    <div className="sim">
+    <div className={`sim${variant ? ` sim--${variant}` : ''}`}>
       <header className="sim__head">
         <div className="shell sim__headInner">
           <Link to={`/app/${slug}`} className="sim__back">
@@ -144,12 +146,19 @@ function ScreensRun({ slug, major, sim }) {
 
 function StoryRun({ slug, major, sim }) {
   const [state, dispatch] = useReducer(storyReducer, sim, initialStoryState)
+  const scenes = useScenePreload(sim)
+
+  /* The curtain, and it replaces the page rather than sitting inside it: the
+     header and the progress rail are part of the set, and raising them behind
+     a loading bar would give away the shape of what is coming. */
+  if (!scenes.ready) return <StoryLoader {...scenes} />
 
   return (
     <SimShell
       slug={slug}
       major={major}
       sim={sim}
+      variant="story"
       step={state.sceneId}
       acts={sim.acts}
       act={storyAct(sim, state.sceneId)}

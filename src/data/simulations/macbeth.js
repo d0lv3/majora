@@ -198,6 +198,7 @@ export const MACBETH = {
       act: 'prophecy',
       visit: 'The text',
       title: 'What Shakespeare just did',
+      backdrop: 'scene-02-thane-of-cawdor',
       question: {
         prompt:
           'The witches tell Macbeth something that may happen much later in the play. What is that technique called?',
@@ -324,6 +325,7 @@ export const MACBETH = {
       act: 'temptation',
       visit: 'The text',
       title: 'What Shakespeare just did',
+      backdrop: 'scene-04-the-aside',
       question: {
         prompt:
           'Macbeth says his thoughts where the audience can hear them but the other characters cannot. What is that called?',
@@ -429,6 +431,7 @@ export const MACBETH = {
       act: 'night',
       visit: 'The text',
       title: 'What Shakespeare just did',
+      backdrop: 'scene-06-lady-macbeth',
       question: {
         prompt:
           'Darkness, a held candle, a sky with the stars put out — the scene is built out of these before anybody does anything. What is that called?',
@@ -515,6 +518,7 @@ export const MACBETH = {
       act: 'after',
       visit: 'The lesson',
       title: 'What the ending argues',
+      backdrop: 'scene-07-ending-duncan-dies',
       question: {
         prompt: 'You took the crown by murder and it brought you no peace. What is the play driving at?',
         options: [
@@ -541,6 +545,7 @@ export const MACBETH = {
       act: 'after',
       visit: 'The lesson',
       title: 'What the ending argues',
+      backdrop: 'scene-08-ending-duncan-lives',
       question: {
         prompt: 'You refused, and the disaster never happened. What is the play driving at?',
         options: [
@@ -564,6 +569,7 @@ export const MACBETH = {
       act: 'after',
       visit: 'Complete',
       title: 'Your reading of Macbeth',
+      backdrop: 'scene-00-return-from-battle',
       lede: 'Three decisions, and what they add up to.',
       blocks: [
         { type: 'recap' },
