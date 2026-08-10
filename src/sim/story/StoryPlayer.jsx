@@ -1,3 +1,4 @@
+import { useEffect, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 
 import { resolve } from './storyState.js'
@@ -180,10 +181,25 @@ export default function StoryPlayer({ sim, state, dispatch }) {
   const paused = !scene.image && Boolean(scene.backdrop)
   const src = scenePhoto(scene.image ?? scene.backdrop)
 
-  /* A scene ends in exactly one of four ways, and the footer follows: a fork
-     has its buttons in the body, a question waits to be answered before it
-     offers a way on, the last scene offers the way out, and everything else is
-     a single continue. */
+  /* ONE BEAT AT A TIME
+     Every layout before this one lost the same argument: a scene is four or
+     five paragraphs, the picture is the point, and the two cannot both have
+     the screen. Paginating settles it. Text on a photograph is perfectly
+     legible at three lines and unreadable at fifteen, so the scene is dealt out
+     a paragraph at a time and the picture keeps everything the paragraph is not
+     standing on. */
+  const blocks = scene.blocks ?? []
+  const [beat, setBeat] = useState(0)
+  useEffect(() => setBeat(0), [scene.id])
+
+  const last = Math.max(0, blocks.length - 1)
+  const at = Math.min(beat, last)
+  const more = beat < last
+  /* The decision arrives with the final beat rather than after it, so the last
+     thing said and the thing you do about it are on screen together. */
+  const decided = !more
+
+  /* A scene ends in exactly one of four ways. */
   const actions = []
   if (scene.restart) {
     actions.push({
@@ -207,6 +223,15 @@ export default function StoryPlayer({ sim, state, dispatch }) {
     })
   }
 
+  /* Anywhere on the picture advances the text, the way it would in any game
+     that reads like this — but only while there is text left, and never when
+     the press landed on something that does its own job. */
+  const advance = (event) => {
+    if (!more) return
+    if (event.target.closest('button, a')) return
+    setBeat((b) => b + 1)
+  }
+
   return (
     <article className="story">
       <div className={`story__frame${paused ? ' story__frame--paused' : ''}`}>
@@ -223,64 +248,87 @@ export default function StoryPlayer({ sim, state, dispatch }) {
         )}
       </div>
 
-      {/* The band. Everything the reader has to read or press is in here, in
-          one strip along the foot of the picture, so the frame above it is
-          never covered — including the scene title, which used to be a second
-          overlay of its own. */}
-      <div className="story__panel">
+      {/* Everything from here down sits on the photograph. No card and no
+          panel — only a gradient dark enough to read on, which is why the text
+          has to stay short. */}
+      <div
+        className={`story__hud${more ? ' is-advancing' : ''}`}
+        onClick={advance}
+        role="presentation"
+      >
         <header className="story__caption">
           <span className="story__eyebrow">{scene.visit}</span>
           <h2 className="story__title">{scene.title}</h2>
-          {scene.lede && <p className="story__lede">{scene.lede}</p>}
         </header>
 
-        <div className="story__prose">
-          {scene.blocks?.map((block, i) => (
-            <Block block={block} sim={sim} choices={choices} i={i} key={`${scene.id}-${i}`} />
-          ))}
-        </div>
+        <div className="story__script">
+          {scene.lede && at === 0 && <p className="story__lede">{scene.lede}</p>}
 
-        {/* What you do about it, in its own column beside the prose: it keeps
-            the band short, which is the whole point of a band. */}
-        <div className="story__decide">
-          {choice && (
-            <Choice
-              choice={choice}
-              onPick={(o) => dispatch({ type: 'choose', set: o.set, to: nextId })}
-            />
+          {blocks.length > 0 && (
+            <div className="story__beat" key={`${scene.id}-${at}`}>
+              <Block block={blocks[at]} sim={sim} choices={choices} i={at} />
+            </div>
           )}
 
-          {scene.question && (
-            <Question
-              q={scene.question}
-              answered={answered}
-              onAnswer={(o) =>
-                dispatch({ type: 'answer', scene: scene.id, id: o.id, correct: Boolean(o.correct) })
-              }
-            />
-          )}
-
-          {actions.length > 0 && (
-            <footer className="story__foot">
-              <div className="story__actions">
-                {actions.map((a) => (
-                  <button
-                    type="button"
-                    key={a.label}
-                    className={`simBtn${a.primary ? ' simBtn--primary' : ''}`}
-                    onClick={a.onClick}
-                    disabled={a.disabled}
-                  >
-                    {a.label}
-                  </button>
+          {more ? (
+            <button type="button" className="story__next" onClick={() => setBeat((b) => b + 1)}>
+              <span className="story__nextDots" aria-hidden="true">
+                {blocks.map((_, i) => (
+                  <span key={i} className={i <= at ? 'is-on' : ''} />
                 ))}
-              </div>
-              {scene.question && !answered && (
-                <p className="story__footnote">
-                  Choose an answer to carry on. Nothing is being scored.
-                </p>
+              </span>
+              Continue reading
+              <span className="story__nextChevron" aria-hidden="true">
+                ›
+              </span>
+            </button>
+          ) : (
+            <div className="story__decide">
+              {choice && (
+                <Choice
+                  choice={choice}
+                  onPick={(o) => dispatch({ type: 'choose', set: o.set, to: nextId })}
+                />
               )}
-            </footer>
+
+              {scene.question && (
+                <Question
+                  q={scene.question}
+                  answered={answered}
+                  onAnswer={(o) =>
+                    dispatch({
+                      type: 'answer',
+                      scene: scene.id,
+                      id: o.id,
+                      correct: Boolean(o.correct),
+                    })
+                  }
+                />
+              )}
+
+              {actions.length > 0 && (
+                <footer className="story__foot">
+                  <div className="story__actions">
+                    {actions.map((a) => (
+                      <button
+                        type="button"
+                        key={a.label}
+                        className={`simBtn${a.primary ? ' simBtn--primary' : ''}`}
+                        onClick={a.onClick}
+                        disabled={a.disabled}
+                      >
+                        {a.label}
+                      </button>
+                    ))}
+                  </div>
+                  {scene.question && !answered && (
+                    <p className="story__footnote">
+                      Choose an answer to carry on. Nothing is being scored.
+                    </p>
+                  )}
+                </footer>
+              )}
+            </div>
           )}
         </div>
       </div>

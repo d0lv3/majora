@@ -1945,20 +1945,27 @@
 }
 
 /* ----------------------------- the stage ----------------------------- */
-/* Capped by height rather than by width, so the whole picture is on screen at
-   once and the reader never has to scroll to see the bottom of a shot. The
-   panel inherits the same cap, so picture and prose read as one object. */
+/* A text game, and the layout follows from that. There is no card and no band:
+   the photograph is the screen and the words are on it, because every version
+   of this that put the prose in a box of its own ended up arguing with the
+   picture about who got the room.
+
+   What makes it work is not the styling, it is the pagination in StoryPlayer —
+   text on a photograph is perfectly legible at three lines and unreadable at
+   fifteen. The gradient below only has to carry three. */
 .story {
-  max-width: min(100%, calc(58svh * 16 / 9), 1040px);
+  position: relative;
+  max-width: 100%;
   margin-inline: auto;
+  overflow: hidden;
+  border-radius: var(--r-lg);
+  background: var(--purple-900);
 }
 
 .story__frame {
-  position: relative;
-  aspect-ratio: 16 / 9;
-  overflow: hidden;
-  border-radius: var(--r-lg) var(--r-lg) 0 0;
-  background: var(--purple-900);
+  position: absolute;
+  inset: 0;
+  aspect-ratio: auto;
 }
 
 .story__img {
@@ -1970,194 +1977,295 @@
   animation: storyIn 0.7s var(--ease-out) backwards;
 }
 
-/* A pause rather than a cut. The three literature questions and the closing
-   screen are not scenes, so they keep the picture they are pausing on and push
-   it out of focus behind them. */
-.story__frame--paused {
-  aspect-ratio: 32 / 9;
-}
-
+/* A pause blurs the ground it is standing on: the questions are not scenes, so
+   the film goes soft behind them rather than cutting away. */
 .story__frame--paused .story__img {
-  filter: blur(7px) saturate(0.6) brightness(0.4);
+  filter: blur(7px) saturate(0.6) brightness(0.45);
   transform: scale(1.09);
 }
 
-/* The scene title heads the band rather than floating over the picture. One
-   overlay instead of two: the title used to need its own scrim, and between
-   them the card and the scrim covered three fifths of every still. */
+/* Dark at the foot for the words, a touch dark at the head for the title, and
+   as close to nothing as it can be across the middle — which is the part of
+   the picture worth keeping. */
+.story__hud {
+  position: relative;
+  z-index: 1;
+  display: grid;
+  /* The last row is capped against the stage rather than left to size itself:
+     a question with three options and a button is taller than a paragraph, and
+     an auto row let it run off the bottom of the picture. The percentage
+     resolves because the HUD's own height is definite. */
+  grid-template-rows: auto minmax(0, 1fr) minmax(0, 72%);
+  min-height: inherit;
+  height: 100%;
+  padding: clamp(1rem, 2.2vw, 1.7rem) clamp(1.1rem, 2.6vw, 2.2rem) clamp(1.1rem, 2.4vw, 1.8rem);
+  background: linear-gradient(
+    to top,
+    rgba(17, 10, 27, 0.93) 0%,
+    rgba(17, 10, 27, 0.78) 20%,
+    rgba(17, 10, 27, 0.18) 48%,
+    rgba(17, 10, 27, 0.06) 70%,
+    rgba(17, 10, 27, 0.42) 100%
+  );
+}
+
+.story__hud.is-advancing {
+  cursor: pointer;
+}
+
 .story__caption {
   display: flex;
   flex-wrap: wrap;
   align-items: baseline;
-  gap: 0.3rem 0.85rem;
+  gap: 0.2rem 0.8rem;
+  grid-row: 1;
 }
 
 .story__eyebrow {
-  font-size: 0.66rem;
+  font-size: 0.64rem;
   font-weight: 700;
   letter-spacing: 0.2em;
   text-transform: uppercase;
   color: var(--gold-400);
+  text-shadow: 0 1px 8px rgba(0, 0, 0, 0.7);
 }
 
 .story__title {
   margin: 0;
-  font-size: clamp(1.25rem, 2.5vw, 1.75rem);
+  font-size: clamp(1.05rem, 2vw, 1.45rem);
   line-height: 1.15;
-  letter-spacing: -0.03em;
-  color: var(--white);
+  letter-spacing: -0.02em;
+  color: rgba(255, 255, 255, 0.94);
+  text-shadow: 0 2px 14px rgba(0, 0, 0, 0.75);
   text-wrap: balance;
 }
 
+/* The words themselves. Set large, because there are never many of them on
+   screen at once and a text game is read at arm's length. */
+.story__script {
+  grid-row: 3;
+  align-self: end;
+  max-width: min(62ch, 100%);
+  min-height: 0;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  scrollbar-width: thin;
+  scrollbar-color: rgba(255, 255, 255, 0.3) transparent;
+}
+
 .story__lede {
-  flex-basis: 100%;
-  max-width: 62ch;
-  margin-top: 0.35rem;
+  margin-bottom: 0.5rem;
   font-family: var(--font-display);
-  font-size: clamp(0.95rem, 1.6vw, 1.08rem);
-  font-weight: 400;
-  line-height: 1.5;
-  color: rgba(255, 255, 255, 0.8);
+  font-size: clamp(1rem, 1.7vw, 1.15rem);
+  font-weight: 500;
+  line-height: 1.45;
+  color: var(--gold-200);
+  text-shadow: 0 2px 12px rgba(0, 0, 0, 0.7);
 }
 
-.story__panel {
-  padding: clamp(1.3rem, 3vw, 2rem) clamp(1.3rem, 3vw, 2.4rem) clamp(1.5rem, 3vw, 2.2rem);
-  border-radius: 0 0 var(--r-lg) var(--r-lg);
-  background: rgba(255, 255, 255, 0.05);
-  box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.09);
+.story__beat {
+  animation: storyBeat 0.4s var(--ease-out) backwards;
 }
 
-@keyframes storyIn {
-  from {
-    opacity: 0;
-  }
+/* Everything the beat can contain, lifted off the photograph by shadow rather
+   than by a panel behind it. */
+.story__beat .simText {
+  margin: 0;
+  font-size: clamp(1.02rem, 1.7vw, 1.24rem);
+  line-height: 1.62;
+  color: rgba(255, 255, 255, 0.93);
+  text-shadow: 0 2px 14px rgba(0, 0, 0, 0.8);
+  text-wrap: pretty;
 }
 
-/* --- the prose, on dark --- */
-.story__panel .simText {
-  color: rgba(255, 255, 255, 0.76);
+.story__beat .simSay {
+  margin: 0;
+  padding: 0 0 0 1rem;
+  border-left: 2px solid var(--gold-500);
+  border-radius: 0;
+  background: none;
 }
 
-/* Whatever opens the panel — prose on a scene, the question on a pause — sits
-   against the picture rather than a gap below it. */
-.story__panel > :first-child {
-  margin-top: 0;
-}
-
-.story__panel .simSay {
-  border-left-color: var(--gold-600);
-  background: rgba(255, 255, 255, 0.05);
-}
-
-.story__panel .simSay__who {
+.story__beat .simSay__who {
   color: var(--gold-400);
+  text-shadow: 0 1px 8px rgba(0, 0, 0, 0.8);
 }
 
-.story__panel .simSay__line {
-  color: var(--white);
+.story__beat .simSay__line {
+  margin-top: 0.2rem;
+  font-size: clamp(1.06rem, 1.9vw, 1.36rem);
+  line-height: 1.42;
+  color: #fff;
+  text-shadow: 0 2px 14px rgba(0, 0, 0, 0.85);
 }
 
-.story__panel .simLesson {
-  background: rgba(238, 175, 22, 0.08);
-  box-shadow: inset 0 0 0 1px rgba(238, 175, 22, 0.22);
+.story__beat .simLesson {
+  margin: 0;
+  padding: 0 0 0 1rem;
+  border-left: 2px solid rgba(238, 175, 22, 0.6);
+  border-radius: 0;
+  background: none;
+  box-shadow: none;
 }
 
-.story__panel .simLesson__tag {
+.story__beat .simLesson__tag {
   color: var(--gold-400);
+  text-shadow: 0 1px 8px rgba(0, 0, 0, 0.8);
 }
 
-.story__panel .simLesson p {
-  color: rgba(255, 255, 255, 0.72);
+.story__beat .simLesson p {
+  font-size: clamp(0.94rem, 1.5vw, 1.06rem);
+  line-height: 1.6;
+  color: rgba(255, 255, 255, 0.88);
+  text-shadow: 0 2px 12px rgba(0, 0, 0, 0.8);
 }
 
-/* --- the fork --- */
+.story__beat .simPath li {
+  background: rgba(17, 10, 27, 0.5);
+  box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.16);
+}
+
+/* --------------------------- reading on ------------------------------ */
+/* The whole picture advances the text, so this is a signpost rather than the
+   only way through — but a game that only responds to clicking nowhere in
+   particular is a game nobody finishes. */
+.story__next {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.6rem;
+  margin-top: 0.9rem;
+  padding: 0.45rem 0.9rem 0.45rem 0.75rem;
+  border-radius: var(--r-pill);
+  background: rgba(255, 255, 255, 0.1);
+  font-size: 0.78rem;
+  font-weight: 600;
+  letter-spacing: 0.02em;
+  color: rgba(255, 255, 255, 0.82);
+  backdrop-filter: blur(8px);
+  transition:
+    background-color 0.25s ease,
+    color 0.25s ease;
+}
+
+.story__next:hover {
+  background: rgba(238, 175, 22, 0.22);
+  color: #fff;
+}
+
+/* How much of the scene is left, as dots rather than a count. */
+.story__nextDots {
+  display: inline-flex;
+  gap: 3px;
+}
+
+.story__nextDots span {
+  width: 5px;
+  height: 5px;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.28);
+}
+
+.story__nextDots span.is-on {
+  background: var(--gold-500);
+}
+
+.story__nextChevron {
+  font-size: 1rem;
+  line-height: 1;
+}
+
+/* ----------------------------- deciding ------------------------------ */
+.story__decide {
+  margin-top: 1rem;
+}
+
 .simFork {
-  margin-top: clamp(1.5rem, 3vw, 2rem);
-  padding-top: clamp(1.1rem, 2.5vw, 1.5rem);
-  border-top: 1px solid rgba(255, 255, 255, 0.12);
+  margin: 0;
+  padding: 0;
+  border: 0;
 }
 
 .simFork__prompt {
   font-family: var(--font-display);
-  font-size: clamp(1rem, 1.8vw, 1.12rem);
+  font-size: clamp(0.95rem, 1.6vw, 1.08rem);
   font-weight: 600;
-  line-height: 1.45;
+  line-height: 1.4;
   letter-spacing: -0.02em;
-  color: var(--white);
+  color: var(--gold-200);
+  text-shadow: 0 2px 12px rgba(0, 0, 0, 0.8);
 }
 
 .simFork__options {
   display: grid;
-  gap: 0.7rem;
-  margin-top: 1rem;
+  gap: 0.5rem;
+  margin-top: 0.7rem;
   padding: 0;
   list-style: none;
 }
 
-/* A choice is a card rather than a button because it carries its consequence
-   with it: the reader should know what they are agreeing to before they agree
-   to it, not one screen afterwards. */
+/* A choice carries its consequence with it: the reader should know what they
+   are agreeing to before they agree to it, not one screen afterwards. */
 .simPick {
   display: grid;
-  gap: 0.35rem;
+  gap: 0.2rem;
   width: 100%;
-  padding: 1rem 1.15rem;
+  padding: 0.65rem 0.95rem;
   border-radius: var(--r-md);
-  background: rgba(255, 255, 255, 0.05);
-  box-shadow: inset 0 0 0 1.5px rgba(255, 255, 255, 0.16);
+  background: rgba(17, 10, 27, 0.62);
+  box-shadow: inset 0 0 0 1.5px rgba(255, 255, 255, 0.22);
+  backdrop-filter: blur(10px);
   text-align: left;
   transition:
-    transform 0.3s var(--ease),
-    box-shadow 0.3s ease,
-    background-color 0.3s ease;
+    transform 0.25s var(--ease),
+    box-shadow 0.25s ease,
+    background-color 0.25s ease;
 }
 
 .simPick:hover,
 .simPick:focus-visible {
   transform: translateY(-2px);
-  background: rgba(238, 175, 22, 0.1);
+  background: rgba(238, 175, 22, 0.2);
   box-shadow: inset 0 0 0 1.5px var(--gold-500);
 }
 
 .simPick__label {
   font-family: var(--font-display);
-  font-size: 1.02rem;
+  font-size: 1rem;
   font-weight: 600;
   letter-spacing: -0.02em;
-  color: var(--white);
+  color: #fff;
 }
 
 .simPick__text {
-  font-size: 0.9rem;
-  line-height: 1.65;
-  color: rgba(255, 255, 255, 0.7);
+  font-size: 0.86rem;
+  line-height: 1.5;
+  color: rgba(255, 255, 255, 0.82);
   text-wrap: pretty;
 }
 
-/* --- the literature question --- */
+/* --------------------- the literature question ----------------------- */
 /* The one place in the simulation where something is right or wrong, so the
-   one place that needs a colour that is neither purple nor gold. Local rather
-   than added to the ramp: two uses do not earn a global token, and the tick or
+   one place that needs a colour that is neither purple nor gold. The tick or
    cross carries the same message for anyone who cannot see the colour. */
 .simQuiz {
-  --right: #6fd39b;
-  --wrong: #f08d8d;
-  margin-top: clamp(1.3rem, 3vw, 1.8rem);
+  --right: #7edea9;
+  --wrong: #f79b9b;
 }
 
 .simQuiz__prompt {
   font-family: var(--font-display);
-  font-size: clamp(1rem, 1.8vw, 1.12rem);
+  font-size: clamp(0.98rem, 1.7vw, 1.14rem);
   font-weight: 600;
-  line-height: 1.5;
+  line-height: 1.42;
   letter-spacing: -0.02em;
-  color: var(--white);
+  color: #fff;
+  text-shadow: 0 2px 12px rgba(0, 0, 0, 0.8);
 }
 
 .simQuiz__options {
   display: grid;
-  gap: 0.55rem;
-  margin-top: 1rem;
+  gap: 0.45rem;
+  margin-top: 0.7rem;
   padding: 0;
   list-style: none;
 }
@@ -2165,25 +2273,26 @@
 .simOpt {
   display: flex;
   align-items: center;
-  gap: 0.8rem;
+  gap: 0.7rem;
   width: 100%;
   min-height: 44px;
-  padding: 0.8rem 1.1rem;
+  padding: 0.55rem 0.9rem;
   border-radius: var(--r-md);
-  background: rgba(255, 255, 255, 0.05);
-  box-shadow: inset 0 0 0 1.5px rgba(255, 255, 255, 0.16);
+  background: rgba(17, 10, 27, 0.62);
+  box-shadow: inset 0 0 0 1.5px rgba(255, 255, 255, 0.22);
+  backdrop-filter: blur(10px);
   text-align: left;
-  font-size: 0.94rem;
-  line-height: 1.55;
-  color: rgba(255, 255, 255, 0.88);
+  font-size: 0.9rem;
+  line-height: 1.45;
+  color: rgba(255, 255, 255, 0.9);
   transition:
     box-shadow 0.25s ease,
     background-color 0.25s ease;
 }
 
 .simOpt:hover:not(:disabled) {
-  background: rgba(255, 255, 255, 0.09);
-  box-shadow: inset 0 0 0 1.5px rgba(255, 255, 255, 0.42);
+  background: rgba(17, 10, 27, 0.78);
+  box-shadow: inset 0 0 0 1.5px rgba(255, 255, 255, 0.48);
 }
 
 .simOpt:disabled {
@@ -2193,7 +2302,7 @@
 /* Unpicked options fade once the answer is out, so the eye lands on the two
    that carry information: what you said and what the answer was. */
 .simOpt:disabled:not(.is-right):not(.is-wrong) {
-  opacity: 0.42;
+  opacity: 0.4;
 }
 
 .simOpt__label {
@@ -2207,31 +2316,52 @@
 }
 
 .simOpt.is-right {
-  background: rgba(111, 211, 155, 0.13);
+  background: rgba(20, 60, 40, 0.72);
   box-shadow: inset 0 0 0 1.5px var(--right);
   color: var(--right);
 }
 
 .simOpt.is-wrong {
-  background: rgba(240, 141, 141, 0.11);
+  background: rgba(70, 22, 22, 0.7);
   box-shadow: inset 0 0 0 1.5px var(--wrong);
   color: var(--wrong);
 }
 
 .simQuiz__after {
-  margin-top: 1.2rem;
+  margin-top: 0.8rem;
 }
 
 .simQuiz__verdict {
-  font-size: 0.97rem;
-  line-height: 1.7;
-  color: rgba(255, 255, 255, 0.86);
+  font-size: 0.94rem;
+  line-height: 1.6;
+  color: rgba(255, 255, 255, 0.92);
+  text-shadow: 0 2px 12px rgba(0, 0, 0, 0.8);
 }
 
-/* --- the path taken --- */
+.simQuiz__after .simLesson {
+  margin-top: 0.7rem;
+  padding: 0 0 0 1rem;
+  border-left: 2px solid rgba(238, 175, 22, 0.6);
+  border-radius: 0;
+  background: none;
+  box-shadow: none;
+}
+
+.simQuiz__after .simLesson__tag {
+  color: var(--gold-400);
+}
+
+.simQuiz__after .simLesson p {
+  font-size: 0.9rem;
+  line-height: 1.58;
+  color: rgba(255, 255, 255, 0.86);
+  text-shadow: 0 2px 12px rgba(0, 0, 0, 0.8);
+}
+
+/* --------------------------- the path taken -------------------------- */
 .simPath {
   display: grid;
-  gap: 0.5rem;
+  gap: 0.4rem;
   margin: 0;
   padding: 0;
   list-style: none;
@@ -2241,17 +2371,16 @@
   display: flex;
   flex-wrap: wrap;
   align-items: baseline;
-  gap: 0.3rem 0.9rem;
-  padding: 0.85rem 1.1rem;
+  gap: 0.2rem 0.8rem;
+  padding: 0.6rem 0.9rem;
   border-radius: var(--r-md);
-  background: rgba(255, 255, 255, 0.05);
-  box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.1);
+  backdrop-filter: blur(10px);
 }
 
 .simPath__when {
   flex: none;
-  min-width: 6.5rem;
-  font-size: 0.62rem;
+  min-width: 6rem;
+  font-size: 0.6rem;
   font-weight: 700;
   letter-spacing: 0.16em;
   text-transform: uppercase;
@@ -2261,35 +2390,37 @@
 .simPath__what {
   flex: 1 1 12rem;
   font-family: var(--font-display);
-  font-size: 1rem;
+  font-size: 0.96rem;
   font-weight: 600;
   letter-spacing: -0.01em;
-  color: var(--white);
+  color: #fff;
 }
 
-/* --- the way on --- */
+/* ----------------------------- the way on ---------------------------- */
 .story__foot {
-  margin-top: clamp(1.4rem, 3vw, 2rem);
-  padding-top: clamp(1.1rem, 2.5vw, 1.5rem);
-  border-top: 1px solid rgba(255, 255, 255, 0.12);
+  margin-top: 0.9rem;
 }
 
 .story__actions {
   display: flex;
   flex-wrap: wrap;
-  gap: 0.6rem;
+  gap: 0.55rem;
 }
 
 .story__footnote {
-  margin-top: 0.9rem;
-  font-size: 0.82rem;
-  color: rgba(255, 255, 255, 0.5);
+  margin-top: 0.7rem;
+  font-size: 0.8rem;
+  color: rgba(255, 255, 255, 0.6);
+  text-shadow: 0 2px 10px rgba(0, 0, 0, 0.8);
 }
 
 .story .simBtn {
-  background: rgba(255, 255, 255, 0.06);
-  box-shadow: inset 0 0 0 1.5px rgba(255, 255, 255, 0.24);
-  color: var(--white);
+  min-height: 40px;
+  padding: 0.55rem 1.1rem;
+  background: rgba(17, 10, 27, 0.62);
+  box-shadow: inset 0 0 0 1.5px rgba(255, 255, 255, 0.28);
+  backdrop-filter: blur(10px);
+  color: #fff;
 }
 
 .story .simBtn:hover:not(:disabled) {
@@ -2308,286 +2439,95 @@
 }
 
 .story .simBtn:disabled {
-  background: rgba(255, 255, 255, 0.04);
+  background: rgba(255, 255, 255, 0.08);
   box-shadow: none;
-  color: rgba(255, 255, 255, 0.35);
+  color: rgba(255, 255, 255, 0.4);
   opacity: 1;
 }
 
-/* ------------------------ the stage, side by side --------------------- */
-/* Wide enough for two columns: the still on the left, what happens next on the
-   right. Stacked, a scene is a picture and then a scroll to find out what you
-   can do about it. Side by side the reader sees the shot and the decision at
-   once, which is the point of showing them a scene before asking. */
+@keyframes storyIn {
+  from {
+    opacity: 0;
+  }
+}
+
+@keyframes storyBeat {
+  from {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+}
+
+/* ---------------------------- stage sizing --------------------------- */
+/* One screen, always. The picture is the page and the words are on it, so
+   there is nothing below the fold to scroll to. */
+.story {
+  height: clamp(430px, calc(100svh - 4rem), 760px);
+}
+
 @media (min-width: 1000px) {
-  /* Head, rail and stage together, so the stage sits under the title rather
-     than beside it. The simulation is its own world and can be wider than the
-     rest of the site. */
+  /* The simulation is its own world and can be wider than the rest of the
+     site. */
   .sim--story .shell {
     max-width: 1440px;
-  }
-
-  /* The picture is the whole stage and the text is a band along the foot of
-     it. A card standing on the right covered two fifths of every still, and
-     the scene title needed a scrim of its own on top of that — between them,
-     three fifths of the photograph was behind something.
-
-     A band gives that back. It is one overlay instead of two, it sits at the
-     edge rather than through the middle, and it leaves the upper two thirds of
-     the frame alone, which is where these compositions put their subject. */
-  .story {
-    position: relative;
-    display: grid;
-    /* The picture takes what the band does not. `minmax(0, 46%)` sizes the
-       band to its content and refuses to let it past 46% of the stage —
-       percentages resolve here because the stage height is definite. */
-    grid-template-rows: minmax(0, 1fr) minmax(0, 46%);
-    height: clamp(400px, calc(100svh - 4rem), 700px);
-    max-width: 100%;
-    overflow: hidden;
-    border-radius: var(--r-lg);
-  }
-
-  .story__frame {
-    position: absolute;
-    inset: 0;
-    aspect-ratio: auto;
-    border-radius: 0;
-  }
-
-  /* A pause blurs the ground it is standing on, which is the whole frame now
-     rather than a band across the top of it. */
-  .story__frame--paused {
-    aspect-ratio: auto;
-  }
-
-  .story__panel {
-    position: relative;
-    z-index: 1;
-    grid-row: 2;
-    /* min-height:0 or a grid item refuses to shrink below its content, which
-       is what makes the overflow scroll rather than spill. */
-    min-height: 0;
-    overflow-y: auto;
-    overscroll-behavior: contain;
-    display: grid;
-    grid-template-columns: minmax(0, 1.3fr) minmax(0, 1fr);
-    column-gap: clamp(1.4rem, 3vw, 2.6rem);
-    align-content: start;
-    padding: clamp(1rem, 2vw, 1.45rem) clamp(1.3rem, 2.6vw, 2.2rem) clamp(1.1rem, 2.2vw, 1.6rem);
-    border-radius: 0;
-    /* Solid enough to read on at the foot of any photograph, and blurred so
-       the picture is still there under it rather than behind a slab. */
-    background: linear-gradient(to top, rgba(21, 13, 33, 0.96), rgba(21, 13, 33, 0.88));
-    backdrop-filter: blur(20px) saturate(1.1);
-    box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.15);
-    scrollbar-width: thin;
-    scrollbar-color: rgba(255, 255, 255, 0.34) transparent;
-  }
-
-  .story__panel::-webkit-scrollbar {
-    width: 10px;
-  }
-
-  .story__panel::-webkit-scrollbar-thumb {
-    border: 3px solid transparent;
-    border-radius: 6px;
-    background-clip: content-box;
-    background-color: rgba(255, 255, 255, 0.34);
-  }
-
-  .story__caption {
-    grid-column: 1 / -1;
-    margin-bottom: 0.55rem;
-  }
-
-  .story__prose {
-    grid-column: 1;
-  }
-
-  /* What you do about it, beside what happened rather than under it. This is
-     what keeps the band short enough to stay a band. */
-  .story__decide {
-    grid-column: 2;
-  }
-
-  /* Both of these rule themselves off from the prose above when they are under
-     it. In their own column they are already separate. */
-  .story__decide .simFork,
-  .story__decide .simQuiz {
-    margin-top: 0;
-    padding-top: 0;
-    border-top: 0;
-  }
-
-  .story__foot {
-    margin-top: 0.9rem;
-    padding-top: 0.85rem;
-  }
-
-  /* Two choices side by side would each be too narrow to read; in a column of
-     their own they stack. */
-  .story__decide .simFork__options {
-    margin-top: 0.7rem;
-  }
-
-  /* Set tighter than the same prose would be in a reading column. A band is
-     read in one look rather than settled into, and every line saved here is a
-     line of photograph given back — at the page's normal spacing all nine
-     scenes overflowed the band and scrolled. */
-  .story__panel .simText {
-    margin-top: 0.6rem;
-    font-size: 0.95rem;
-    line-height: 1.6;
-  }
-
-  .story__panel .simSay {
-    margin-top: 0.75rem;
-    padding: 0.75rem 1rem;
-  }
-
-  .story__panel .simSay__line {
-    margin-top: 0.25rem;
-    font-size: 1rem;
-    line-height: 1.4;
-  }
-
-  .story__panel .simLesson {
-    margin-top: 0.8rem;
-    padding: 0.75rem 1rem;
-  }
-
-  .story__panel .simLesson p {
-    font-size: 0.86rem;
-    line-height: 1.58;
-  }
-
-  .story__panel .simPick {
-    padding: 0.7rem 0.95rem;
-  }
-
-  .story__panel .simPick__text {
-    font-size: 0.85rem;
-    line-height: 1.5;
-  }
-
-  .story__panel .simOpt {
-    padding: 0.6rem 0.9rem;
-    font-size: 0.88rem;
-  }
-
-  .story__panel .simQuiz__verdict {
-    font-size: 0.9rem;
-    line-height: 1.6;
   }
 }
 
 /* --------------------------- story on a phone ------------------------- */
-/* The picture is the screen here, so it runs edge to edge: a gutter either
-   side of it would spend width the phone does not have. The 16:9 cap comes off
-   and the frame takes a fixed slice of the viewport instead — cropping a wide
-   still is worth it for a picture that fills the top half of the screen. */
+/* Full bleed, and the gradient does more work: a phone screen is mostly the
+   picture, so the words need a darker foot to sit on. */
 @media (max-width: 760px) {
   .sim--story .sim__stage {
     padding-inline: 0;
   }
 
-  /* Four labelled act pills wrap to two rows and push the sound switch onto a
-     third, which cost 140px of a 640px screen before the picture even began.
-     The acts become a progress bar with only the one you are in named. */
-  .sim--story .sim__rail {
-    flex-wrap: nowrap;
-    gap: 0.7rem;
-    padding-block: 0.65rem;
-  }
-
-  .sim--story .simActs {
-    flex: 1 1 auto;
-    flex-wrap: nowrap;
-    align-items: center;
-    min-width: 0;
-    gap: 0.3rem;
-  }
-
-  .sim--story .simActs li:not(.is-on) {
-    flex: none;
-    width: 16px;
-    height: 6px;
-    padding: 0;
-    border-radius: 3px;
-  }
-
-  .sim--story .simActs li:not(.is-on) .simActs__label {
-    display: none;
-  }
-
-  .sim--story .simActs li.is-on {
-    min-width: 0;
-    padding: 0.3rem 0.7rem;
-  }
-
-  .sim--story .simActs li.is-on .simActs__label {
-    overflow: hidden;
-    white-space: nowrap;
-    text-overflow: ellipsis;
-  }
-
   .story {
-    max-width: 100%;
-  }
-
-  .story__frame {
-    aspect-ratio: auto;
-    height: clamp(250px, 45svh, 420px);
+    height: clamp(430px, calc(100svh - var(--nav-clear) - 12rem), 620px);
     border-radius: 0;
   }
 
-  .story__frame--paused {
-    aspect-ratio: auto;
-    height: clamp(140px, 21svh, 200px);
+  .story__hud {
+    background: linear-gradient(
+      to top,
+      rgba(17, 10, 27, 0.95) 0%,
+      rgba(17, 10, 27, 0.86) 28%,
+      rgba(17, 10, 27, 0.24) 58%,
+      rgba(17, 10, 27, 0.08) 74%,
+      rgba(17, 10, 27, 0.5) 100%
+    );
   }
 
-  .story__caption,
-  .story__panel {
-    padding-inline: var(--gutter);
+  /* A phone stage is 430px tall against a beat that wants 200 of them, so the
+     words get more of the row and are set a shade smaller to earn it. */
+  .story__hud {
+    grid-template-rows: auto minmax(0, 1fr) minmax(0, 84%);
   }
 
-  .story__panel {
-    border-radius: 0;
-    box-shadow: none;
+  .story__beat .simText {
+    font-size: 1rem;
+    line-height: 1.55;
+  }
+
+  .story__beat .simSay__line {
+    font-size: 1.05rem;
   }
 
   .story__actions .simBtn {
     width: 100%;
     justify-content: center;
   }
+}
 
-  /* Icon alone at a full tap target. The word is still on the button for
-     anything that reads it aloud — hidden rather than removed, so the control
-     is still called "Music on" by a screen reader and by voice control. */
-  .storySound__btn {
+/* The control that carries the whole game has to clear a fingertip. */
+@media (pointer: coarse) {
+  .story__next {
     min-height: 44px;
-    min-width: 44px;
-    justify-content: center;
-    padding: 0.35rem;
-  }
-
-  .storySound__label {
-    position: absolute;
-    width: 1px;
-    height: 1px;
-    margin: -1px;
-    padding: 0;
-    overflow: hidden;
-    clip-path: inset(50%);
-    white-space: nowrap;
+    padding-inline: 1rem;
   }
 }
 
-/* A phone on its side. Only 380px of height to spend and the chrome was taking
-   more than half of it, so the head gives back everything it can and the frame
-   drops its floor — a shorter picture beats a picture that starts below the
-   bottom of the screen. */
+/* A phone on its side: barely any height, so the picture gives up most of it
+   and the words take what they need. */
 @media (max-width: 900px) and (max-height: 520px) {
   .sim--story .sim__head {
     padding-top: calc(var(--nav-headroom) * 0.4);
@@ -2607,12 +2547,8 @@
     padding-block: 0.4rem;
   }
 
-  .story__frame {
-    height: clamp(150px, 40svh, 240px);
-  }
-
-  .story__frame--paused {
-    height: clamp(96px, 20svh, 140px);
+  .story {
+    height: clamp(300px, calc(100svh - 8rem), 420px);
   }
 }
 
@@ -2629,6 +2565,10 @@
   .simPick:hover,
   .simPick:focus-visible {
     transform: none;
+  }
+
+  .story__beat {
+    animation: none;
   }
 }
 
