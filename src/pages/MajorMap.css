@@ -556,6 +556,24 @@
   font-size: 0.66rem;
 }
 
+/* Leaflet sets its attribution at a size meant for a mouse, which left the
+   three links on this page 13px tall — the smallest targets on the site, and
+   they are the ones the basemap's licence requires be followable. They cannot
+   have 44px without the credit becoming a band across the map, so they get as
+   much as the corner can carry. */
+@media (pointer: coarse) {
+  .mapStage .leaflet-control-attribution {
+    font-size: 0.72rem;
+    line-height: 1.5;
+    padding: 0.3rem 0.55rem;
+  }
+
+  .mapStage .leaflet-control-attribution a {
+    display: inline-block;
+    padding-block: 0.3rem;
+  }
+}
+
 /* ------------------------------- narrow ------------------------------- */
 @media (max-width: 980px) {
   /* Picker, then the map, then the list: choosing a major shows its effect

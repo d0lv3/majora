@@ -56,6 +56,17 @@
   object-fit: contain;
 }
 
+/* The wordmark beside it is hidden at this width, so the link is exactly the
+   40px mark and nothing else — four pixels short, in both directions, of the
+   target everything else on the site clears. */
+@media (pointer: coarse) {
+  .quiz__brand {
+    min-width: 44px;
+    min-height: 44px;
+    justify-content: center;
+  }
+}
+
 /* The way out, and it stays in the same corner on every question so a reader
    who wants it does not have to hunt for it twice. */
 .quiz__skipAll {

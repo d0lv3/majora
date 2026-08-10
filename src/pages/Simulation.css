@@ -547,6 +547,21 @@
   height: 12%;
 }
 
+/* The bite band is 12% of a stage that is 272px tall on a phone, which makes
+   the most important target on this screen a 33px one — and it is the target
+   the whole screen is built around, because clicking it is what names the
+   overjet. It keeps its centre and grows to a thumb, and takes a layer above
+   its neighbours so the few percent it now shares with them still go to it. */
+@media (pointer: coarse) {
+  .mouth__zone--front {
+    top: 51%;
+    height: auto;
+    min-height: 44px;
+    transform: translateY(-50%);
+    z-index: 1;
+  }
+}
+
 .mouth__zone--lower {
   left: 17%;
   top: 58%;
