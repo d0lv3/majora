@@ -407,6 +407,7 @@ export const DENTISTRY_LANDING = {
     {
       id: 'simulate',
       title: 'Year 5, played out',
+      tag: 'Simulation',
       panel: true,
       blocks: [
         { type: 'lede', text: 'Don’t just read about it. Take the case yourself.' },

@@ -20,6 +20,10 @@ import './ContentsRail.css'
  * opens over the page as a sheet, closing again the moment a section is
  * chosen.
  *
+ * A section carrying `tag` gets that word badged beside its name in the rail.
+ * It is there for the sections that are not reading — a simulation reached
+ * from the foot of a curriculum is worth knowing about from the top of it.
+ *
  * Use it as a pair: the hook holds the state, the component draws the rail,
  * and the caller owns the grid between them.
  *
@@ -152,6 +156,10 @@ export default function ContentsRail({ sections, open, setOpen, active, goTo, id
                 >
                   <span className="cnav__n">{String(i + 1).padStart(2, '0')}</span>
                   <span className="cnav__label">{section.title}</span>
+                  {/* A section that is not more reading but a thing you do. It
+                      is named in the contents so a reader can see it is there
+                      before scrolling the length of the document to find it. */}
+                  {section.tag && <span className="cnav__tag">{section.tag}</span>}
                 </button>
               </li>
             ))}
