@@ -283,6 +283,9 @@ export const ENGLISH_LITERATURE = {
         },
         {
           type: 'table',
+          /* Names the scroll region for a screen reader; the renderer falls
+             back to a bare "Table" without it. */
+          label: 'Career paths',
           head: ['Field', 'Possible work', 'What you might do'],
           rows: [
             [

@@ -1,0 +1,550 @@
+/* =========================================================
+   The document beside the contents rail. Lifted out of the
+   branch guide when a second major wanted the same year
+   cards, term lists and arrow chains.
+   ========================================================= */
+
+/* min(), not a bare 74ch. This is a grid item, and a grid item is free to
+   grow past its track to fit content that will not shrink — the career table
+   sets a 640px floor, which dragged the whole document out to 642px inside a
+   335px column on a phone. body has overflow-x hidden, so nothing scrolled and
+   nothing looked wrong: the right third of every line was simply gone. The
+   100% term is what forbids that; the 74ch term is the reading measure. */
+.doc {
+  max-width: min(74ch, 100%);
+}
+
+.doc__section {
+  padding-block: clamp(1.6rem, 3vw, 2.4rem);
+  /* the nav floats over the page, so a jump has to stop short of it */
+  scroll-margin-top: var(--anchor-offset);
+}
+
+.doc__section + .doc__section {
+  border-top: 1px solid var(--line);
+}
+
+.doc__section:first-child {
+  padding-top: 0;
+}
+
+.doc__num {
+  font-family: var(--font-display);
+  font-size: 0.7rem;
+  font-weight: 700;
+  letter-spacing: 0.2em;
+  color: var(--gold-600);
+}
+
+.doc__title {
+  margin-top: 0.5rem;
+  font-size: clamp(1.5rem, 3vw, 2.05rem);
+  color: var(--purple-600);
+  letter-spacing: -0.03em;
+  text-wrap: balance;
+}
+
+.doc__lead {
+  margin-top: 0.7rem;
+  font-family: var(--font-display);
+  font-size: clamp(1rem, 1.5vw, 1.14rem);
+  font-weight: 500;
+  line-height: 1.5;
+  color: var(--text-on-light-dim);
+}
+
+.doc__lede {
+  margin-top: 1.2rem;
+  font-family: var(--font-display);
+  font-size: clamp(1.15rem, 2.2vw, 1.5rem);
+  font-weight: 500;
+  line-height: 1.4;
+  letter-spacing: -0.02em;
+  color: var(--purple-600);
+  text-wrap: pretty;
+}
+
+.doc__text {
+  margin-top: 1.1rem;
+  font-size: 1rem;
+  line-height: 1.75;
+  color: var(--text-on-light-dim);
+  text-wrap: pretty;
+}
+
+.doc__text strong {
+  color: var(--text-on-light);
+  font-weight: 600;
+}
+
+/* A line the document wants to land on. Gold rule rather than quotation
+   marks: nobody is being quoted, the document is raising its voice. */
+.doc__quote {
+  margin-top: 1.3rem;
+  padding: 0.1rem 0 0.1rem 1.15rem;
+  border-left: 3px solid var(--gold);
+  font-family: var(--font-display);
+  font-size: clamp(1.02rem, 1.7vw, 1.18rem);
+  font-weight: 500;
+  line-height: 1.5;
+  letter-spacing: -0.015em;
+  color: var(--purple-600);
+  text-wrap: pretty;
+}
+
+.doc__quote strong {
+  font-weight: 600;
+  color: var(--purple-600);
+}
+
+.doc__list {
+  display: grid;
+  gap: 0.55rem;
+  margin-top: 1.1rem;
+  padding-left: 0;
+  list-style: none;
+}
+
+.doc__list li {
+  position: relative;
+  padding-left: 1.4rem;
+  font-size: 0.96rem;
+  line-height: 1.65;
+  color: var(--text-on-light-dim);
+}
+
+.doc__list li::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 0.62em;
+  width: 7px;
+  height: 7px;
+  background: var(--gold-600);
+  transform: rotate(45deg);
+}
+
+.doc__note {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.8rem;
+  margin-top: 1.2rem;
+  padding: 0.9rem 1.1rem;
+  border-radius: var(--r-md);
+  background: rgba(65, 43, 99, 0.05);
+  box-shadow: inset 0 0 0 1px rgba(65, 43, 99, 0.12);
+  font-size: 0.88rem;
+  line-height: 1.6;
+  color: var(--text-on-light-dim);
+}
+
+.doc__noteMark {
+  width: 9px;
+  height: 9px;
+  margin-top: 0.45rem;
+  flex: none;
+  background: var(--purple-400);
+  transform: rotate(45deg);
+}
+
+.doc__foot {
+  padding-top: clamp(1.6rem, 3vw, 2.4rem);
+  border-top: 1px solid var(--line);
+}
+
+/* ------------------------------- chips ------------------------------- */
+/* Naming a set without explaining each one. White on the pale ground with the
+   same hairline ring the branch cards carry, so a run of them reads as one
+   family of small cards. */
+.doc__tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  margin-top: 1.15rem;
+  padding: 0;
+  list-style: none;
+}
+
+.doc__tag {
+  padding: 0.42rem 0.9rem;
+  border-radius: var(--r-pill);
+  background: var(--white);
+  box-shadow: inset 0 0 0 1px rgba(65, 43, 99, 0.12);
+  font-family: var(--font-display);
+  font-size: 0.85rem;
+  font-weight: 500;
+  letter-spacing: -0.01em;
+  color: var(--purple-600);
+}
+
+/* ------------------------------ arrow flow --------------------------- */
+/* Read -> Analyze -> Interpret. The arrows are drawn in ::after so they are
+   not read out as text, and the last step does not get one. */
+.dflow {
+  margin-top: 1.3rem;
+}
+
+.dflow__label {
+  display: block;
+  margin-bottom: 0.55rem;
+  font-size: 0.68rem;
+  font-weight: 700;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--text-on-light-dim);
+}
+
+.dflow__steps {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.4rem 0.2rem;
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.dflow__steps li {
+  display: inline-flex;
+  align-items: center;
+  padding: 0.35rem 0.8rem;
+  border-radius: var(--r-pill);
+  background: rgba(238, 175, 22, 0.16);
+  font-family: var(--font-display);
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: var(--gold-700);
+}
+
+.dflow__steps li:not(:last-child)::after {
+  content: '→';
+  margin: 0 -0.15rem 0 0.65rem;
+  color: var(--gold-600);
+  font-weight: 400;
+}
+
+/* ----------------------------- quick facts --------------------------- */
+.dfacts {
+  margin-top: 1.4rem;
+  padding: clamp(1.1rem, 2.2vw, 1.5rem);
+  border-radius: var(--r-md);
+  background: var(--white);
+  box-shadow: inset 0 0 0 1px rgba(65, 43, 99, 0.12);
+}
+
+.dfacts__title {
+  margin-bottom: 0.9rem;
+  font-size: 0.68rem;
+  font-weight: 700;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: var(--purple-500);
+}
+
+.dfacts__list {
+  display: grid;
+  gap: 0.85rem;
+  margin: 0;
+}
+
+.dfacts__list > div {
+  display: grid;
+  grid-template-columns: minmax(0, 9.5rem) minmax(0, 1fr);
+  gap: 0.3rem 1.2rem;
+  align-items: baseline;
+}
+
+.dfacts__list dt {
+  font-size: 0.68rem;
+  font-weight: 700;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--text-on-light-dim);
+}
+
+.dfacts__list dd {
+  margin: 0;
+  font-size: 0.95rem;
+  line-height: 1.55;
+  color: var(--text-on-light);
+}
+
+.dfacts__note {
+  margin-top: 1rem;
+  padding-top: 0.85rem;
+  border-top: 1px solid var(--line);
+  font-size: 0.8rem;
+  line-height: 1.55;
+  color: var(--text-on-light-dim);
+}
+
+/* ---------------------------- term + text ---------------------------- */
+.ddefs {
+  display: grid;
+  margin: 1.3rem 0 0;
+  border-radius: var(--r-md);
+  border: 1px solid var(--line);
+  overflow: hidden;
+}
+
+.ddefs__row {
+  display: grid;
+  grid-template-columns: minmax(0, 12rem) minmax(0, 1fr);
+  gap: 0.3rem 1.4rem;
+  padding: clamp(0.85rem, 1.6vw, 1.1rem) clamp(1rem, 2vw, 1.3rem);
+  background: var(--white);
+  transition: background-color 0.3s ease;
+}
+
+.ddefs__row + .ddefs__row {
+  border-top: 1px solid var(--line);
+}
+
+.ddefs__row:hover {
+  background: var(--paper);
+}
+
+.ddefs dt {
+  font-family: var(--font-display);
+  font-size: 0.98rem;
+  font-weight: 600;
+  letter-spacing: -0.015em;
+  color: var(--purple-600);
+}
+
+.ddefs dd {
+  margin: 0;
+  font-size: 0.93rem;
+  line-height: 1.65;
+  color: var(--text-on-light-dim);
+}
+
+/* ------------------------------- years ------------------------------- */
+.dyears {
+  display: grid;
+  gap: clamp(0.8rem, 1.6vw, 1.1rem);
+  margin: 1.3rem 0 0;
+  padding: 0;
+  list-style: none;
+}
+
+.dyear {
+  padding: clamp(1.1rem, 2.2vw, 1.6rem);
+  border-radius: var(--r-md);
+  background: var(--white);
+  box-shadow: inset 0 0 0 1px rgba(65, 43, 99, 0.12);
+  transition: box-shadow 0.35s ease;
+}
+
+.dyear:hover {
+  box-shadow: inset 0 0 0 1.5px rgba(238, 175, 22, 0.55);
+}
+
+.dyear__n {
+  font-family: var(--font-body);
+  font-size: 0.68rem;
+  font-weight: 700;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: var(--gold-600);
+}
+
+.dyear__title {
+  margin-top: 0.35rem;
+  font-size: 1.14rem;
+  color: var(--purple-600);
+  letter-spacing: -0.02em;
+}
+
+.dyear__intro {
+  margin-top: 0.6rem;
+  font-size: 0.93rem;
+  line-height: 1.65;
+  color: var(--text-on-light-dim);
+}
+
+.dyear__label {
+  margin-top: 1rem;
+  font-size: 0.68rem;
+  font-weight: 700;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--text-on-light-dim);
+}
+
+.dyear__list {
+  display: grid;
+  gap: 0.45rem;
+  margin-top: 0.5rem;
+  padding-left: 0;
+  list-style: none;
+}
+
+.dyear__list li {
+  position: relative;
+  padding-left: 1.3rem;
+  font-size: 0.92rem;
+  line-height: 1.6;
+  color: var(--text-on-light-dim);
+}
+
+.dyear__list li::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 0.6em;
+  width: 6px;
+  height: 6px;
+  background: var(--purple-300);
+  transform: rotate(45deg);
+}
+
+.dyear__purpose {
+  margin-top: 1rem;
+  padding-top: 0.85rem;
+  border-top: 1px solid var(--line);
+  font-size: 0.92rem;
+  line-height: 1.6;
+  color: var(--text-on-light);
+}
+
+/* ------------------------------- table ------------------------------- */
+.dtable {
+  margin-top: 1.3rem;
+  border-radius: var(--r-md);
+  border: 1px solid var(--line);
+  overflow-x: auto;
+  background: var(--white);
+}
+
+.dtable:focus-visible {
+  outline: 2px solid var(--gold);
+  outline-offset: 2px;
+}
+
+.dtable table {
+  width: 100%;
+  min-width: 640px;
+  border-collapse: collapse;
+  text-align: left;
+}
+
+.dtable th,
+.dtable td {
+  padding: 0.85rem 1rem;
+  vertical-align: top;
+  font-size: 0.9rem;
+  line-height: 1.6;
+}
+
+.dtable thead th {
+  position: sticky;
+  top: 0;
+  background: var(--paper);
+  font-size: 0.68rem;
+  font-weight: 700;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--purple-500);
+  white-space: nowrap;
+}
+
+.dtable tbody tr + tr {
+  border-top: 1px solid var(--line);
+}
+
+.dtable tbody th {
+  font-family: var(--font-display);
+  font-weight: 600;
+  color: var(--purple-600);
+  white-space: nowrap;
+}
+
+.dtable tbody td {
+  color: var(--text-on-light-dim);
+}
+
+.dtable tbody td:first-of-type {
+  color: var(--text-on-light);
+}
+
+/* ======================== THE CLOSING PANEL ========================= */
+/* A section that is the call to action rather than more document, so it is
+   painted rather than ruled off. */
+.doc__section--panel {
+  margin-top: clamp(1.6rem, 3vw, 2.4rem);
+  padding: clamp(1.6rem, 3.2vw, 2.4rem);
+  border: 0;
+  border-radius: var(--r-lg);
+  background: linear-gradient(120deg, var(--purple-700), var(--purple-800));
+  box-shadow: inset 0 0 0 1px rgba(238, 175, 22, 0.35);
+  color: var(--white);
+}
+
+.doc__section--panel .doc__num {
+  color: var(--gold-400);
+}
+
+.doc__section--panel .doc__title,
+.doc__section--panel .doc__lede {
+  color: var(--white);
+}
+
+.doc__section--panel .doc__text {
+  color: var(--text-on-dark-dim);
+}
+
+/* The chain repainted for a dark ground: gold-700 is chosen to be legible on
+   white and disappears here. */
+.doc__section--panel .dflow__steps li {
+  color: var(--gold-400);
+}
+
+.doc__section--panel .dflow__steps li:not(:last-child)::after {
+  color: rgba(245, 195, 63, 0.7);
+}
+
+.doc__action {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.9rem 1.2rem;
+  margin-top: clamp(1.5rem, 3vw, 2rem);
+}
+
+/* Disabled, and it has to look it: the gold button is the loudest thing in
+   the panel, and a reader who presses it should already know why nothing
+   happens. */
+.doc__actionBtn:disabled {
+  cursor: not-allowed;
+  background: rgba(238, 175, 22, 0.28);
+  color: rgba(255, 255, 255, 0.72);
+}
+
+.doc__actionBtn:disabled:hover {
+  transform: none;
+  box-shadow: none;
+}
+
+.doc__actionNote {
+  font-size: 0.85rem;
+  color: var(--text-on-dark-faint);
+}
+
+/* ============================== NARROW =============================== */
+/* The reading measure is the column here, but the ceiling stays: see the note
+   on .doc above for what "none" cost. */
+@media (max-width: 999px) {
+  .doc {
+    max-width: 100%;
+  }
+}
+
+/* One column for the term lists and the facts panel: at this width a 12rem
+   term track leaves the explanation beside it about 150px wide. */
+@media (max-width: 700px) {
+  .ddefs__row,
+  .dfacts__list > div {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}

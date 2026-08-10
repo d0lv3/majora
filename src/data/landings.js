@@ -12,9 +12,11 @@
  */
 
 import { CYBERSECURITY_LANDING } from './landings/cybersecurity.js'
+import { DENTISTRY_LANDING } from './landings/dentistry.js'
 
 const LANDINGS = {
   cybersecurity: CYBERSECURITY_LANDING,
+  dentistry: DENTISTRY_LANDING,
 }
 
 export const landingFor = (majorSlug) => LANDINGS[majorSlug] ?? null
