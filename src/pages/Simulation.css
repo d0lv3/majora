@@ -2169,37 +2169,102 @@
    can do about it. Side by side the reader sees the shot and the decision at
    once, which is the point of showing them a scene before asking. */
 @media (min-width: 1000px) {
-  /* Head, rail and stage together, so the columns sit under the title rather
+  /* Head, rail and stage together, so the stage sits under the title rather
      than beside it. The simulation is its own world and can be wider than the
      rest of the site. */
   .sim--story .shell {
     max-width: 1440px;
   }
 
+  /* The picture stops being a column and becomes the ground.
+
+     Two boxes of different heights standing beside each other can only ever be
+     reconciled by cropping the picture or truncating the prose; one box cannot
+     disagree with itself. So the still fills the stage, the text floats on it,
+     and however long a scene runs the picture is exactly that tall.
+
+     --panel is the card's width and the caption's right edge is derived from
+     it, so a scene title can never run underneath the card. */
   .story {
+    --panel: 30rem;
+    --stage-pad: clamp(1.2rem, 2.2vw, 2rem);
+    position: relative;
     display: grid;
-    grid-template-columns: minmax(0, 1.32fr) minmax(0, 1fr);
-    align-items: start;
+    grid-template-columns: minmax(0, 1fr) var(--panel);
+    gap: var(--stage-pad);
+    align-items: center;
+    /* A definite height, not a min and a max. The stage is a screen the reader
+       looks at rather than a box that grows with whatever the scene says, and
+       a definite one is also what lets the card below cap itself: a grid row
+       that sizes to its content gives `max-height: 100%` nothing to resolve
+       against, and the card spills straight out of the picture.
+
+       The value is the viewport less the chrome, so a scene is one screen, and
+       ceilinged so the frame never stretches far past 16:9 on a tall monitor. */
+    height: clamp(400px, calc(100svh - 4rem), 700px);
+    grid-template-rows: minmax(0, 1fr);
+    padding: var(--stage-pad);
     max-width: 100%;
   }
 
-  /* Sticky, so a long panel scrolls past a picture that stays where it is.
-     A grid item sticks inside its own row, which here is the whole stage. */
   .story__frame {
-    position: sticky;
-    top: 1.25rem;
-    border-radius: var(--r-lg) 0 0 var(--r-lg);
+    position: absolute;
+    inset: 0;
+    aspect-ratio: auto;
+    border-radius: var(--r-lg);
   }
 
-  /* A pause keeps the scene's shape here. Letterboxing it only ever bought
-     vertical room, and there is none to win when the prose is beside it. */
+  /* A pause blurs the ground it is standing on, which is the whole frame now
+     rather than a band across the top of it. */
   .story__frame--paused {
-    aspect-ratio: 16 / 9;
+    aspect-ratio: auto;
   }
 
+  .story__caption {
+    right: calc(var(--panel) + var(--stage-pad) * 2);
+    padding-bottom: clamp(1.5rem, 2.8vw, 2.4rem);
+    padding-left: clamp(1.5rem, 2.8vw, 2.4rem);
+  }
+
+  /* Glass rather than a panel: dark enough to read on over any part of any
+     photograph, blurred so the picture is still there behind it. The flat
+     background alone carries it where backdrop-filter is unsupported. */
   .story__panel {
-    min-height: 100%;
-    border-radius: 0 var(--r-lg) var(--r-lg) 0;
+    position: relative;
+    z-index: 1;
+    grid-column: 2;
+    /* min-height:0 or a grid item refuses to shrink below its content, which
+       is what makes the overflow scroll rather than spill. */
+    min-height: 0;
+    max-height: 100%;
+    overflow-y: auto;
+    overscroll-behavior: contain;
+    border-radius: var(--r-md);
+    background: rgba(21, 13, 33, 0.84);
+    backdrop-filter: blur(18px) saturate(1.15);
+    box-shadow:
+      inset 0 0 0 1px rgba(255, 255, 255, 0.14),
+      var(--shadow-card);
+    /* The longest scene runs past one screen, so the bar has to be visible
+       rather than the default hairline on dark — it is the only thing telling
+       the reader the choice is further down. */
+    scrollbar-width: thin;
+    scrollbar-color: rgba(255, 255, 255, 0.34) transparent;
+  }
+
+  .story__panel::-webkit-scrollbar {
+    width: 10px;
+  }
+
+  .story__panel::-webkit-scrollbar-thumb {
+    border: 3px solid transparent;
+    border-radius: 6px;
+    background-clip: content-box;
+    background-color: rgba(255, 255, 255, 0.34);
+  }
+
+  .story__panel::-webkit-scrollbar-thumb:hover {
+    background-color: rgba(255, 255, 255, 0.55);
   }
 }
 
