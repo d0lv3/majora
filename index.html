@@ -12,10 +12,27 @@
 
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <!--
+      Fetched without blocking the first paint. A plain stylesheet link here
+      holds the whole document back until it answers — including the splash
+      below, which is the one thing that must not wait on the network. The
+      media switch is the trick: a sheet that only applies to print is not
+      render-blocking, and onload promotes it to the real thing the moment it
+      lands. Both faces are already display=swap, so the swap this causes is
+      the one that was going to happen anyway.
+    -->
     <link
       href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800&family=Inter:wght@400;500;600;700&display=swap"
       rel="stylesheet"
+      media="print"
+      onload="this.media='all'"
     />
+    <noscript>
+      <link
+        href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800&family=Inter:wght@400;500;600;700&display=swap"
+        rel="stylesheet"
+      />
+    </noscript>
 
     <title>Majora: Discover Where You Fit</title>
 
@@ -64,16 +81,35 @@
         height: clamp(120px, 26vmin, 190px);
         overflow: visible;
         /* Once the mark is drawn it breathes, so a slow connection gets a
-           screen that is still alive rather than a still image. Starts after
-           the last stroke lands. */
-        animation: splashBreathe 2.6s ease-in-out 1.7s infinite;
+           screen that is still alive rather than a still image.
+
+           It starts well clear of the last stroke rather than a beat after it.
+           On a load that is ready on time the splash lifts before this ever
+           runs, which is the point: at 1.7s it began scaling down just as the
+           fade started, and the two read as one unsteady movement. Now it only
+           appears when there is genuinely something to wait for. */
+        animation: splashBreathe 2.6s ease-in-out 2.15s infinite;
       }
 
       /* Drawn is the resting state and the keyframes come from nowhere, not
          the other way round. That ordering is what lets the reduced-motion
          rule below cancel the animation and leave a finished logo rather than
-         a blank square. */
-      .splash__mark path {
+         a blank square.
+
+         TWO THINGS ABOUT THIS SELECTOR, BOTH LOAD-BEARING.
+
+         The child combinator, because the tassel's strands are a path too.
+         Left as a descendant selector this rule reached inside the tassel and
+         painted them white, dashed them to bits and handed them the outline's
+         draw — a gold detail rendered as a dotted white one.
+
+         And `path.` on each of the four below, because this rule sets the
+         `animation` shorthand, which writes every animation longhand including
+         the delay and the duration. A bare `.splash__frame` is one class where
+         this is a class and a type, so it loses, and every stroke drew at once
+         in 0.68s with the stagger written below doing nothing at all. Matching
+         the specificity and coming later is what makes them stick. */
+      .splash__mark > path {
         fill: none;
         stroke: #ffffff;
         stroke-linecap: round;
@@ -83,24 +119,24 @@
         animation: splashDraw 0.68s cubic-bezier(0.65, 0, 0.35, 1) backwards;
       }
 
-      .splash__frame {
+      path.splash__frame {
         stroke-width: 7;
         animation-delay: 0.05s;
       }
 
-      .splash__book {
+      path.splash__book {
         stroke-width: 5.5;
         stroke-opacity: 0.9;
         animation-delay: 0.4s;
       }
 
-      .splash__cap {
+      path.splash__cap {
         stroke-width: 5.5;
         animation-delay: 0.68s;
         animation-duration: 0.48s;
       }
 
-      .splash__m {
+      path.splash__m {
         stroke-width: 9;
         animation-delay: 0.88s;
         animation-duration: 0.38s;
