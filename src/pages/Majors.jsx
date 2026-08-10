@@ -1,4 +1,4 @@
-import { useMemo, useState } from 'react'
+import { useEffect, useMemo, useState } from 'react'
 import { Link } from 'react-router-dom'
 
 import MajorCard from '../components/MajorCard.jsx'
@@ -12,10 +12,28 @@ import './Majors.css'
 const READY_COUNT = MAJORS.filter(isAvailable).length
 const MAPPED_COUNT = mappedMajorSlugs().length
 
+/**
+ * What was typed and which field was chosen, kept outside the component.
+ *
+ * Opening a major unmounts this page, and a search that has to be retyped
+ * every time a reader looks at one of its results is not a search — it is a
+ * reason to stop looking. A module-level object rather than the URL because
+ * the reader never asked for a shareable link to a filter, and rather than
+ * sessionStorage because a genuine reload should hand back a clean library.
+ *
+ * ScrollManager in App.jsx does the other half: where the page was left.
+ */
+const LEFT_AS = { query: '', field: 'all' }
+
 export default function Majors() {
   const { user } = useAuth()
-  const [query, setQuery] = useState('')
-  const [field, setField] = useState('all')
+  const [query, setQuery] = useState(LEFT_AS.query)
+  const [field, setField] = useState(LEFT_AS.field)
+
+  useEffect(() => {
+    LEFT_AS.query = query
+    LEFT_AS.field = field
+  }, [query, field])
 
   const counts = useMemo(() => countByField(), [])
 

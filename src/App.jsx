@@ -1,5 +1,5 @@
 import { Routes, Route, Navigate, useLocation } from 'react-router-dom'
-import { Suspense, lazy, useEffect } from 'react'
+import { Suspense, lazy, useEffect, useLayoutEffect } from 'react'
 
 import Navbar from './components/Navbar.jsx'
 import AppNav from './components/AppNav.jsx'
@@ -40,9 +40,51 @@ import NotFound from './pages/NotFound.jsx'
  *   /app   the product — the majors library and its pages, behind the login.
  */
 
-/** Honours the #hash on the landing page, and starts every other route at the top. */
+/**
+ * Where each page of the app was left.
+ *
+ * Keyed by path rather than by history entry, which is the whole point: a
+ * reader who opens a major from half way down the library and comes back
+ * should land where they were, and they may come back by the browser's back
+ * button, by the "← The library" link, or by the Library pill in the nav.
+ * Those are three different history entries and one intention.
+ *
+ * Scoped to /app. The landing page is a single scroll whose nav items are
+ * anchors into it, so every link that arrives at "/" without a hash means the
+ * top of it and nothing else.
+ */
+const LEFT_AT = new Map()
+
+const remembersScroll = (pathname) => pathname === '/app' || pathname.startsWith('/app/')
+
+/**
+ * Honours the #hash on the landing page, puts the reader back where they were
+ * on a page of the app they have already visited, and starts everything else
+ * at the top.
+ */
 function ScrollManager() {
   const { pathname, hash, key } = useLocation()
+
+  /* Where this page was when the reader left it, read on the way out.
+
+     A layout effect, and that is the whole trick. The same cleanup as a plain
+     effect records the wrong number: by the time passive effects run, React
+     has swapped in the next page, and if that page is shorter the browser has
+     already clamped the scroll to fit it. Leaving a 9616px major at 2500 for
+     the 1876px library recorded 1156 — the library's own maximum — so coming
+     back to the major landed there instead of where it was left.
+
+     Layout cleanups run during the mutation phase, in tree order, and this
+     component sits above the routes, so this runs before the page underneath
+     it is replaced and window.scrollY is still the outgoing page's.
+
+     Scroll events would work too, and only in a browser that is painting: they
+     are dispatched during the rendering step, so a backgrounded tab records
+     nothing. This needs no frames. */
+  useLayoutEffect(() => {
+    if (!remembersScroll(pathname)) return undefined
+    return () => LEFT_AT.set(pathname, window.scrollY)
+  }, [pathname])
 
   useEffect(() => {
     if (hash) {
@@ -50,10 +92,53 @@ function ScrollManager() {
       if (target) {
         const reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches
         target.scrollIntoView({ behavior: reduced ? 'auto' : 'smooth', block: 'start' })
-        return
+        return undefined
       }
     }
-    window.scrollTo({ top: 0, behavior: 'auto' })
+
+    /* 'instant', not 'auto'. This page sets scroll-behavior: smooth on html
+       for its anchor links, and 'auto' means "whatever the CSS says" rather
+       than "immediately" — so every route change was quietly asking for an
+       animated scroll, and arriving at a page by watching it slide there is
+       not arriving at it. A restore has to be instant or it looks broken. */
+    const target = remembersScroll(pathname) ? (LEFT_AT.get(pathname) ?? 0) : 0
+    if (target === 0) {
+      window.scrollTo({ top: 0, behavior: 'instant' })
+      return undefined
+    }
+
+    /* The page has to be tall enough to hold the position before it can be
+       restored, and on the frame the route changes it is not: the outgoing
+       page is still what the document measures, so scrollTo clamps to the
+       bottom of that instead — the library is 1876 tall and a major is 9616,
+       and restoring 2500 into the first one lands at 1156 and stays there.
+       Navigation is a transition here, so there is no one frame to wait for
+       either.
+
+       So it keeps asking until the answer sticks, and stops the moment it does
+       — or when the reader scrolls, because at that point they have said where
+       they want to be and it is not here, or after a second, because by then
+       the page is as tall as it is going to get and something else is wrong. */
+    let timer = 0
+    const settle = () => {
+      window.clearInterval(timer)
+      window.removeEventListener('wheel', settle)
+      window.removeEventListener('touchstart', settle)
+      window.removeEventListener('keydown', settle)
+    }
+    const attempt = () => {
+      window.scrollTo({ top: target, behavior: 'instant' })
+      if (Math.abs(window.scrollY - target) < 2) settle()
+    }
+
+    attempt()
+    timer = window.setInterval(attempt, 50)
+    window.setTimeout(settle, 1000)
+    window.addEventListener('wheel', settle, { passive: true })
+    window.addEventListener('touchstart', settle, { passive: true })
+    window.addEventListener('keydown', settle)
+
+    return settle
   }, [pathname, hash, key])
 
   return null

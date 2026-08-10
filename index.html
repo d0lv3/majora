@@ -128,43 +128,41 @@
       }
 
       .splash__frame {
-        stroke-width: 6;
+        stroke-width: 7.7;
         animation-delay: 0.04s;
       }
 
       .splash__book {
-        stroke-width: 5.5;
+        stroke-width: 7.6;
         animation-delay: 0.3s;
         animation-duration: 0.5s;
       }
 
       .splash__pages {
-        stroke-width: 5.5;
-        stroke-opacity: 0.85;
+        stroke-width: 7.6;
         animation-delay: 0.4s;
         animation-duration: 0.44s;
       }
 
-      .splash__cap {
-        stroke-width: 5.5;
-        animation-delay: 0.56s;
-        animation-duration: 0.4s;
-      }
+      /* The mark's one solid shape, and the only thing here that is not drawn.
+         The mortarboard in the logo is a filled diamond with the M cut out of
+         it, not an outline — so it arrives as one, fading in over the strokes
+         rather than being traced. Tracing it would have left a stroked rim
+         standing 3 units outside the fill when the fill landed, which is a
+         hairline the logo does not have.
 
-      /* The mark's one solid shape, arriving over its own outline: the
-         mortarboard as the logo has it, with the M cut out rather than laid
-         on. Opacity is the resting state so reduced motion keeps the filled
-         cap and simply skips the fade. */
+         Opacity is the resting state, so reduced motion keeps the solid cap
+         and simply skips the fade. */
       .splash__capFill {
         fill: #ffffff;
-        animation: splashFill 0.26s ease 0.92s backwards;
+        animation: splashFill 0.3s ease 0.72s backwards;
       }
 
       /* The one gold thing on the screen, and the last to arrive, so the eye
          finishes on it. An ellipse cannot be dash-drawn the way a line can,
          so the tassel swings in instead of being traced. */
       .splash__tassel {
-        transform-origin: 26px 108px;
+        transform-origin: 30.25px 106.5px;
         animation: splashTassel 0.38s cubic-bezier(0.34, 1.4, 0.5, 1) 0.84s backwards;
       }
 
@@ -230,12 +228,15 @@
 
       /* No drawing, no swing, no fade — the logo is simply already there while
          the app loads behind it. main.jsx reads the same query and drops its
-         minimum display time to match, so nobody is held on a still image. */
+         minimum display time to match, so nobody is held on a still image.
+
+         `.splash__mark *` matches the stroked paths at the same weight as
+         their own rules and comes later, so it wins. The filled cap keeps its
+         resting opacity of 1 because splashFill only ever set 0 in a `from`. */
       @media (prefers-reduced-motion: reduce) {
         #splash,
         .splash__mark,
-        .splash__mark path,
-        .splash__tassel,
+        .splash__mark *,
         .splash__word {
           animation: none;
           transition: none;
@@ -245,28 +246,50 @@
   </head>
   <body>
     <div id="splash" role="status" aria-label="Loading Majora">
+      <!--
+        Every coordinate below was measured off logo.png rather than eyeballed:
+        the image was sampled on a grid and the runs of ink read back, which is
+        why the mark is centred on x=104.5 and not on 100. The artwork is
+        composed with the tassel hanging outside the frame, so the frame sits
+        right of centre and the whole thing balances. Moving it to 100 is what
+        made the previous version look like a different logo.
+      -->
       <svg class="splash__mark" viewBox="0 0 200 200" aria-hidden="true">
-        <!-- the outer frame, one stroke from the tassel point all the way
-             round to the stub at the bottom left, exactly as the logo breaks
-             it -->
+        <!-- The house frame, as one stroke. It starts where the tassel hangs —
+             the left edge stops at y=106.5 in the artwork, and that break is
+             what the tassel hangs from — then runs up over the peak, down the
+             right side and back along the bottom. -->
         <path
-          class="splash__frame"
+          class="splash__stroke splash__frame"
           pathLength="1"
-          d="M27 109V72Q27 66 32 62L100 13Q105 10 110 13L174 62Q179 66 179 72V158Q179 164 173 164H52Q46 164 46 158V150"
+          d="M30.25 106.5V70Q30.25 65 34.5 62L100.5 16Q104.5 13 108.5 16L174.5 62Q178.65 65 178.65 70V157Q178.65 162.15 173.5 162.15H48"
         />
-        <!-- the open book: down the left page, across the fold, up the right -->
+        <!-- The open book, one page each. Both run straight down and then
+             break toward the spine, crossing under the frame's bottom edge and
+             meeting below it — which is what gives the logo its dipped foot. -->
         <path
-          class="splash__book"
+          class="splash__stroke splash__book"
           pathLength="1"
-          d="M61 106V150Q83 155 105 174Q127 155 147 150V106"
+          d="M64.6 111V146Q90 153 104.5 177"
         />
-        <!-- the mortarboard -->
-        <path class="splash__cap" pathLength="1" d="M104 46 167 86 104 126 41 86Z" />
-        <path class="splash__m" pathLength="1" d="M84 100V75L105 92 126 75V100" />
+        <path
+          class="splash__stroke splash__pages"
+          pathLength="1"
+          d="M145.6 111V146Q119 153 104.5 177"
+        />
+
+        <!-- The mortarboard: one path, two subpaths, and evenodd cuts the
+             second out of the first. That is the letter reversed out of the
+             diamond rather than drawn on top of it. -->
+        <path
+          class="splash__capFill"
+          fill-rule="evenodd"
+          d="M104.5 47.4L167 87.8L104.5 128.2L42.1 87.8Z M80.5 100V74H93L104.5 87.5L116 74H128.5V100H118.7V82L104.5 96.5L90.5 82V100Z"
+        />
 
         <g class="splash__tassel">
-          <ellipse class="splash__knot" cx="30" cy="117" rx="8.5" ry="6.5" />
-          <path class="splash__strands" d="M30 123 22 151M30 124V153M30 123 38 150" />
+          <ellipse class="splash__knot" cx="30.2" cy="118.2" rx="7.2" ry="5.6" />
+          <path class="splash__strands" d="M26 125 22.9 149M30.2 125V154M34.4 125 37.4 149" />
         </g>
       </svg>
 
