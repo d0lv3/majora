@@ -12,12 +12,13 @@ import './MajorLanding.css'
  * list uses, because this is the part of the page you actually read and it
  * should not be more dark-on-dark beneath the header.
  *
- * --noSheet, unlike the guide. A guide is its whole page, so a contents button
- * pinned to the corner of a narrow screen is always about what is under it.
- * This document is one band of a major page with related majors below it, and
- * the same button would follow the reader down into them still offering the
- * contents of something they had left. Narrow, the rail goes away and the
- * sections are read straight through.
+ * The rail behaves the same way here as it does on a guide at every width,
+ * narrow screens included: the toggle pins itself to the corner and the
+ * contents open over the page as a sheet. This document is one band of a
+ * longer page rather than the whole of it, so the button is also on screen
+ * above the document and below it — which is the trade for a reader who can
+ * reach the contents from anywhere on the page instead of scrolling back for
+ * them.
  */
 
 export default function MajorLanding({ landing }) {
@@ -26,10 +27,7 @@ export default function MajorLanding({ landing }) {
 
   return (
     <section className="section mland">
-      <div
-        className="shell contents contents--noSheet"
-        data-open={contents.open ? 'true' : 'false'}
-      >
+      <div className="shell contents" data-open={contents.open ? 'true' : 'false'}>
         <ContentsRail sections={sections} id="landing-nav" {...contents} />
         <DocSections sections={sections} />
       </div>

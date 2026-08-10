@@ -283,17 +283,6 @@
     opacity: 1;
     visibility: visible;
   }
-
-  /* A document that is only one band of a longer page cannot own a control
-     pinned to the corner of the viewport: the reader scrolls past it to the
-     related majors and the button is still there, offering the contents of
-     something they have left. Those documents ask for --noSheet and go without
-     a rail down here — they are five sections read straight through, and the
-     headings are on the page either way. */
-  .contents--noSheet .contents__rail,
-  .contents--noSheet .contents__scrim {
-    display: none;
-  }
 }
 
 /* The contents entries do not clear 44px on their own padding. */

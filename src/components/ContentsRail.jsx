@@ -18,8 +18,7 @@ import './ContentsRail.css'
  * widths. Wide, it is open and sticky and the document keeps its measure
  * beside it. Narrow, there is no room for two columns, so it starts closed and
  * opens over the page as a sheet, closing again the moment a section is
- * chosen — unless the caller asks for `--noSheet`, which is right for a
- * document that is only part of its page. See MajorLanding.jsx.
+ * chosen.
  *
  * Use it as a pair: the hook holds the state, the component draws the rail,
  * and the caller owns the grid between them.
