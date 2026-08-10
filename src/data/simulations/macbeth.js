@@ -49,6 +49,10 @@ export const MACBETH = {
 
   first: 'cover',
 
+  /* The file in src/assets/audio, minus its extension. Streamed under the
+     whole simulation on a loop, with a switch in the progress rail. */
+  score: 'macbeth-ost',
+
   exit: {
     label: 'Back to the guide',
     to: '/app/english-language-literature/english-literature',

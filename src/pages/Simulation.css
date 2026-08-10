@@ -1727,6 +1727,56 @@
   }
 }
 
+/* ------------------------------ the score ---------------------------- */
+/* Sound that starts on its own has to be stoppable without hunting for the
+   switch, so it lives in the progress rail and is on screen from the first
+   scene to the last rather than folded into a menu. */
+.storySound {
+  margin-left: auto;
+}
+
+.storySound__btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  min-height: 36px;
+  padding: 0.35rem 0.85rem 0.35rem 0.7rem;
+  border-radius: var(--r-pill);
+  background: rgba(255, 255, 255, 0.07);
+  font-size: 0.72rem;
+  font-weight: 600;
+  letter-spacing: 0.02em;
+  color: rgba(255, 255, 255, 0.55);
+  transition:
+    background-color 0.25s ease,
+    color 0.25s ease;
+}
+
+.storySound__btn:hover {
+  background: rgba(255, 255, 255, 0.12);
+  color: var(--white);
+}
+
+.storySound__btn.is-on {
+  color: var(--gold-400);
+}
+
+.storySound__icon {
+  width: 17px;
+  height: 17px;
+  flex: none;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 1.7;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+/* The speaker cone reads as a shape rather than an outline at this size. */
+.storySound__icon path:first-child {
+  fill: currentColor;
+}
+
 /* ----------------------------- the stage ----------------------------- */
 /* Capped by height rather than by width, so the whole picture is on screen at
    once and the reader never has to scroll to see the bottom of a shot. The

@@ -7,6 +7,7 @@ import { SCREENS, ACTS } from '../sim/Screens.jsx'
 import { initialState, reducer, LAST_SCREEN } from '../sim/state.js'
 import StoryPlayer, { storyAct } from '../sim/story/StoryPlayer.jsx'
 import StoryLoader from '../sim/story/StoryLoader.jsx'
+import StoryAudio from '../sim/story/StoryAudio.jsx'
 import { initialStoryState, storyReducer } from '../sim/story/storyState.js'
 import { useScenePreload } from '../sim/story/useScenePreload.js'
 import './Simulation.css'
@@ -67,7 +68,7 @@ export default function Simulation() {
  * for this kind of simulation — a screen number or a scene id — and changing
  * it puts the reader at the top of the new one.
  */
-function SimShell({ slug, major, sim, step, acts, act, count, variant, children }) {
+function SimShell({ slug, major, sim, step, acts, act, count, variant, railEnd, children }) {
   const first = useRef(true)
   const stage = useRef(null)
 
@@ -111,6 +112,7 @@ function SimShell({ slug, major, sim, step, acts, act, count, variant, children 
           ))}
         </ol>
         {count && <p className="sim__count">{count}</p>}
+        {railEnd}
       </nav>
 
       <main className="shell sim__stage" ref={stage}>
@@ -162,6 +164,7 @@ function StoryRun({ slug, major, sim }) {
       step={state.sceneId}
       acts={sim.acts}
       act={storyAct(sim, state.sceneId)}
+      railEnd={<StoryAudio name={sim.score} />}
     >
       <StoryPlayer sim={sim} state={state} dispatch={dispatch} />
     </SimShell>
