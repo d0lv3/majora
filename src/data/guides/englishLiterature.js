@@ -357,5 +357,37 @@ export const ENGLISH_LITERATURE = {
         },
       ],
     },
+
+    /* ---------------------------- the last level ------------------------ */
+    /* The simulation closes the guide rather than sitting beside it: eight
+       sections of reading about what the degree asks of you, and then one
+       where you do it. The tag is what puts it in the contents rail. */
+    {
+      id: 'simulate',
+      title: 'Macbeth, played out',
+      tag: 'Simulation',
+      panel: true,
+      blocks: [
+        { type: 'lede', text: 'Don’t just read about it. Take the decisions yourself.' },
+        {
+          type: 'text',
+          text: 'The last level of this guide is *Macbeth*, Act 1. You play Macbeth from the moment the witches stop him on the road to the moment his wife hands him the daggers — three decisions, and the story bends to all three.',
+        },
+        {
+          type: 'text',
+          text: 'Nothing scores your choices, because there is no correct Macbeth: the play has been read both ways for four hundred years. What is marked, gently, is whether you can name what Shakespeare is doing to you while he does it.',
+        },
+        {
+          type: 'flow',
+          steps: ['Read', 'Decide', 'Name the device', 'Defend the reading'],
+        },
+        {
+          type: 'action',
+          label: 'Start the case',
+          to: '/app/english-language-literature/simulation',
+          note: 'Macbeth — Ambition or Fate? · about 10 minutes',
+        },
+      ],
+    },
   ],
 }

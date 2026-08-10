@@ -5,40 +5,33 @@ import { getMajor, isAvailable } from '../data/majors.js'
 import { simulationFor } from '../data/simulations.js'
 import { SCREENS, ACTS } from '../sim/Screens.jsx'
 import { initialState, reducer, LAST_SCREEN } from '../sim/state.js'
+import StoryPlayer, { storyAct } from '../sim/story/StoryPlayer.jsx'
+import { initialStoryState, storyReducer } from '../sim/story/storyState.js'
 import './Simulation.css'
 
 /**
  * The last level of a major's curriculum, played out.
  *
  * The page is a shell: a head that names the case, a rail showing which act
- * you are in, and whichever of the twenty-five screens the state says you are
- * on. Everything that makes it a simulation is in src/sim.
+ * you are in, and whichever part of it the state says you are on. Everything
+ * that makes it a simulation is in src/sim.
  *
- * Deliberately not the app's dark ground. This is a clinic, and the reader is
- * inside a case rather than reading about one; the surrounding chrome is kept
- * to a way back out and nothing else.
+ * There are two kinds, and the route picks between them here because they hold
+ * genuinely different state and hooks may not be called conditionally:
+ *
+ *   screens  a fixed run of hand-built screens, numbered — the orthodontics
+ *            clinic, where each screen is its own instrument
+ *   story    a branching scene graph driven by choices — Macbeth, where the
+ *            scenes are alike and only the path through them differs
+ *
+ * Deliberately not the app's dark ground. The reader is inside the case rather
+ * than reading about one; the surrounding chrome is a way back out and nothing
+ * else.
  */
 export default function Simulation() {
   const { slug } = useParams()
   const major = getMajor(slug)
   const sim = simulationFor(slug)
-
-  const [state, dispatch] = useReducer(reducer, undefined, initialState)
-  const go = useCallback((screen) => dispatch({ type: 'go', screen }), [])
-
-  /* Each screen is a page in its own right, so arriving at one should put you
-     at the top of it. Not on the first render, though — jumping the window on
-     load would fight the scroll position the route arrived with. */
-  const first = useRef(true)
-  const stage = useRef(null)
-  useEffect(() => {
-    if (first.current) {
-      first.current = false
-      return
-    }
-    const reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches
-    stage.current?.scrollIntoView({ behavior: reduced ? 'auto' : 'smooth', block: 'start' })
-  }, [state.currentScreen])
 
   if (!major || !isAvailable(major) || !sim) {
     return (
@@ -58,8 +51,35 @@ export default function Simulation() {
     )
   }
 
-  const Current = SCREENS[state.currentScreen]
-  const act = ACTS.find((a) => state.currentScreen >= a.from && state.currentScreen <= a.to)
+  return sim.kind === 'story' ? (
+    <StoryRun slug={slug} major={major} sim={sim} />
+  ) : (
+    <ScreensRun slug={slug} major={major} sim={sim} />
+  )
+}
+
+/* -------------------------------- the shell ----------------------------- */
+
+/**
+ * Head, progress rail, stage. `step` is whatever counts as "somewhere else"
+ * for this kind of simulation — a screen number or a scene id — and changing
+ * it puts the reader at the top of the new one.
+ */
+function SimShell({ slug, major, sim, step, acts, act, count, children }) {
+  const first = useRef(true)
+  const stage = useRef(null)
+
+  /* Each step is a page in its own right, so arriving at one should put you at
+     the top of it. Not on the first render, though — jumping the window on
+     load would fight the scroll position the route arrived with. */
+  useEffect(() => {
+    if (first.current) {
+      first.current = false
+      return
+    }
+    const reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches
+    stage.current?.scrollIntoView({ behavior: reduced ? 'auto' : 'smooth', block: 'start' })
+  }, [step])
 
   return (
     <div className="sim">
@@ -74,30 +94,67 @@ export default function Simulation() {
         </div>
       </header>
 
-      {/* Where you are, in five acts rather than in twenty-fifths — a reader
-          does not need to know a screen number, only roughly how far in they
-          are and what this part of the case is about. */}
+      {/* Where you are, in acts rather than in twenty-fifths — a reader does
+          not need a step number, only roughly how far in they are and what
+          this part of it is about. */}
       <nav className="shell sim__rail" aria-label="Progress">
         <ol className="simActs">
-          {ACTS.map((a) => (
+          {acts.map((a, i) => (
             <li
               key={a.label}
-              className={
-                a === act ? 'is-on' : state.currentScreen > a.to ? 'is-done' : ''
-              }
+              className={a === act ? 'is-on' : i < acts.indexOf(act) ? 'is-done' : ''}
             >
               <span className="simActs__label">{a.label}</span>
             </li>
           ))}
         </ol>
-        <p className="sim__count">
-          Screen {state.currentScreen} of {LAST_SCREEN}
-        </p>
+        {count && <p className="sim__count">{count}</p>}
       </nav>
 
       <main className="shell sim__stage" ref={stage}>
-        <Current c={sim} state={state} dispatch={dispatch} go={go} />
+        {children}
       </main>
     </div>
+  )
+}
+
+/* ------------------------------- the two runs --------------------------- */
+
+function ScreensRun({ slug, major, sim }) {
+  const [state, dispatch] = useReducer(reducer, undefined, initialState)
+  const go = useCallback((screen) => dispatch({ type: 'go', screen }), [])
+
+  const Current = SCREENS[state.currentScreen]
+  const act = ACTS.find((a) => state.currentScreen >= a.from && state.currentScreen <= a.to)
+
+  return (
+    <SimShell
+      slug={slug}
+      major={major}
+      sim={sim}
+      step={state.currentScreen}
+      acts={ACTS}
+      act={act}
+      count={`Screen ${state.currentScreen} of ${LAST_SCREEN}`}
+    >
+      <Current c={sim} state={state} dispatch={dispatch} go={go} />
+    </SimShell>
+  )
+}
+
+function StoryRun({ slug, major, sim }) {
+  const [state, dispatch] = useReducer(storyReducer, sim, initialStoryState)
+
+  return (
+    <SimShell
+      slug={slug}
+      major={major}
+      sim={sim}
+      step={state.sceneId}
+      acts={sim.acts}
+      act={storyAct(sim, state.sceneId)}
+    >
+      <StoryPlayer sim={sim} state={state} dispatch={dispatch} />
+    </SimShell>
   )
 }
