@@ -1606,10 +1606,12 @@
    photograph — and a header deep enough to push the first picture below the
    fold would undo the point of the layout. */
 .sim--story .sim__head {
-  /* The clinic's headroom is generous; here it is only what the floating nav
-     pill needs to clear, which is 84px at the widest. Every pixel saved above
-     is a pixel the first photograph gets. */
-  padding-top: max(6.5rem, calc(var(--nav-headroom) * 0.72));
+  /* The clinic's headroom is generous; here it is only what the nav pill needs
+     to clear, and every pixel saved above is a pixel the first photograph
+     gets. A fraction of the token rather than a floor, because on a phone the
+     bar moves to the foot of the screen and there is nothing overhead to clear
+     — a fixed floor there stole 80px from a 640px screen. */
+  padding-top: calc(var(--nav-headroom) * 0.72);
   padding-bottom: clamp(0.9rem, 2vw, 1.3rem);
   background-image: none;
 }
@@ -1759,6 +1761,14 @@
 
 .storySound__btn.is-on {
   color: var(--gold-400);
+}
+
+/* A finger needs the full target even on a wide tablet, where the narrow-screen
+   rules below never apply. */
+@media (pointer: coarse) {
+  .storySound__btn {
+    min-height: 44px;
+  }
 }
 
 .storySound__icon {
@@ -2203,6 +2213,46 @@
     padding-inline: 0;
   }
 
+  /* Four labelled act pills wrap to two rows and push the sound switch onto a
+     third, which cost 140px of a 640px screen before the picture even began.
+     The acts become a progress bar with only the one you are in named. */
+  .sim--story .sim__rail {
+    flex-wrap: nowrap;
+    gap: 0.7rem;
+    padding-block: 0.65rem;
+  }
+
+  .sim--story .simActs {
+    flex: 1 1 auto;
+    flex-wrap: nowrap;
+    align-items: center;
+    min-width: 0;
+    gap: 0.3rem;
+  }
+
+  .sim--story .simActs li:not(.is-on) {
+    flex: none;
+    width: 16px;
+    height: 6px;
+    padding: 0;
+    border-radius: 3px;
+  }
+
+  .sim--story .simActs li:not(.is-on) .simActs__label {
+    display: none;
+  }
+
+  .sim--story .simActs li.is-on {
+    min-width: 0;
+    padding: 0.3rem 0.7rem;
+  }
+
+  .sim--story .simActs li.is-on .simActs__label {
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+  }
+
   .story {
     max-width: 100%;
   }
@@ -2231,6 +2281,59 @@
   .story__actions .simBtn {
     width: 100%;
     justify-content: center;
+  }
+
+  /* Icon alone at a full tap target. The word is still on the button for
+     anything that reads it aloud — hidden rather than removed, so the control
+     is still called "Music on" by a screen reader and by voice control. */
+  .storySound__btn {
+    min-height: 44px;
+    min-width: 44px;
+    justify-content: center;
+    padding: 0.35rem;
+  }
+
+  .storySound__label {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    margin: -1px;
+    padding: 0;
+    overflow: hidden;
+    clip-path: inset(50%);
+    white-space: nowrap;
+  }
+}
+
+/* A phone on its side. Only 380px of height to spend and the chrome was taking
+   more than half of it, so the head gives back everything it can and the frame
+   drops its floor — a shorter picture beats a picture that starts below the
+   bottom of the screen. */
+@media (max-width: 900px) and (max-height: 520px) {
+  .sim--story .sim__head {
+    padding-top: calc(var(--nav-headroom) * 0.4);
+    padding-bottom: 0.4rem;
+  }
+
+  .sim--story .sim__back {
+    margin-bottom: 0.4rem;
+  }
+
+  .sim--story .sim__title {
+    margin-top: 0.25rem;
+    font-size: 1rem;
+  }
+
+  .sim--story .sim__rail {
+    padding-block: 0.4rem;
+  }
+
+  .story__frame {
+    height: clamp(150px, 40svh, 240px);
+  }
+
+  .story__frame--paused {
+    height: clamp(96px, 20svh, 140px);
   }
 }
 
