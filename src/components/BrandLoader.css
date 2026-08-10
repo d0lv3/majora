@@ -1,0 +1,91 @@
+/* =========================================================
+   The in-app loading screen.
+
+   The panel and the drawing itself are defined in index.html
+   — .brandCurtain shares #splash's rule, and the mark shares
+   the .splash__* rules — so there is one loading screen on
+   this site and one place its timing lives. What is here is
+   only what the app's copy needs on top: when it appears,
+   and the two lines of text under the mark.
+   ========================================================= */
+
+/* Held back so a wait that is over in a blink never shows a screen. Most route
+   chunks are cached and arrive inside this delay. */
+.brandCurtain--app {
+  animation: brandCurtainIn 0.3s ease 0.22s backwards;
+}
+
+@keyframes brandCurtainIn {
+  from {
+    opacity: 0;
+  }
+}
+
+/* Covering one panel instead of the screen — the map, while its basemap
+   arrives. Two classes deep so it outranks the fixed positioning #splash and
+   .brandCurtain share, rather than relying on which stylesheet the browser
+   happened to read last. The map's own controls sit at Leaflet's z-index 1000,
+   so this has to clear them. */
+.brandCurtain.brandCurtain--inset {
+  position: absolute;
+  z-index: 1100;
+  border-radius: inherit;
+  padding: 1.5rem;
+  text-align: center;
+}
+
+.brandCurtain--inset .splash__mark {
+  width: clamp(72px, 16vmin, 104px);
+  height: clamp(72px, 16vmin, 104px);
+}
+
+.brandCurtain--inset .splash__word {
+  font-size: 0.95rem;
+}
+
+.brandCurtain__label {
+  margin: 0;
+  font-family: 'Poppins', 'Segoe UI', system-ui, sans-serif;
+  font-size: 0.82rem;
+  font-weight: 500;
+  letter-spacing: 0.02em;
+  color: rgba(255, 255, 255, 0.62);
+}
+
+/* Sized against the wordmark rather than the viewport: it is a detail under a
+   logo, not a component in its own right. */
+.brandCurtain__bar {
+  width: clamp(140px, 34vmin, 220px);
+  height: 3px;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.16);
+  overflow: hidden;
+}
+
+.brandCurtain__fill {
+  display: block;
+  width: 100%;
+  height: 100%;
+  border-radius: inherit;
+  background: #eeaf16;
+  transform-origin: left center;
+  transition: transform 0.35s ease;
+}
+
+.brandCurtain__detail {
+  margin: 0;
+  font-family: 'Inter', 'Segoe UI', system-ui, sans-serif;
+  font-size: 0.75rem;
+  font-variant-numeric: tabular-nums;
+  color: rgba(255, 255, 255, 0.45);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .brandCurtain--app {
+    animation: none;
+  }
+
+  .brandCurtain__fill {
+    transition: none;
+  }
+}

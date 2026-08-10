@@ -3,6 +3,7 @@ import { Link } from 'react-router-dom'
 import L from 'leaflet'
 import 'leaflet/dist/leaflet.css'
 
+import BrandLoader from '../components/BrandLoader.jsx'
 import FieldGlyph from '../components/decor/FieldGlyph.jsx'
 import { MAJORS, isAvailable, fieldLabel } from '../data/majors.js'
 import { IRAQ_BOUNDS, collegesFor, isSampleMajor, mappedMajorSlugs } from '../data/mapData.js'
@@ -120,6 +121,15 @@ export default function MajorMap() {
   const holderRef = useRef(null)
   const mapRef = useRef(null)
   const layerRef = useRef(null)
+  /* Whether the basemap has actually arrived. Leaflet builds its panes
+     immediately, so the map "exists" long before there is anything to look at
+     — which is the difference between a map that is loading and the blank grey
+     rectangle this page used to show while it did. */
+  const [tiles, setTiles] = useState('loading')
+  /* Bumped when the container is measured for the first time at a real size,
+     to re-run the fit below against dimensions that mean something. */
+  const [fitNonce, setFitNonce] = useState(0)
+  const sizedRef = useRef(false)
   // Read inside Leaflet callbacks, which close over the state they were built
   // with; the ref is what lets a marker click see the current selection.
   const selectRef = useRef(setSelectedId)
@@ -143,12 +153,27 @@ export default function MajorMap() {
     })
     L.control.zoom({ position: 'topright' }).addTo(map)
     map.fitBounds(IRAQ_BOUNDS)
-    L.tileLayer(TILE_URL, {
+
+    /* The basemap is a third-party CDN, so it is the one part of this page
+       that can be slow or simply not answer, and a reader should be told which
+       rather than left looking at an empty frame wondering whether to wait.
+
+       `load` is not "it worked" — it fires when every tile in view has
+       finished, and a tile that 404s has finished. So the two are counted, and
+       one tile arriving is enough to call the map usable: a patchy basemap is
+       still a basemap, and only a total failure is worth a message. */
+    let arrived = 0
+    const tileLayer = L.tileLayer(TILE_URL, {
       attribution: TILE_ATTRIBUTION,
       subdomains: 'abcd',
       detectRetina: true,
       maxZoom: 20,
-    }).addTo(map)
+    })
+    tileLayer.on('tileload', () => {
+      arrived += 1
+    })
+    tileLayer.on('load', () => setTiles(arrived > 0 ? 'ready' : 'error'))
+    tileLayer.addTo(map)
 
     layerRef.current = L.layerGroup().addTo(map)
     mapRef.current = map
@@ -184,7 +209,9 @@ export default function MajorMap() {
       colleges.map((c) => [c.lat, c.lng]),
       { padding: [48, 48], maxZoom: 8, animate: !prefersReducedMotion() },
     )
-  }, [colleges, selectedId])
+    // fitNonce, so that a fit computed against an unmeasured container is done
+    // again once the container has been measured. See the ResizeObserver below.
+  }, [colleges, selectedId, fitNonce])
 
   /* --------------- selecting from the list moves the map --------------- */
   useEffect(() => {
@@ -195,15 +222,49 @@ export default function MajorMap() {
     })
   }, [selected])
 
-  // Leaflet measures its container on creation. The container is inside a
-  // grid that settles a frame later, and on a phone it changes shape when the
-  // panel above it reflows, so the map is told to re-measure both times.
+  /**
+   * Leaflet measures its container once, when it is made.
+   *
+   * That measurement is taken inside a grid that has not settled, and on a
+   * cold navigation it can be taken against a container with no height at all
+   * — at which point the fit above resolves against nothing, no tiles fall
+   * inside the view, and the map sits there empty until something makes it
+   * measure again. Reloading the page was the something.
+   *
+   * So: re-measure on every resize, and the first time the container has a
+   * real size, re-run the fit as well. invalidateSize alone was not enough —
+   * it corrects the frame the map is drawn in and leaves the view that was
+   * computed for the wrong one.
+   */
   useEffect(() => {
     const map = mapRef.current
-    if (!map || !holderRef.current) return undefined
-    const observer = new ResizeObserver(() => map.invalidateSize())
-    observer.observe(holderRef.current)
-    return () => observer.disconnect()
+    const holder = holderRef.current
+    if (!map || !holder) return undefined
+
+    const remeasure = () => {
+      map.invalidateSize()
+      if (sizedRef.current) return
+      if (holder.clientWidth > 0 && holder.clientHeight > 0) {
+        sizedRef.current = true
+        setFitNonce((n) => n + 1)
+      }
+    }
+
+    const observer = new ResizeObserver(remeasure)
+    observer.observe(holder)
+
+    /* And the same thing on a short timer, because the observer is not enough
+       on its own: its callbacks are delivered with the rendering steps, so a
+       tab that is not being painted — opened in the background, or behind
+       another window — gets none of them, and the map that was built against
+       an unmeasured container stays that way until something repaints it.
+       Timers fire regardless. Both stop as soon as one of them succeeds. */
+    const timers = [0, 120, 400, 900].map((ms) => window.setTimeout(remeasure, ms))
+
+    return () => {
+      observer.disconnect()
+      timers.forEach(window.clearTimeout)
+    }
   }, [])
 
   const onPick = (next) => {
@@ -439,6 +500,21 @@ export default function MajorMap() {
             </div>
           )}
           <div className="mapStage__canvas" ref={holderRef} />
+
+          {/* Over the map rather than over the page: the college list beside
+              it is already readable, and covering it would be pretending the
+              whole screen is waiting when one panel of it is. */}
+          {tiles !== 'ready' && (
+            <BrandLoader
+              inset
+              label={tiles === 'error' ? 'The basemap did not load' : 'Loading the map'}
+              detail={
+                tiles === 'error'
+                  ? 'The universities and their details are all here; only the background is missing.'
+                  : null
+              }
+            />
+          )}
         </div>
       </div>
     </div>

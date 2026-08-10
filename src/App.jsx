@@ -1,6 +1,7 @@
 import { Routes, Route, Navigate, useLocation } from 'react-router-dom'
 import { Suspense, lazy, useEffect, useLayoutEffect } from 'react'
 
+import BrandLoader from './components/BrandLoader.jsx'
 import Navbar from './components/Navbar.jsx'
 import AppNav from './components/AppNav.jsx'
 import Footer from './components/Footer.jsx'
@@ -203,7 +204,7 @@ export default function App() {
             path="/app"
             element={
               <RequireAuth>
-                <Suspense fallback={<div className="routeWait">Opening the library…</div>}>
+                <Suspense fallback={<BrandLoader label="Opening the library" />}>
                   <Majors />
                 </Suspense>
               </RequireAuth>
@@ -215,7 +216,7 @@ export default function App() {
             path="/app/map"
             element={
               <RequireAuth>
-                <Suspense fallback={<div className="routeWait">Loading the map…</div>}>
+                <Suspense fallback={<BrandLoader label="Loading the map" />}>
                   <MajorMap />
                 </Suspense>
               </RequireAuth>
@@ -236,7 +237,7 @@ export default function App() {
             path="/app/:slug/simulation"
             element={
               <RequireAuth>
-                <Suspense fallback={<div className="routeWait">Preparing the clinic…</div>}>
+                <Suspense fallback={<BrandLoader label="Preparing the simulation" />}>
                   <Simulation />
                 </Suspense>
               </RequireAuth>
@@ -249,7 +250,7 @@ export default function App() {
             path="/app/:slug/:branch"
             element={
               <RequireAuth>
-                <Suspense fallback={<div className="routeWait">Opening the guide…</div>}>
+                <Suspense fallback={<BrandLoader label="Opening the guide" />}>
                   <MajorGuide />
                 </Suspense>
               </RequireAuth>

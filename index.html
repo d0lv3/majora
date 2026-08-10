@@ -62,7 +62,23 @@
       main.jsx takes it down once React has mounted; see removeSplash() there.
     -->
     <style>
-      #splash {
+      /*
+        THE CURTAIN, AND WHY THE APP USES IT TOO.
+
+        #splash is the one that has to be here, inline, before anything else
+        loads. .brandCurtain is the same screen rendered from inside the app —
+        while a route's chunk arrives, while the map's tiles do, while a
+        simulation's scenes do — and it shares this rule rather than owning a
+        copy of it.
+
+        That is the whole point: a reader who saw the mark draw itself on the
+        way in should see the same screen, drawn the same way, at every other
+        wait. Two stylesheets would have been two answers to that within a
+        month. This block survives the splash being removed from the document,
+        so BrandLoader.jsx can rely on it — see the note there.
+      */
+      #splash,
+      .brandCurtain {
         position: fixed;
         inset: 0;
         z-index: 9999;
