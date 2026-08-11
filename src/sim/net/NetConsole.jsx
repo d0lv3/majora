@@ -47,6 +47,11 @@ function Recon({ sim, state, dispatch, onDone }) {
     if (step.ends) onDone()
   }
 
+  const lastStep = sim.steps.find((s) => s.id === state.taken[state.taken.length - 1]) ?? null
+  /* Where a step leaves you: the ground it opened, or the node it happened at
+     when it opened nothing. The same rule netState uses to move the selection. */
+  const landedOn = lastStep ? (lastStep.opens[0] ?? lastStep.at) : null
+
   const justNamed = sim.terms.filter(
     (t) => state.named.includes(t.id) && t.after === state.taken[state.taken.length - 1],
   )
@@ -128,17 +133,15 @@ function Recon({ sim, state, dispatch, onDone }) {
         </>
       )}
 
-      {state.taken.length > 0 && (
+      {/* What the last step did, and only where it did it. Taking a step drops
+          the reader on the ground it opened, and the result belongs to that
+          node — left unconditional it followed them around the map, so
+          standing on the file server they were still being told they had just
+          signed in to the website. */}
+      {lastStep && state.selected === landedOn && (
         <div className="netResult">
-          {(() => {
-            const last = sim.steps.find((s) => s.id === state.taken[state.taken.length - 1])
-            return (
-              <>
-                <p className="netResult__text">{last.result}</p>
-                <Assumption>{last.assumption}</Assumption>
-              </>
-            )
-          })()}
+          <p className="netResult__text">{lastStep.result}</p>
+          <Assumption>{lastStep.assumption}</Assumption>
           {justNamed.map((t) => (
             <Term key={t.id} term={t} />
           ))}
@@ -213,12 +216,16 @@ function Hunt({ sim, state, dispatch, onNext }) {
         })}
       </ul>
 
-      {!allFound && (
+      {/* Guidance whenever the marks are not yet exactly right — including
+          when all three are found and a fourth is marked as well, which used
+          to render nothing at all: no hint, no button, and nothing to say the
+          way on was to unmark something. */}
+      {(!allFound || wrong.length > 0) && (
         <p className="netAct__hint">
-          {state.marked.length === 0
-            ? 'Three of these are yours. You made them less than ten minutes ago.'
-            : wrong.length > 0
-              ? 'One of those is ordinary traffic. Every night has some.'
+          {wrong.length > 0
+            ? 'One of those is ordinary traffic — a backup, a printer, somebody arriving. Every night has some. Tap it again to put it back.'
+            : state.marked.length === 0
+              ? 'Three of these are yours. You made them less than ten minutes ago.'
               : `${state.marked.length} of 3.`}
         </p>
       )}
@@ -319,9 +326,11 @@ function Replay({ sim, state, onNext }) {
             ))}
           </ol>
           <p className={`netPath__end${p.reachedEnd ? ' is-bad' : ''}`}>
-            {p.reachedEnd
-              ? `The records went out the door — ${p.watching ? sim.outcomes.seen : sim.outcomes.unseen}.`
-              : `Stopped before the records — ${p.watching ? sim.outcomes.seen : sim.outcomes.unseen}.`}
+            {
+              sim.outcomes.ends[
+                `${p.reachedEnd ? 'through' : 'stopped'}${p.watching ? 'Seen' : 'Unseen'}`
+              ]
+            }
           </p>
         </div>
       ))}

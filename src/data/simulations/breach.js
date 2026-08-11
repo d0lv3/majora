@@ -131,6 +131,13 @@ export const BREACH = {
    * than handing you everything on the first click — and so the reader never
    * sees a detail they could not yet have learned. */
   observations: {
+    you: [
+      {
+        id: 'outside',
+        text: 'You are outside the building, on the same internet as everybody else. From here exactly one thing belonging to Zagros Freight answers you: their website.',
+        note: 'Everything else on this map you are guessing at. It is there because companies have those things, not because you can see it.',
+      },
+    ],
     web: [
       {
         id: 'admin-page',
@@ -368,8 +375,18 @@ export const BREACH = {
   outcomes: {
     stopped: 'stopped here',
     through: 'still works',
-    seen: 'and somebody saw it',
-    unseen: 'and nobody was watching',
+    /* Four endings rather than two clauses bolted together. "Stopped, and
+       nobody was watching" reads as a complaint about a good outcome; the
+       point is subtler and worth its own sentence — you held the door and you
+       would never know anybody tried it. */
+    ends: {
+      throughSeen: 'The records went out the door — and somebody saw it happen the same morning.',
+      throughUnseen:
+        'The records went out the door, and nothing on this network would have told anyone for months.',
+      stoppedSeen: 'Stopped before the records, and you would know somebody had tried.',
+      stoppedUnseen:
+        'Stopped before the records — though nobody would ever know it had been tried.',
+    },
   },
 
   debrief: {

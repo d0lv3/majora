@@ -166,6 +166,13 @@
   color: #fff;
 }
 
+/* Disabled once the attack is over. It keeps its colour — the map is still
+   the record of what happened and has to stay readable — and only gives up
+   the cursor, because there is nothing left to press. */
+.netNode:disabled {
+  cursor: default;
+}
+
 /* Something here you have not looked at. A dot, because the node is already
    carrying an icon and a name and cannot afford a third piece of text. */
 .netNode__new {

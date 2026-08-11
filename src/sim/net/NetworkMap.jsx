@@ -30,6 +30,10 @@ const ICONS = {
 }
 
 export default function NetworkMap({ sim, state, onSelect, unreadIds = [], pathIds = [], cutLinks = [], defending = false }) {
+  /* Once the attack is over the panel stops listening to the map, so the nodes
+     stop offering: disabled rather than silently inert, which also takes them
+     out of the tab order instead of leaving six stops that do nothing. */
+  const live = !defending
   const at = (id) => sim.nodes.find((n) => n.id === id)
   const reached = (id) => state.reached.includes(id)
   /* Yours, which is not the same as reachable. Taking the web server puts the
@@ -75,7 +79,8 @@ export default function NetworkMap({ sim, state, onSelect, unreadIds = [], pathI
                 type="button"
                 className={cls}
                 onClick={() => onSelect(n.id)}
-                aria-pressed={state.selected === n.id}
+                disabled={!live}
+                aria-pressed={live ? state.selected === n.id : undefined}
               >
                 <span className="netNode__icon" aria-hidden="true">
                   <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.7" strokeLinecap="round" strokeLinejoin="round">
