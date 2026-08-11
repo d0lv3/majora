@@ -1,11 +1,18 @@
 # Simulation feedback → a Google Sheet
 
-One question at the end of every simulation: a rating out of five and an
-optional note. There is no API behind the site, so the answers go to a Google
-Apps Script Web App, which writes them into a Sheet.
+At the end of every simulation, two ways to answer: a rating out of five, and a
+box to write whatever the reader thought. Either on its own is enough to send.
+There is no API behind the site, so the answers go to a Google Apps Script Web
+App, which writes them into a Sheet.
 
 Nothing is collected that identifies a reader. The site knows the signed-in
 email and does not send it.
+
+> **If you deployed this script before the writing box existed, redeploy it.**
+> The old version rejected any submission without a 1–5 rating. The page cannot
+> read the reply — see "What this costs" below — so it would thank a student for
+> a paragraph that was never written down. Paste the script below over the old
+> one and deploy a new version.
 
 ---
 
@@ -40,15 +47,21 @@ function doPost(e) {
     if (!sheet) sheet = SpreadsheetApp.getActiveSpreadsheet().insertSheet(TAB);
     if (sheet.getLastRow() === 0) sheet.appendRow(HEADERS);
 
+    // Either answer on its own is a real submission: a number, some words, or
+    // both. The rating used to be compulsory here and the row was dropped
+    // without one — which, because the reply is opaque to the page, meant a
+    // student who wrote a paragraph and pressed Send was thanked and lost.
     var rating = Number(data.rating);
-    if (!(rating >= 1 && rating <= 5)) throw new Error('rating out of range');
+    var hasRating = rating >= 1 && rating <= 5;
+    var comment = String(data.comment || '').trim().slice(0, 1000);
+    if (!hasRating && !comment) throw new Error('nothing to record');
 
     sheet.appendRow([
       new Date(),
       String(data.slug || '').slice(0, 80),
       String(data.title || '').slice(0, 200),
-      rating,
-      String(data.comment || '').slice(0, 1000),
+      hasRating ? rating : '',
+      comment,
       String(data.screen || '').slice(0, 20),
       String(data.at || '').slice(0, 40),
     ]);
@@ -113,6 +126,10 @@ mode: no-cors
 {"slug":"the-jaw","title":"The Jaw, Read Properly","rating":4,
  "comment":"…","at":"2026-08-12T…","screen":"1440x900"}
 ```
+
+`rating` is `null` when the reader wrote something and did not pick a number,
+and `comment` is `""` when they picked a number and did not write. Both at once
+is the only combination the page will not send.
 
 Two things are doing work there, both because of the browser rather than
 Google:
