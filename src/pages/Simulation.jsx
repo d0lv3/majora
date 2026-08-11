@@ -70,7 +70,7 @@ export default function Simulation() {
  * for this kind of simulation — a screen number or a scene id — and changing
  * it puts the reader at the top of the new one.
  */
-function SimShell({ slug, major, sim, step, acts, act, count, variant, railEnd, children }) {
+function SimShell({ slug, major, sim, step, acts, act, count, variant, railEnd, headExtra, children }) {
   const first = useRef(true)
   const stage = useRef(null)
 
@@ -96,6 +96,7 @@ function SimShell({ slug, major, sim, step, acts, act, count, variant, railEnd, 
           <span className="eyebrow">{sim.eyebrow}</span>
           <h1 className="sim__title">{sim.title}</h1>
           <p className="sim__subtitle">{sim.subtitle}</p>
+          {headExtra}
         </div>
       </header>
 
@@ -177,6 +178,18 @@ function NetRun({ slug, major, sim }) {
   const [state, dispatch] = useReducer(netReducer, undefined, initialNetState)
   const actId = actOf(sim, state)
 
+  /* The target, named. It was in the content from the start and shown nowhere —
+     and it is the whole reason any of this matters: forty people's customers on
+     one database. A dossier in the head puts the stakes on screen before the
+     reader touches the map. */
+  const dossier = sim.company ? (
+    <div className="netBrief">
+      <span className="netBrief__tag">Target dossier</span>
+      <p className="netBrief__name">{sim.company.name}</p>
+      <p className="netBrief__blurb">{sim.company.blurb}</p>
+    </div>
+  ) : null
+
   return (
     <SimShell
       slug={slug}
@@ -186,6 +199,7 @@ function NetRun({ slug, major, sim }) {
       step={`${state.phase}:${state.taken.length}`}
       acts={sim.acts}
       act={sim.acts.find((a) => a.id === actId)}
+      headExtra={dossier}
     >
       <NetConsole sim={sim} state={state} dispatch={dispatch} />
     </SimShell>

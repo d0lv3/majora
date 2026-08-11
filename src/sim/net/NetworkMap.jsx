@@ -29,7 +29,7 @@ const ICONS = {
   database: <path d="M4 6c0-1.7 3.6-3 8-3s8 1.3 8 3-3.6 3-8 3-8-1.3-8-3zM4 6v12c0 1.7 3.6 3 8 3s8-1.3 8-3V6M4 12c0 1.7 3.6 3 8 3s8-1.3 8-3" />,
 }
 
-export default function NetworkMap({ sim, state, onSelect, unreadIds = [], pathIds = [], cutLinks = [], defending = false }) {
+export default function NetworkMap({ sim, state, onSelect, unreadIds = [], pathIds = [], cutLinks = [], defending = false, mode = null }) {
   /* Once the attack is over the panel stops listening to the map, so the nodes
      stop offering: disabled rather than silently inert, which also takes them
      out of the tab order instead of leaving six stops that do nothing. */
@@ -48,6 +48,16 @@ export default function NetworkMap({ sim, state, onSelect, unreadIds = [], pathI
 
   return (
     <div className={`netMap${defending ? ' netMap--defend' : ''}`}>
+      {/* Which mindset you are in, said on the map. Gold while you are the one
+          moving through the network, green once it is yours to hold. */}
+      {mode && (
+        <div className="netMap__mode">
+          <span className="netMap__modeDot" aria-hidden="true" />
+          <span className="netMap__modeSide">{mode.side}</span>
+          {mode.label && <span className="netMap__modeLabel">{mode.label}</span>}
+        </div>
+      )}
+
       <svg className="netMap__svg" viewBox="0 0 100 100" preserveAspectRatio="none" aria-hidden="true">
         {sim.links.map(([a, b]) => {
           const A = at(a)
@@ -59,6 +69,24 @@ export default function NetworkMap({ sim, state, onSelect, unreadIds = [], pathI
             isCut(a, b) ? 'is-cut' : '',
           ].filter(Boolean).join(' ')
           return <line key={`${a}${b}`} className={cls} x1={A.x} y1={A.y} x2={B.x} y2={B.y} />
+        })}
+
+        {/* The traffic. A second line over each one that carries something —
+            live links while you are moving, the route you took once the turn has
+            happened — crawling with dots so the network reads as awake rather
+            than drawn. Purely decorative, and gone under reduced motion. */}
+        {sim.links.map(([a, b]) => {
+          const live = reached(a) && reached(b) && !defending
+          const path = onPath(a, b)
+          if ((!live && !path) || isCut(a, b)) return null
+          const A = at(a)
+          const B = at(b)
+          const cls = ['netMap__flow', live ? 'is-live' : '', path ? 'is-path' : '']
+            .filter(Boolean)
+            .join(' ')
+          return (
+            <line key={`flow${a}${b}`} className={cls} x1={A.x} y1={A.y} x2={B.x} y2={B.y} pathLength="100" />
+          )
         })}
       </svg>
 

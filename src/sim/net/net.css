@@ -14,15 +14,117 @@
 }
 
 /* ================================= MAP ================================ */
+/* The screen on the wall. It has to lift off the dark room the page now sits
+   in — same family of purples, a shade warmer, ringed in a hairline and a
+   faint gold edge so it reads as a lit panel rather than a hole in the floor. */
 .netMap {
   position: relative;
   aspect-ratio: 16 / 10;
   border-radius: var(--r-lg);
   background:
-    radial-gradient(70% 60% at 50% 45%, rgba(107, 78, 148, 0.22), transparent 70%),
-    var(--purple-950);
-  box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.08);
+    radial-gradient(72% 62% at 50% 42%, rgba(122, 90, 168, 0.30), transparent 72%),
+    linear-gradient(180deg, #1b1029, #120b1e);
+  box-shadow:
+    inset 0 0 0 1px rgba(255, 255, 255, 0.10),
+    inset 0 0 70px rgba(0, 0, 0, 0.55),
+    0 0 0 1px rgba(238, 175, 22, 0.10),
+    0 40px 80px -44px rgba(0, 0, 0, 0.9);
   overflow: hidden;
+}
+
+/* A slow sweep across the screen, like a scope refreshing. Behind the grid and
+   the nodes, low enough that it is atmosphere and not a light show. */
+.netMap::after {
+  content: '';
+  position: absolute;
+  inset: -30%;
+  background: conic-gradient(
+    from 0deg at 50% 50%,
+    transparent 0deg,
+    rgba(238, 175, 22, 0.10) 26deg,
+    transparent 52deg
+  );
+  z-index: 2;
+  pointer-events: none;
+  animation: netSweep 8s linear infinite;
+}
+
+.netMap--defend::after {
+  background: conic-gradient(
+    from 0deg at 50% 50%,
+    transparent 0deg,
+    rgba(110, 231, 168, 0.10) 26deg,
+    transparent 52deg
+  );
+}
+
+@keyframes netSweep {
+  to {
+    transform: rotate(1turn);
+  }
+}
+
+/* The mode ribbon: which head you are wearing, top-left of the screen. Gold as
+   the attacker, green as the defender — the site's one-line thesis, made into a
+   thing you can see you are inside of. */
+.netMap__mode {
+  position: absolute;
+  top: 11px;
+  left: 12px;
+  z-index: 5;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.32rem 0.75rem 0.32rem 0.6rem;
+  border-radius: var(--r-pill);
+  background: rgba(18, 11, 30, 0.72);
+  box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.14);
+  backdrop-filter: blur(6px);
+  font-family: var(--font-display);
+}
+
+.netMap__modeDot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: var(--gold);
+  box-shadow: 0 0 0 3px rgba(238, 175, 22, 0.25);
+  animation: netBlink 1.7s ease-in-out infinite;
+}
+
+.netMap__modeSide {
+  font-size: 0.62rem;
+  font-weight: 700;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--gold-400);
+}
+
+.netMap__modeLabel {
+  padding-left: 0.55rem;
+  border-left: 1px solid rgba(255, 255, 255, 0.18);
+  font-size: 0.68rem;
+  font-weight: 500;
+  color: rgba(255, 255, 255, 0.74);
+}
+
+.netMap--defend .netMap__modeDot {
+  background: #6ee7a8;
+  box-shadow: 0 0 0 3px rgba(110, 231, 168, 0.25);
+}
+
+.netMap--defend .netMap__modeSide {
+  color: #8ff0be;
+}
+
+@keyframes netBlink {
+  0%,
+  100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.4;
+  }
 }
 
 /* A faint grid, so the dark reads as a diagram rather than a hole. */
@@ -30,6 +132,7 @@
   content: '';
   position: absolute;
   inset: 0;
+  z-index: 1;
   background-image:
     linear-gradient(rgba(255, 255, 255, 0.045) 1px, transparent 1px),
     linear-gradient(90deg, rgba(255, 255, 255, 0.045) 1px, transparent 1px);
@@ -49,6 +152,7 @@
   inset: 6% 9% 6% 5%;
   width: auto;
   height: auto;
+  z-index: 3;
 }
 
 /* preserveAspectRatio is none, so the stroke is scaled with the box and has to
@@ -81,10 +185,41 @@
   stroke-dasharray: 5 5;
 }
 
+/* The traffic. A short comet of dots that crawls along a link, so a network you
+   can reach reads as a network with something moving on it. pathLength=100
+   normalises the dash spacing whatever the link's real length, and the offset
+   animation is what makes the dots travel. Faint gold as the attacker; the
+   brighter gold route once it is being replayed as the defender. */
+.netMap__flow {
+  fill: none;
+  stroke-width: 2;
+  stroke-linecap: round;
+  vector-effect: non-scaling-stroke;
+  stroke-dasharray: 0.6 7;
+  animation: netTraffic 1.5s linear infinite;
+}
+
+.netMap__flow.is-live {
+  stroke: rgba(238, 175, 22, 0.7);
+}
+
+.netMap__flow.is-path {
+  stroke: var(--gold-200);
+  stroke-width: 2.4;
+  animation-duration: 1.1s;
+}
+
+@keyframes netTraffic {
+  to {
+    stroke-dashoffset: -7.6;
+  }
+}
+
 .netMap__nodes {
   margin: 0;
   padding: 0;
   list-style: none;
+  z-index: 4;
 }
 
 .netMap__nodes li {
@@ -190,6 +325,42 @@
 /* The database, which is what all of this is about. */
 .netNode--prize.is-lit {
   color: var(--gold-200);
+}
+
+/* The objective, marked. A gold beacon breathing behind the records database
+   from the very first screen — before it is reachable, before it is yours — so
+   the reader can see where all of this is heading. It brightens as the node
+   comes within reach and again once it is taken. Behind the icon, never over
+   it. */
+.netNode--prize::before {
+  content: '';
+  position: absolute;
+  left: 50%;
+  top: 34%;
+  width: 74px;
+  height: 74px;
+  transform: translate(-50%, -50%);
+  border-radius: 50%;
+  background: radial-gradient(circle, rgba(238, 175, 22, 0.4), transparent 68%);
+  z-index: -1;
+  pointer-events: none;
+  opacity: 0.5;
+  animation: netBeacon 2.8s ease-in-out infinite;
+}
+
+.netNode--prize.is-lit::before {
+  opacity: 0.85;
+  background: radial-gradient(circle, rgba(238, 175, 22, 0.55), transparent 68%);
+}
+
+@keyframes netBeacon {
+  0%,
+  100% {
+    transform: translate(-50%, -50%) scale(0.85);
+  }
+  50% {
+    transform: translate(-50%, -50%) scale(1.15);
+  }
 }
 
 /* Defending: the route is history, so it stops pulsing and the greens lead. */
@@ -703,6 +874,25 @@
   .netLog__src {
     display: none;
   }
+
+  /* A smaller map wants a smaller ribbon, so it clears the top row of nodes
+     with room to spare rather than meeting the laptop at a corner. */
+  .netMap__mode {
+    top: 8px;
+    left: 8px;
+    gap: 0.4rem;
+    padding: 0.26rem 0.55rem 0.26rem 0.5rem;
+  }
+
+  .netMap__modeSide {
+    font-size: 0.56rem;
+    letter-spacing: 0.12em;
+  }
+
+  .netMap__modeLabel {
+    padding-left: 0.45rem;
+    font-size: 0.6rem;
+  }
 }
 
 @media (prefers-reduced-motion: reduce) {
@@ -710,5 +900,18 @@
   .netMap__link,
   .netAct__btn {
     transition: none;
+  }
+
+  /* The atmosphere stops moving. The sweep and the traffic are motion for its
+     own sake, so they go entirely; the beacon and the ribbon dot hold still but
+     stay, because they mark things — the target, and which side you are on. */
+  .netMap::after,
+  .netMap__flow {
+    display: none;
+  }
+
+  .netMap__modeDot,
+  .netNode--prize::before {
+    animation: none;
   }
 }

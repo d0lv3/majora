@@ -392,6 +392,15 @@ export default function NetConsole({ sim, state, dispatch }) {
       : []
 
   const defending = ['turn', 'hunt', 'harden', 'replay', 'debrief'].includes(state.phase)
+
+  /* Which head the reader is wearing, named on the map itself. The one sentence
+     the cybersecurity page is built on is "think like an attacker… and then
+     think like a defender", and this is that sentence turned into a state you
+     can see you are in. The sub-label tracks the act so the ribbon says not
+     just which side but what that side is doing right now. */
+  const mode = defending
+    ? { side: 'Defender', label: { turn: 'The turn', hunt: 'Investigation', harden: 'Hardening', replay: 'Replay', debrief: 'Debrief' }[state.phase] ?? '' }
+    : { side: 'Attacker', label: ['Reconnaissance', 'Breaking in', 'Moving inward'][state.taken.length] ?? 'Moving inward' }
   /* Once the turn has happened the map stops being a place you are moving
      through and becomes the route you took, drawn. */
   const pathIds = defending ? ['you', 'web', 'office', 'admin', 'db'] : []
@@ -414,6 +423,7 @@ export default function NetConsole({ sim, state, dispatch }) {
         pathIds={pathIds}
         cutLinks={cutLinks}
         defending={defending}
+        mode={mode}
       />
 
       <section className="netPanel">
