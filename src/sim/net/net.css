@@ -11,6 +11,20 @@
   grid-template-columns: minmax(0, 1.15fr) minmax(0, 1fr);
   gap: clamp(1rem, 2.5vw, 1.8rem);
   align-items: start;
+  /* How big the device icons are drawn. One number, referred to by the icon,
+     the hit area and the mobile overrides, so the map can be scaled up in one
+     place instead of four. */
+  --net-icon: 40px;
+}
+
+/* Once there is real width to spend, spend it on the map. The panel stops
+   growing at a readable measure — a column of prose 900px wide is worse to
+   read, not better — and everything left over goes to the drawing. */
+@media (min-width: 1180px) {
+  .netConsole {
+    grid-template-columns: minmax(0, 1fr) clamp(400px, 32vw, 560px);
+    --net-icon: 52px;
+  }
 }
 
 /* ================================= MAP ================================ */
@@ -20,6 +34,12 @@
 .netMap {
   position: relative;
   aspect-ratio: 16 / 10;
+  /* Width is free now; height is not — the page still has to be scrolled. So
+     the ratio governs until the map would start pushing the panel off the
+     screen, and past that it simply gets wider. The topology is in
+     percentages, so a wider box spreads the nodes rather than distorting
+     them. */
+  max-height: min(64svh, 620px);
   border-radius: var(--r-lg);
   background:
     radial-gradient(72% 62% at 50% 42%, rgba(122, 90, 168, 0.30), transparent 72%),
@@ -213,13 +233,26 @@
    Insetting the coordinate space is the fix rather than moving the node,
    because the links are drawn in the same percentages and the two have to
    agree: this shrinks both together and the topology is untouched. */
-.netMap__svg,
+.netMap__wires,
 .netMap__nodes {
   position: absolute;
   inset: 6% 9% 6% 5%;
   width: auto;
   height: auto;
   z-index: 3;
+}
+
+.netMap__wires {
+  pointer-events: none;
+}
+
+/* Told to fill its wrapper outright. Left to size itself an svg would take the
+   viewBox's square ratio and draw the network on a taller grid than the one the
+   machines are placed on — which is exactly what it used to do. */
+.netMap__svg {
+  display: block;
+  width: 100%;
+  height: 100%;
 }
 
 /* preserveAspectRatio is none, so the stroke is scaled with the box and has to
@@ -325,14 +358,19 @@
     transform 0.3s var(--ease);
 }
 
+.netNode__icon {
+  display: block;
+  line-height: 0;
+}
+
 .netNode__icon svg {
-  width: 28px;
-  height: 28px;
+  width: var(--net-icon);
+  height: var(--net-icon);
 }
 
 .netNode__label {
   font-family: var(--font-display);
-  font-size: 0.7rem;
+  font-size: 0.78rem;
   font-weight: 600;
   line-height: 1.2;
   text-align: center;
@@ -403,9 +441,9 @@
   content: '';
   position: absolute;
   left: 50%;
-  top: 34%;
-  width: 74px;
-  height: 74px;
+  top: calc(0.5rem + var(--net-icon) / 2);
+  width: calc(var(--net-icon) * 2.1);
+  height: calc(var(--net-icon) * 2.1);
   transform: translate(-50%, -50%);
   border-radius: 50%;
   background: radial-gradient(circle, rgba(238, 175, 22, 0.4), transparent 68%);
@@ -912,24 +950,25 @@
   }
 
   /* Narrower panel, same labels, so the coordinate box gives up more room at
-     the sides — most of it on the right, where the longest name lives. */
-  .netMap__svg,
+     the sides — most of it on the right, where the longest name lives. The
+     wires and the machines have to be given the same box, or the two are drawn
+     against different scales. */
+  .netMap__wires,
   .netMap__nodes {
     inset: 7% 15% 7% 8%;
   }
 
   .netNode {
-    max-width: 6rem;
+    max-width: 6.5rem;
     padding: 0.4rem 0.45rem;
   }
 
-  .netNode__icon svg {
-    width: 23px;
-    height: 23px;
+  .netConsole {
+    --net-icon: 30px;
   }
 
   .netNode__label {
-    font-size: 0.6rem;
+    font-size: 0.64rem;
   }
 }
 

@@ -1885,12 +1885,14 @@
   opacity: 0.55;
 }
 
-@media (min-width: 1000px) {
-  /* The console can be wider than the library it came from, same as the story
-     world, so the map is drawn at a size worth looking at. */
-  .sim--net .shell {
-    max-width: 1360px;
-  }
+/* The console takes the whole screen. A network diagram is the one thing on
+   this site that genuinely wants every pixel of width it can get — the map is
+   the lesson, and a wider map is a bigger drawing rather than a longer line of
+   text. Nothing here needs the library's 1240px measure: the running prose in
+   the head carries its own, and the reading panel is capped on its own terms
+   below. */
+.sim--net .shell {
+  max-width: none;
 }
 
 /* =============================== STORY =============================== */

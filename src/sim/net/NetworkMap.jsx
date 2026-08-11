@@ -1,3 +1,5 @@
+import { useCallback, useLayoutEffect, useMemo, useRef, useState } from 'react'
+
 /**
  * The network, and the one component that never leaves the screen.
  *
@@ -19,7 +21,128 @@
  *
  * Positions are percentages, so the topology survives a phone rather than
  * being squashed into one — the layout is the meaning here.
+ *
+ * WHERE THE LINES GO
+ *
+ * A node's coordinate is the centre of the whole button — icon with its name
+ * underneath — so a line drawn centre to centre leaves from the gap between the
+ * two and crosses the icon and the label on its way out. That is what made them
+ * look wrong. The lines are measured instead: they run icon centre to icon
+ * centre and stop at the icon's edge, so a link touches the two machines it
+ * joins and nothing else. See useWiring.
  */
+
+/** Clear air between the icon's edge and where its wire starts, in pixels. */
+const LEAD = 7
+
+/**
+ * Measure what the lines need and nothing more: how big the coordinate box is,
+ * how far each icon's centre sits above its node's anchor point, and how wide
+ * the icon is.
+ *
+ * All of it read from offset* rather than getBoundingClientRect, because the
+ * selected node is scaled by a CSS transform and a measured rect would grow
+ * with it — the wires would then shrink back every time you clicked something,
+ * mid-transition. offsetWidth and offsetTop are layout, before transforms, so
+ * this stays still.
+ */
+function useWiring(ref) {
+  const [wiring, setWiring] = useState(null)
+  const last = useRef('')
+
+  const measure = useCallback(() => {
+    const root = ref.current
+    if (!root) return
+    const layer = root.querySelector('.netMap__nodes')
+    if (!layer) return
+    const w = layer.clientWidth
+    const h = layer.clientHeight
+    if (!w || !h) return
+
+    const nodes = {}
+    layer.querySelectorAll('[data-node]').forEach((li) => {
+      const button = li.querySelector('.netNode')
+      const icon = li.querySelector('.netNode__icon')
+      if (!button || !icon) return
+      nodes[li.dataset.node] = {
+        /* The anchor is the button's middle; the icon sits above it by however
+           much the name underneath takes up. */
+        lift: button.offsetHeight / 2 - (icon.offsetTop + icon.offsetHeight / 2),
+        /* Two boxes around the icon's centre. The inner one is the icon, and it
+           is what a line leaves from sideways or upward, so a wire touches the
+           machine it joins. The outer one takes in the name underneath, and it
+           is what a line leaves from when it is heading down — past where the
+           name is written. */
+        hx: icon.offsetWidth / 2,
+        hxWide: button.offsetWidth / 2,
+        hUp: icon.offsetHeight / 2,
+        hDown: button.offsetHeight - (icon.offsetTop + icon.offsetHeight / 2),
+      }
+    })
+
+    /* Only wake React when the answer actually moved. This is what lets the
+       measurement run after every render without looping: the second pass
+       computes the same numbers and stops here. */
+    const next = { w, h, nodes }
+    const key = JSON.stringify(next)
+    if (key === last.current) return
+    last.current = key
+    setWiring(next)
+  }, [ref])
+
+  /* After every render, because a resize is not the only thing that moves an
+     icon and not every host reports one: ResizeObserver and the resize event
+     are both delivered on the frame loop, which a host is free to hold back.
+     Re-checking on render costs a handful of offset reads and means the wires
+     cannot stay wrong once anything at all has happened. */
+  useLayoutEffect(measure)
+
+  useLayoutEffect(() => {
+    const root = ref.current
+    if (!root) return
+    const ro = new ResizeObserver(measure)
+    ro.observe(root)
+    window.addEventListener('resize', measure)
+    /* A label that wraps to two lines once the webfont lands moves the icon,
+       so measure again when the fonts are in rather than wiring to Times. */
+    document.fonts?.ready?.then(measure).catch(() => {})
+    return () => {
+      ro.disconnect()
+      window.removeEventListener('resize', measure)
+    }
+  }, [ref, measure])
+
+  return wiring
+}
+
+/**
+ * How far from an icon's centre a wire pointing (ux, uy) should start.
+ *
+ * A ray out of the middle of a box leaves through whichever wall it reaches
+ * first, which is the smaller of the two crossing distances. Downward rays are
+ * measured against the wider box so they clear the name; everything else
+ * against the icon, so a wire meets the machine and not the caption.
+ */
+function edgeOut(node, ux, uy) {
+  /* "Down" has to mean properly down, not merely not-up. Two nodes on the same
+     row still tilt a hair when one of their names wraps to a second line, and
+     on any threshold near zero that hair was enough to trim the wire back to
+     the width of the name — a level link leaving a wide gap for no visible
+     reason. A ray this shallow leaves through the icon's side and is past the
+     name's outer edge long before it has dropped as far as the name's first
+     line, so the icon is the right box for it. */
+  const down = uy > 0.3
+  const hx = down ? node.hxWide : node.hx
+  const hy = down ? node.hDown : node.hUp
+  const toSide = Math.abs(ux) < 1e-6 ? Infinity : hx / Math.abs(ux)
+  const toCap = Math.abs(uy) < 1e-6 ? Infinity : hy / Math.abs(uy)
+  const out = Math.min(toSide, toCap)
+  /* Both walls out of reach means the ray has no direction at all — two nodes
+     measured to the same point, which is what a collapsed or not-yet-laid-out
+     map gives. Infinity here would multiply a zero direction into NaN and put
+     "NaN" in the attribute, so it stops at nothing instead. */
+  return Number.isFinite(out) ? out : 0
+}
 
 /* The devices, as silhouettes. Identity is the shape — a real topology diagram
    names a machine by its outline, not its colour — so these stay stroked in
@@ -85,8 +208,63 @@ export default function NetworkMap({ sim, state, onSelect, unreadIds = [], pathI
   const onPath = (a, b) => pathIds.includes(a) && pathIds.includes(b)
   const isCut = (a, b) => cutLinks.some(([x, y]) => (x === a && y === b) || (x === b && y === a))
 
+  const mapRef = useRef(null)
+  const wiring = useWiring(mapRef)
+
+  /**
+   * Every link, as the segment between the two icons it joins.
+   *
+   * The maths is done in pixels — the coordinate box is stretched to the map's
+   * shape, so a step sideways and a step down are different distances and a
+   * trim applied in the 0–100 space would be lopsided — and handed back in the
+   * same 0–100 units the viewBox is drawn in.
+   */
+  const wires = useMemo(() => {
+    const out = {}
+    sim.links.forEach(([a, b]) => {
+      const A = at(a)
+      const B = at(b)
+      /* Before the first measurement, join the anchors. It is what the map did
+         all along and it is only ever on screen for one frame. */
+      if (!wiring?.nodes[a] || !wiring?.nodes[b]) {
+        out[`${a}${b}`] = { x1: A.x, y1: A.y, x2: B.x, y2: B.y }
+        return
+      }
+      const { w, h, nodes } = wiring
+      const ax = (A.x / 100) * w
+      const ay = (A.y / 100) * h - nodes[a].lift
+      const bx = (B.x / 100) * w
+      const by = (B.y / 100) * h - nodes[b].lift
+      const span = Math.hypot(bx - ax, by - ay) || 1
+      const ux = (bx - ax) / span
+      const uy = (by - ay) / span
+      /* Each end measured along its own outgoing direction — the far node's
+         wire points back the way it came. */
+      const head = edgeOut(nodes[a], ux, uy) + LEAD
+      const tail = edgeOut(nodes[b], -ux, -uy) + LEAD
+      /* Two icons closer together than their own radii would give a line that
+         runs backwards; a short stub is the honest picture. */
+      const reach = Math.max(span - head - tail, 1)
+      const sx = ax + ux * head
+      const sy = ay + uy * head
+      const line = {
+        x1: (sx / w) * 100,
+        y1: (sy / h) * 100,
+        x2: ((sx + ux * reach) / w) * 100,
+        y2: ((sy + uy * reach) / h) * 100,
+      }
+      /* Whatever happens, an <svg> gets four numbers. A measurement taken while
+         the map is collapsed can still work its way through the arithmetic, and
+         the anchors are always drawable. */
+      out[`${a}${b}`] = Object.values(line).every(Number.isFinite)
+        ? line
+        : { x1: A.x, y1: A.y, x2: B.x, y2: B.y }
+    })
+    return out
+  }, [sim.links, sim.nodes, wiring])
+
   return (
-    <div className={`netMap${defending ? ' netMap--defend' : ''}`}>
+    <div className={`netMap${defending ? ' netMap--defend' : ''}`} ref={mapRef}>
       {/* Which mindset you are in, said on the map. Gold while you are the one
           moving through the network, green once it is yours to hold. */}
       {mode && (
@@ -115,17 +293,22 @@ export default function NetworkMap({ sim, state, onSelect, unreadIds = [], pathI
         </div>
       )}
 
-      <svg className="netMap__svg" viewBox="0 0 100 100" preserveAspectRatio="none" aria-hidden="true">
+      {/* The wires get a wrapper because an <svg> is a replaced element: given
+          insets and height:auto it takes its height from the viewBox's ratio
+          instead of from the box it was given, so the line layer was 601 tall
+          where the nodes were 384 and every line was drawn against a different
+          vertical scale than the machines it joined. The wrapper has a definite
+          height; the svg fills it. */}
+      <div className="netMap__wires" aria-hidden="true">
+        <svg className="netMap__svg" viewBox="0 0 100 100" preserveAspectRatio="none">
         {sim.links.map(([a, b]) => {
-          const A = at(a)
-          const B = at(b)
           const cls = [
             'netMap__link',
             reached(a) && reached(b) ? 'is-live' : '',
             onPath(a, b) ? 'is-path' : '',
             isCut(a, b) ? 'is-cut' : '',
           ].filter(Boolean).join(' ')
-          return <line key={`${a}${b}`} className={cls} x1={A.x} y1={A.y} x2={B.x} y2={B.y} />
+          return <line key={`${a}${b}`} className={cls} {...wires[`${a}${b}`]} />
         })}
 
         {/* The traffic. A second line over each one that carries something —
@@ -136,16 +319,15 @@ export default function NetworkMap({ sim, state, onSelect, unreadIds = [], pathI
           const live = reached(a) && reached(b) && !defending
           const path = onPath(a, b)
           if ((!live && !path) || isCut(a, b)) return null
-          const A = at(a)
-          const B = at(b)
           const cls = ['netMap__flow', live ? 'is-live' : '', path ? 'is-path' : '']
             .filter(Boolean)
             .join(' ')
           return (
-            <line key={`flow${a}${b}`} className={cls} x1={A.x} y1={A.y} x2={B.x} y2={B.y} pathLength="100" />
+            <line key={`flow${a}${b}`} className={cls} {...wires[`${a}${b}`]} pathLength="100" />
           )
         })}
-      </svg>
+        </svg>
+      </div>
 
       <ul className="netMap__nodes">
         {sim.nodes.map((n) => {
@@ -159,7 +341,7 @@ export default function NetworkMap({ sim, state, onSelect, unreadIds = [], pathI
             unreadIds.includes(n.id) ? 'has-new' : '',
           ].filter(Boolean).join(' ')
           return (
-            <li key={n.id} style={{ left: `${n.x}%`, top: `${n.y}%` }}>
+            <li key={n.id} data-node={n.id} style={{ left: `${n.x}%`, top: `${n.y}%` }}>
               <button
                 type="button"
                 className={cls}
