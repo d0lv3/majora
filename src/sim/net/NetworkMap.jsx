@@ -284,7 +284,12 @@ export default function NetworkMap({ sim, state, onSelect, unreadIds = [], pathI
             <div
               key={z.id}
               className={`netZone netZone--${z.tone}`}
-              style={{ left: `${z.x}%`, top: `${z.y}%`, width: `${z.w}%`, height: `${z.h}%` }}
+              /* Handed over as custom properties rather than as left/width
+                 outright: a phone fits the same names into a third of the
+                 pixels, so the two narrow segments have to be cut differently
+                 there, and an inline left/width could not be overridden by a
+                 media query. */
+              style={{ '--zx': `${z.x}%`, '--zy': `${z.y}%`, '--zw': `${z.w}%`, '--zh': `${z.h}%` }}
             >
               <span className="netZone__label">{z.label}</span>
               {z.sub && <span className="netZone__sub">{z.sub}</span>}
@@ -341,7 +346,10 @@ export default function NetworkMap({ sim, state, onSelect, unreadIds = [], pathI
             unreadIds.includes(n.id) ? 'has-new' : '',
           ].filter(Boolean).join(' ')
           return (
-            <li key={n.id} data-node={n.id} style={{ left: `${n.x}%`, top: `${n.y}%` }}>
+            /* Custom properties for the same reason the segments use them: a
+               phone has a third of the width for the same six names, and the
+               two on the right have to stand further apart there. */
+            <li key={n.id} data-node={n.id} style={{ '--nx': `${n.x}%`, '--ny': `${n.y}%` }}>
               <button
                 type="button"
                 className={cls}

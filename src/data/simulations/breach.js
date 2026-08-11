@@ -95,7 +95,7 @@ export const BREACH = {
       label: 'IT laptop',
       sub: 'Kawa, who runs the systems',
       kind: 'laptop',
-      x: 76,
+      x: 75,
       y: 22,
     },
     {
@@ -103,7 +103,7 @@ export const BREACH = {
       label: 'File server',
       sub: 'Shared drives and the nightly backup',
       kind: 'server',
-      x: 76,
+      x: 75,
       y: 78,
     },
     {
@@ -111,7 +111,7 @@ export const BREACH = {
       label: 'Shipment records',
       sub: 'Every customer, every consignment',
       kind: 'database',
-      x: 92,
+      x: 93,
       y: 50,
       prize: true,
     },
@@ -135,9 +135,9 @@ export const BREACH = {
    * inside the building, and the reader has to borrow a trusted machine to
    * cross it. x/y/w/h are in the same 0–100 space the nodes use. */
   zones: [
-    { id: 'wan', label: 'The internet', sub: 'Outside the building', tone: 'outside', x: 2, y: 27, w: 16, h: 46 },
-    { id: 'lan', label: 'Office network', sub: 'Flat — nothing is separated', tone: 'inside', x: 20, y: 6, w: 62, h: 88 },
-    { id: 'mgmt', label: 'Management', sub: 'The records only answer here', tone: 'prize', x: 84, y: 30, w: 15, h: 40 },
+    { id: 'wan', label: 'The internet', sub: 'Outside the building', tone: 'outside', x: 0.5, y: 22, w: 19, h: 56 },
+    { id: 'lan', label: 'Office network', sub: 'Flat — nothing is separated', tone: 'inside', x: 21, y: 3, w: 62, h: 94 },
+    { id: 'mgmt', label: 'Management', sub: 'The records answer only here', tone: 'prize', x: 84.5, y: 22, w: 17, h: 56 },
   ],
 
   /* ------------------------------ observations -----------------------------

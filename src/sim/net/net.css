@@ -52,53 +52,22 @@
   overflow: hidden;
 }
 
-/* A slow sweep across the screen, like a scope refreshing. Behind the grid and
-   the nodes, low enough that it is atmosphere and not a light show. */
-.netMap::after {
-  content: '';
-  position: absolute;
-  inset: -30%;
-  background: conic-gradient(
-    from 0deg at 50% 50%,
-    transparent 0deg,
-    rgba(238, 175, 22, 0.10) 26deg,
-    transparent 52deg
-  );
-  z-index: 2;
-  pointer-events: none;
-  animation: netSweep 8s linear infinite;
-}
-
-.netMap--defend::after {
-  background: conic-gradient(
-    from 0deg at 50% 50%,
-    transparent 0deg,
-    rgba(110, 231, 168, 0.10) 26deg,
-    transparent 52deg
-  );
-}
-
-@keyframes netSweep {
-  to {
-    transform: rotate(1turn);
-  }
-}
-
 /* ------------------------------- segments ------------------------------
    The three grounds of the network, drawn behind the nodes. Same inset as the
    node layer so the boxes land around the right machines; below the links so a
    connection reads over the region it crosses. */
 .netMap__zones {
-  position: absolute;
-  inset: 6% 9% 6% 5%;
-  z-index: 3;
   pointer-events: none;
 }
 
 .netZone {
   position: absolute;
-  padding: 7px 9px;
-  border-radius: 13px;
+  left: var(--zx);
+  top: var(--zy);
+  width: var(--zw);
+  height: var(--zh);
+  padding: 8px 10px;
+  border-radius: 14px;
   border: 1.5px dashed rgba(255, 255, 255, 0.16);
   background: rgba(255, 255, 255, 0.018);
 }
@@ -233,8 +202,14 @@
    Insetting the coordinate space is the fix rather than moving the node,
    because the links are drawn in the same percentages and the two have to
    agree: this shrinks both together and the topology is untouched. */
+/* One box, shared by all three layers. The segments, the wires and the machines
+   are all placed in percentages of it, and the moment one of them is given a
+   different box those percentages stop meaning the same thing — which is how
+   the segments came to be drawn against a space 30px wider than the one the
+   machines were standing in. */
 .netMap__wires,
-.netMap__nodes {
+.netMap__nodes,
+.netMap__zones {
   position: absolute;
   inset: 6% 9% 6% 5%;
   width: auto;
@@ -324,6 +299,8 @@
 
 .netMap__nodes li {
   position: absolute;
+  left: var(--nx);
+  top: var(--ny);
   transform: translate(-50%, -50%);
 }
 
@@ -346,7 +323,10 @@
   gap: 0.35rem;
   width: max-content;
   min-width: 48px;
-  max-width: 8.5rem;
+  /* Narrow enough that a two-word name breaks onto a second line instead of
+     running out of the segment it belongs to — "Shipment records" set on one
+     line is wider than the Management box that is supposed to contain it. */
+  max-width: 5.5rem;
   padding: 0.5rem 0.6rem;
   color: rgba(255, 255, 255, 0.62);
   filter:
@@ -954,12 +934,16 @@
      wires and the machines have to be given the same box, or the two are drawn
      against different scales. */
   .netMap__wires,
-  .netMap__nodes {
+  .netMap__nodes,
+  .netMap__zones {
     inset: 7% 15% 7% 8%;
   }
 
   .netNode {
-    max-width: 6.5rem;
+    /* Names break a word sooner here, because everything below is decided by
+       how wide a node ends up being and this is the one lever that makes it
+       narrower without shrinking the type. */
+    max-width: 3.6rem;
     padding: 0.4rem 0.45rem;
   }
 
@@ -969,6 +953,42 @@
 
   .netNode__label {
     font-size: 0.64rem;
+  }
+
+  /* The right-hand crowd, given room. On a full-width map the IT laptop, the
+     file server and the records sit comfortably apart; on a 260px-wide one
+     their names are the same number of pixels and they collide, so the two
+     groups are pushed away from each other and the boundary between the
+     office and the management ground opens up between them. */
+  /* !important because the coordinate arrives as an inline custom property,
+     and an inline declaration outranks a stylesheet one whatever its
+     specificity. This is the one place the narrow layout has to win. */
+  .netMap__nodes li[data-node='you'] {
+    --nx: 8% !important;
+  }
+
+  .netMap__nodes li[data-node='admin'],
+  .netMap__nodes li[data-node='files'] {
+    --nx: 68% !important;
+  }
+
+  .netMap__nodes li[data-node='db'] {
+    --nx: 96% !important;
+  }
+
+  .netZone--outside {
+    --zx: -3% !important;
+    --zw: 21.5% !important;
+  }
+
+  .netZone--inside {
+    --zx: 19.5% !important;
+    --zw: 63% !important;
+  }
+
+  .netZone--prize {
+    --zx: 84% !important;
+    --zw: 24% !important;
   }
 }
 
@@ -1029,10 +1049,9 @@
     transition: none;
   }
 
-  /* The atmosphere stops moving. The sweep and the traffic are motion for its
-     own sake, so they go entirely; the beacon and the ribbon dot hold still but
-     stay, because they mark things — the target, and which side you are on. */
-  .netMap::after,
+  /* The traffic is motion for its own sake, so it goes entirely; the beacon and
+     the ribbon dot hold still but stay, because they mark things — the target,
+     and which side you are on. */
   .netMap__flow {
     display: none;
   }
