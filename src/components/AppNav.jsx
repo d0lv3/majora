@@ -27,14 +27,16 @@ export default function AppNav() {
     () => [
       { label: 'Library', href: '/app' },
       { label: 'Map', href: '/app/map' },
+      { label: 'Reach', href: '/app/reach' },
       { label: 'Log out', href: '/logout' },
     ],
     [],
   )
 
   // Library stays lit on a major's own page: /app/dentistry is somewhere
-  // inside the library, not a fourth destination.
-  const activeHref = pathname.startsWith('/app/map') ? '/app/map' : '/app'
+  // inside the library, not another destination. Only the two that have a
+  // page of their own take the marker off it.
+  const activeHref = ['/app/map', '/app/reach'].find((href) => pathname.startsWith(href)) ?? '/app'
 
   return (
     <PillNav

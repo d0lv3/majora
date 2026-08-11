@@ -1,0 +1,700 @@
+/* =========================================================
+   Reach — the person card, and the panel for booking them.
+
+   The library's light skin, with one difference that matters:
+   a major's card is mostly type and this one is mostly face.
+   So the photograph gets the top of the card at full width
+   and everything else is arranged under it, and the card is
+   never itself a link — it holds three destinations and the
+   reader has to be able to tell them apart.
+   ========================================================= */
+
+.pcard {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  overflow: hidden;
+  border-radius: var(--r-md);
+  background: rgba(255, 255, 255, 0.86);
+  backdrop-filter: blur(8px);
+  box-shadow:
+    inset 0 0 0 1px rgba(65, 43, 99, 0.1),
+    0 24px 50px -42px rgba(21, 13, 33, 0.35);
+  transition:
+    transform 0.45s var(--ease),
+    box-shadow 0.45s ease,
+    background-color 0.45s ease;
+}
+
+/* Lifts on hover like a major's card, and — because a card carrying its own
+   controls has no single target — also whenever anything inside it has focus,
+   so a keyboard arriving at the LinkedIn link gets the same acknowledgement a
+   mouse does. */
+.pcard:hover,
+.pcard:focus-within {
+  transform: translateY(-5px);
+  background: var(--white);
+  box-shadow:
+    inset 0 0 0 1px rgba(238, 175, 22, 0.6),
+    0 34px 70px -34px rgba(21, 13, 33, 0.3);
+}
+
+/* ------------------------------ the photograph ------------------------- */
+/* 4:5, which is the crop the source images were cut to. Stated here as well so
+   a photograph that arrives at some other ratio is cropped by the card rather
+   than allowed to change the height of one card in a row of them. */
+.pcard__shot {
+  position: relative;
+  aspect-ratio: 4 / 5;
+  overflow: hidden;
+  background: var(--purple-800);
+}
+
+.pcard__photo {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  /* Faces sit in the upper part of a portrait, so a crop that has to give
+     something up gives up the feet. */
+  object-position: 50% 22%;
+  transition: transform 0.7s var(--ease);
+}
+
+.pcard:hover .pcard__photo,
+.pcard:focus-within .pcard__photo {
+  transform: scale(1.03);
+}
+
+/* The subject, over the foot of the picture. A scrim rather than a solid bar:
+   these are photographs of people in rooms, and a band across the bottom of
+   one looks like a caption printed over a mistake. */
+.pcard__shot::after {
+  content: '';
+  position: absolute;
+  inset: auto 0 0 0;
+  height: 46%;
+  background: linear-gradient(to top, rgba(21, 13, 33, 0.82), transparent);
+  pointer-events: none;
+}
+
+.pcard__majors {
+  position: absolute;
+  left: 0.9rem;
+  right: 0.9rem;
+  bottom: 0.85rem;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.35rem;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.pcard__major {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.15rem;
+  padding: 0.3rem 0.7rem;
+  border-radius: var(--r-pill);
+  background: rgba(21, 13, 33, 0.55);
+  box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.22);
+  backdrop-filter: blur(4px);
+  font-family: var(--font-display);
+  font-size: 0.74rem;
+  font-weight: 600;
+  color: #fff;
+}
+
+/* Only the majors that are written up are links, and only those look like one. */
+.pcard__major--open {
+  transition:
+    background-color 0.25s ease,
+    color 0.25s ease;
+}
+
+.pcard__major--open:hover {
+  background: var(--gold);
+  color: var(--purple-950);
+}
+
+/* --------------------------------- body -------------------------------- */
+.pcard__body {
+  flex: 1;
+  padding: 1.1rem 1.15rem 0.9rem;
+}
+
+.pcard__name {
+  font-family: var(--font-display);
+  font-size: clamp(1.15rem, 1.5vw, 1.32rem);
+  font-weight: 700;
+  line-height: 1.15;
+  letter-spacing: -0.028em;
+  color: var(--purple-600);
+  text-wrap: balance;
+}
+
+.pcard__headline {
+  margin-top: 0.35rem;
+  font-size: 0.86rem;
+  line-height: 1.5;
+  color: var(--text-on-light-dim);
+  text-wrap: pretty;
+}
+
+/* Every degree, not the latest one. Somebody part way through a master's in
+   another country is a different person to ask than an undergraduate, and
+   flattening the two to one line is throwing away the reason to book them. */
+.pcard__study {
+  display: grid;
+  gap: 0.6rem;
+  margin-top: 0.9rem;
+  padding-top: 0.85rem;
+  border-top: 1px solid rgba(65, 43, 99, 0.12);
+  list-style: none;
+}
+
+.pcard__degree {
+  display: grid;
+  gap: 0.15rem;
+}
+
+.pcard__award {
+  display: flex;
+  align-items: baseline;
+  flex-wrap: wrap;
+  gap: 0.45rem;
+  font-family: var(--font-display);
+  font-size: 0.88rem;
+  font-weight: 600;
+  line-height: 1.35;
+  color: var(--text-on-light);
+}
+
+.pcard__now {
+  padding: 0.1rem 0.5rem;
+  border-radius: var(--r-pill);
+  background: rgba(238, 175, 22, 0.2);
+  font-family: var(--font-body);
+  font-size: 0.6rem;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--gold-700);
+}
+
+.pcard__school {
+  font-size: 0.82rem;
+  line-height: 1.45;
+  color: var(--text-on-light-dim);
+  text-wrap: pretty;
+}
+
+.pcard__where {
+  color: rgba(92, 81, 112, 0.75);
+}
+
+/* --------------------------------- foot -------------------------------- */
+.pcard__foot {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  padding: 0.9rem 1.15rem 1.15rem;
+}
+
+.pcard__linkedin {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.45rem;
+  min-height: 44px;
+  padding: 0.5rem 0.9rem;
+  border-radius: var(--r-pill);
+  box-shadow: inset 0 0 0 1.5px rgba(65, 43, 99, 0.18);
+  font-size: 0.83rem;
+  font-weight: 600;
+  color: var(--purple-600);
+  transition:
+    box-shadow 0.25s ease,
+    background-color 0.25s ease;
+}
+
+.pcard__linkedin svg {
+  width: 16px;
+  height: 16px;
+  flex: none;
+}
+
+.pcard__linkedin:hover {
+  background: rgba(65, 43, 99, 0.06);
+  box-shadow: inset 0 0 0 1.5px rgba(65, 43, 99, 0.45);
+}
+
+/* The point of the card, so it is the one painted thing on it. */
+.pcard__reach {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.4rem;
+  flex: 1;
+  min-height: 44px;
+  padding: 0.6rem 1.1rem;
+  border-radius: var(--r-pill);
+  background: var(--purple-600);
+  font-family: var(--font-display);
+  font-size: 0.92rem;
+  font-weight: 600;
+  color: var(--white);
+  transition:
+    background-color 0.25s ease,
+    box-shadow 0.25s ease;
+}
+
+.pcard__reach:hover {
+  background: var(--purple-500);
+  box-shadow: 0 16px 30px -18px rgba(65, 43, 99, 0.9);
+}
+
+.pcard__reachArrow {
+  transform: translateX(-3px);
+  opacity: 0;
+  transition:
+    transform 0.3s var(--ease),
+    opacity 0.3s ease;
+}
+
+.pcard__reach:hover .pcard__reachArrow {
+  transform: none;
+  opacity: 1;
+}
+
+/* =========================================================
+   THE BOOKING PANEL
+   ========================================================= */
+/* The dialog element itself is the whole viewport and paints nothing: it is
+   what a click outside the panel lands on, which is how the backdrop closes.
+   The scrim is ::backdrop, underneath it. */
+.rdlg {
+  width: 100%;
+  max-width: none;
+  height: 100%;
+  max-height: none;
+  margin: 0;
+  padding: clamp(0.75rem, 3vh, 2.5rem) clamp(0.75rem, 3vw, 2rem);
+  border: 0;
+  background: transparent;
+  overflow: auto;
+  overscroll-behavior: contain;
+}
+
+.rdlg::backdrop {
+  background: rgba(21, 13, 33, 0.62);
+  backdrop-filter: blur(3px);
+}
+
+.rdlg__panel {
+  position: relative;
+  width: min(560px, 100%);
+  margin: auto;
+  padding: clamp(1.2rem, 3vw, 1.8rem);
+  border-radius: var(--r-lg);
+  background: var(--white);
+  box-shadow:
+    inset 0 0 0 1px rgba(65, 43, 99, 0.1),
+    0 40px 90px -40px rgba(0, 0, 0, 0.6);
+  animation: rdlgIn 0.28s var(--ease-out) both;
+}
+
+@keyframes rdlgIn {
+  from {
+    opacity: 0;
+    transform: translateY(12px) scale(0.985);
+  }
+}
+
+.rdlg__x {
+  position: absolute;
+  top: 0.6rem;
+  right: 0.6rem;
+  display: grid;
+  place-items: center;
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  font-size: 1.5rem;
+  line-height: 1;
+  color: var(--text-on-light-dim);
+  transition:
+    background-color 0.2s ease,
+    color 0.2s ease;
+}
+
+.rdlg__x:hover {
+  background: rgba(65, 43, 99, 0.08);
+  color: var(--purple-600);
+}
+
+/* --------------------------------- head -------------------------------- */
+.rdlg__head {
+  display: flex;
+  align-items: center;
+  gap: 0.9rem;
+  padding-right: 2.6rem;
+}
+
+.rdlg__face {
+  flex: none;
+  width: 62px;
+  height: 62px;
+  border-radius: 50%;
+  object-fit: cover;
+  object-position: 50% 18%;
+  box-shadow: 0 0 0 2px rgba(65, 43, 99, 0.12);
+}
+
+.rdlg__eyebrow {
+  font-size: 0.62rem;
+  font-weight: 700;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: var(--gold-700);
+}
+
+.rdlg__title {
+  margin-top: 0.25rem;
+  font-size: clamp(1.15rem, 2.4vw, 1.45rem);
+  line-height: 1.18;
+  color: var(--purple-600);
+  text-wrap: balance;
+}
+
+.rdlg__sub {
+  margin-top: 0.25rem;
+  font-size: 0.82rem;
+  line-height: 1.45;
+  color: var(--text-on-light-dim);
+  text-wrap: pretty;
+}
+
+/* --------------------------------- form -------------------------------- */
+.rdlg__form {
+  margin-top: 1.3rem;
+}
+
+.rdlg__field {
+  display: block;
+  margin-top: 1.1rem;
+  border: 0;
+  padding: 0;
+}
+
+.rdlg__form > .rdlg__field:first-child {
+  margin-top: 0;
+}
+
+.rdlg__label {
+  display: block;
+  margin-bottom: 0.45rem;
+  padding: 0;
+  font-family: var(--font-display);
+  font-size: 0.88rem;
+  font-weight: 600;
+  color: var(--purple-600);
+}
+
+.rdlg__optional {
+  font-family: var(--font-body);
+  font-size: 0.72rem;
+  font-weight: 500;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: var(--text-on-light-dim);
+}
+
+/* --- how long --- */
+.rdlg__lengths {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 150px), 1fr));
+  gap: 0.6rem;
+}
+
+.rdlg__length {
+  display: grid;
+  gap: 0.15rem;
+  min-height: 44px;
+  padding: 0.75rem 1rem;
+  border-radius: var(--r-md);
+  background: var(--white);
+  box-shadow: inset 0 0 0 1.5px var(--line-strong);
+  text-align: left;
+  transition:
+    box-shadow 0.25s ease,
+    background-color 0.25s ease;
+}
+
+.rdlg__length:hover {
+  box-shadow: inset 0 0 0 1.5px var(--purple-500);
+}
+
+.rdlg__length.is-on {
+  background: rgba(65, 43, 99, 0.06);
+  box-shadow: inset 0 0 0 2px var(--purple-600);
+}
+
+.rdlg__mins {
+  font-family: var(--font-display);
+  font-size: 0.95rem;
+  font-weight: 600;
+  color: var(--purple-600);
+}
+
+.rdlg__price {
+  font-size: 0.82rem;
+  font-variant-numeric: tabular-nums;
+  color: var(--text-on-light-dim);
+}
+
+/* --- when --- */
+.rdlg__when {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 170px), 1fr));
+  gap: 0.6rem;
+}
+
+.rdlg__input {
+  width: 100%;
+  min-height: 46px;
+  padding: 0.6rem 0.85rem;
+  border: 0;
+  border-radius: var(--r-md);
+  background: var(--paper);
+  box-shadow: inset 0 0 0 1.5px rgba(65, 43, 99, 0.16);
+  color: var(--text-on-light);
+  /* 16px exactly. Under it, iOS Safari zooms the viewport on focus and the
+     reader is left pinching their way back out of a form. */
+  font-size: 1rem;
+  transition: box-shadow 0.25s ease;
+}
+
+.rdlg__input:focus {
+  outline: none;
+  background: var(--white);
+  box-shadow:
+    inset 0 0 0 1.5px var(--purple-500),
+    0 0 0 4px rgba(65, 43, 99, 0.1);
+}
+
+.rdlg__tz {
+  margin-top: 0.5rem;
+  font-size: 0.78rem;
+  color: var(--text-on-light-dim);
+}
+
+/* --- what to ask --- */
+.rdlg__asks {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.4rem;
+  margin: 0 0 0.6rem;
+  padding: 0;
+  list-style: none;
+}
+
+.rdlg__ask {
+  padding: 0.45rem 0.8rem;
+  border-radius: var(--r-pill);
+  box-shadow: inset 0 0 0 1.5px rgba(65, 43, 99, 0.16);
+  font-size: 0.8rem;
+  line-height: 1.35;
+  text-align: left;
+  color: var(--text-on-light-dim);
+  transition:
+    box-shadow 0.25s ease,
+    background-color 0.25s ease,
+    color 0.25s ease;
+}
+
+.rdlg__ask:hover {
+  background: rgba(238, 175, 22, 0.14);
+  box-shadow: inset 0 0 0 1.5px var(--gold-600);
+  color: var(--text-on-light);
+}
+
+.rdlg__note {
+  width: 100%;
+  padding: 0.8rem 0.95rem;
+  border: 0;
+  border-radius: var(--r-md);
+  background: var(--paper);
+  box-shadow: inset 0 0 0 1.5px rgba(65, 43, 99, 0.16);
+  color: var(--text-on-light);
+  font-size: 1rem;
+  line-height: 1.6;
+  resize: vertical;
+  transition: box-shadow 0.25s ease;
+}
+
+.rdlg__note:focus {
+  outline: none;
+  background: var(--white);
+  box-shadow:
+    inset 0 0 0 1.5px var(--purple-500),
+    0 0 0 4px rgba(65, 43, 99, 0.1);
+}
+
+/* --------------------------------- foot -------------------------------- */
+.rdlg__foot {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.8rem;
+  margin-top: 1.4rem;
+  padding-top: 1.1rem;
+  border-top: 1px solid var(--line);
+}
+
+.rdlg__total {
+  display: grid;
+  gap: 0.1rem;
+}
+
+.rdlg__totalLabel {
+  font-size: 0.72rem;
+  font-weight: 600;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--text-on-light-dim);
+}
+
+.rdlg__totalPrice {
+  font-family: var(--font-display);
+  font-size: 1.25rem;
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
+  color: var(--purple-600);
+}
+
+.rdlg__go {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 48px;
+  padding: 0.8rem 1.5rem;
+  border-radius: var(--r-pill);
+  background: var(--purple-600);
+  font-family: var(--font-display);
+  font-size: 0.98rem;
+  font-weight: 600;
+  color: var(--white);
+  transition:
+    background-color 0.25s ease,
+    transform 0.25s var(--ease),
+    box-shadow 0.25s ease;
+}
+
+.rdlg__go:hover:not(:disabled) {
+  transform: translateY(-2px);
+  background: var(--purple-500);
+  box-shadow: 0 16px 30px -18px rgba(65, 43, 99, 0.9);
+}
+
+.rdlg__go:disabled {
+  cursor: not-allowed;
+  background: rgba(65, 43, 99, 0.1);
+  color: var(--text-on-light-dim);
+}
+
+.rdlg__small {
+  margin-top: 0.7rem;
+  font-size: 0.78rem;
+  line-height: 1.55;
+  color: var(--text-on-light-dim);
+}
+
+/* --------------------------------- sent -------------------------------- */
+.rdlg__done {
+  margin-top: 1.3rem;
+}
+
+.rdlg__doneLead {
+  font-size: 1rem;
+  line-height: 1.7;
+  color: var(--text-on-light);
+  text-wrap: pretty;
+}
+
+/* Set apart rather than folded into the paragraph above, because it is the
+   sentence that stops a reader believing they have bought something. */
+.rdlg__doneNote {
+  margin-top: 1rem;
+  padding: 0.95rem 1.1rem;
+  border-radius: var(--r-md);
+  background: var(--paper);
+  box-shadow: inset 0 0 0 1px var(--line);
+  font-size: 0.9rem;
+  line-height: 1.65;
+  color: var(--text-on-light-dim);
+  text-wrap: pretty;
+}
+
+.rdlg__done .rdlg__go {
+  margin-top: 1.2rem;
+  width: 100%;
+}
+
+/* Fingers, not screen size — a desktop touchscreen needs the target as much as
+   a phone does. Two controls here are sized to be read rather than pressed:
+   the subject tag is a caption over a photograph and the suggested questions
+   are a wrapping list of them, and both would be heavy at 44px of type.
+   So the tag keeps its size and grows a hit area behind it, taken in the
+   vertical only — the tags sit 5.6px apart and expanding sideways would have
+   two of them sharing a strip. The questions can simply be taller. */
+@media (pointer: coarse) {
+  .pcard__majors li {
+    position: relative;
+  }
+
+  .pcard__major--open::after {
+    content: '';
+    position: absolute;
+    inset: -8px -2px;
+  }
+
+  .rdlg__ask {
+    min-height: 44px;
+    display: inline-flex;
+    align-items: center;
+  }
+}
+
+@media (max-width: 560px) {
+  /* A sheet rather than a card afloat: on a phone the panel is the screen. */
+  .rdlg {
+    padding: 0;
+  }
+
+  .rdlg__panel {
+    width: 100%;
+    min-height: 100%;
+    margin: 0;
+    border-radius: 0;
+    padding-bottom: calc(1.4rem + env(safe-area-inset-bottom, 0px));
+  }
+
+  .rdlg__foot {
+    display: grid;
+  }
+
+  .rdlg__go {
+    width: 100%;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .pcard,
+  .pcard__photo,
+  .rdlg__panel {
+    transition: none;
+    animation: none;
+  }
+}

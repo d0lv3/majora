@@ -27,8 +27,10 @@ import MajorDetail from './pages/MajorDetail.jsx'
 //   Simulation a whole interactive case — twenty-five screens and the drawings
 //              that go with them. Opened by the reader who finished a major's
 //              write-up and wanted to try the work, which is not most of them.
+//   Reach      the people you can book time with, and the photographs of them.
 const Majors = lazy(() => import('./pages/Majors.jsx'))
 const MajorMap = lazy(() => import('./pages/MajorMap.jsx'))
+const Reach = lazy(() => import('./pages/Reach.jsx'))
 const MajorGuide = lazy(() => import('./pages/MajorGuide.jsx'))
 const Simulation = lazy(() => import('./pages/Simulation.jsx'))
 import NotFound from './pages/NotFound.jsx'
@@ -210,14 +212,25 @@ export default function App() {
               </RequireAuth>
             }
           />
-          {/* Before /app/:slug, which would otherwise match "map" as a slug
-              and send the reader to a major that does not exist. */}
+          {/* Both before /app/:slug, which would otherwise match "map" and
+              "reach" as slugs and send the reader to majors that do not
+              exist. */}
           <Route
             path="/app/map"
             element={
               <RequireAuth>
                 <Suspense fallback={<BrandLoader label="Loading the map" />}>
                   <MajorMap />
+                </Suspense>
+              </RequireAuth>
+            }
+          />
+          <Route
+            path="/app/reach"
+            element={
+              <RequireAuth>
+                <Suspense fallback={<BrandLoader label="Finding people" />}>
+                  <Reach />
                 </Suspense>
               </RequireAuth>
             }
