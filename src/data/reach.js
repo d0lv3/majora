@@ -114,15 +114,6 @@ export const schoolName = (entry) =>
 /** The key a filter groups by — the registry id where there is one. */
 export const schoolId = (entry) => entry.uni ?? `x:${entry.place}`
 
-/** Where it is, for the line under the name. Jordan is not a governorate. */
-export const schoolWhere = (entry) => {
-  if (entry.uni) {
-    const u = UNIVERSITIES[entry.uni]
-    return u ? `${u[2]}, ${u[3]}` : ''
-  }
-  return entry.where ?? ''
-}
-
 /** Every institution any of these people studied at, once each, A–Z. */
 export function schoolsOf(people) {
   const seen = new Map()

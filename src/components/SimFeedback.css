@@ -5,8 +5,16 @@
    on a dark page and one on a light one, and a card that is
    always white reads as the site asking rather than the
    simulation carrying on.
+
+   simRate, not simAsk. Simulation.css has owned .simAsk since
+   before this existed — it is the list of questions you put to
+   the patient on screen 3 of the clinic — and the two blocks
+   collided in one bundle: the interview picked up this card's
+   white ground, gold hairline and 28px corners half way
+   through the simulation, and this card lost its padding to
+   the interview's `padding: 0`. Two blocks, two names.
    ========================================================= */
-.simAsk {
+.simRate {
   /* Carries its own side margin rather than relying on the stage's. The story
      simulation runs its stage full-bleed on a phone so the photograph can reach
      the edges, and a card inheriting that had its rounded corners cut off by
@@ -21,21 +29,21 @@
     var(--shadow-card);
 }
 
-.simAsk--done {
+.simRate--done {
   display: grid;
   place-items: center;
   min-height: 84px;
   text-align: center;
 }
 
-.simAsk__thanks {
+.simRate__thanks {
   font-family: var(--font-display);
   font-size: 1rem;
   font-weight: 500;
   color: var(--purple-600);
 }
 
-.simAsk__eyebrow {
+.simRate__eyebrow {
   font-size: 0.62rem;
   font-weight: 700;
   letter-spacing: 0.2em;
@@ -43,7 +51,7 @@
   color: var(--gold-700);
 }
 
-.simAsk__title {
+.simRate__title {
   margin-top: 0.45rem;
   font-size: clamp(1.05rem, 2.2vw, 1.35rem);
   line-height: 1.25;
@@ -53,14 +61,14 @@
 }
 
 /* ------------------------------- the scale ------------------------------ */
-.simAsk__scale {
+.simRate__scale {
   display: grid;
   grid-template-columns: repeat(5, minmax(0, 1fr));
   gap: 0.4rem;
   margin-top: 1.1rem;
 }
 
-.simAsk__step {
+.simRate__step {
   display: grid;
   gap: 0.25rem;
   justify-items: center;
@@ -76,17 +84,17 @@
     transform 0.2s var(--ease);
 }
 
-.simAsk__step:hover {
+.simRate__step:hover {
   box-shadow: inset 0 0 0 1.5px var(--purple-400);
 }
 
-.simAsk__step.is-on {
+.simRate__step.is-on {
   background: rgba(238, 175, 22, 0.14);
   box-shadow: inset 0 0 0 2px var(--gold-600);
   transform: translateY(-2px);
 }
 
-.simAsk__n {
+.simRate__n {
   font-family: var(--font-display);
   font-size: 1.05rem;
   font-weight: 700;
@@ -95,7 +103,7 @@
 
 /* The two ends are labelled and the middle three are not, so the scale reads
    as a line between two positions rather than five separate options. */
-.simAsk__word {
+.simRate__word {
   font-size: 0.62rem;
   line-height: 1.25;
   text-align: center;
@@ -103,19 +111,19 @@
 }
 
 /* -------------------------------- the note ------------------------------ */
-.simAsk__field {
+.simRate__field {
   display: grid;
   gap: 0.4rem;
   margin-top: 1.1rem;
 }
 
-.simAsk__field > span {
+.simRate__field > span {
   font-size: 0.82rem;
   font-weight: 600;
   color: var(--text-on-light-dim);
 }
 
-.simAsk__field textarea {
+.simRate__field textarea {
   width: 100%;
   padding: 0.7rem 0.9rem;
   border: none;
@@ -129,13 +137,13 @@
   resize: vertical;
 }
 
-.simAsk__field textarea:focus-visible {
+.simRate__field textarea:focus-visible {
   outline: none;
   box-shadow: inset 0 0 0 2px var(--purple-500);
 }
 
 /* -------------------------------- the foot ------------------------------ */
-.simAsk__foot {
+.simRate__foot {
   display: flex;
   flex-wrap: wrap;
   align-items: center;
@@ -143,7 +151,7 @@
   margin-top: 1.1rem;
 }
 
-.simAsk__send {
+.simRate__send {
   display: inline-flex;
   align-items: center;
   justify-content: center;
@@ -161,26 +169,26 @@
     box-shadow 0.25s ease;
 }
 
-.simAsk__send:hover:not(:disabled) {
+.simRate__send:hover:not(:disabled) {
   transform: translateY(-2px);
   background: var(--purple-500);
   box-shadow: 0 16px 30px -18px rgba(65, 43, 99, 0.9);
 }
 
-.simAsk__send:disabled {
+.simRate__send:disabled {
   cursor: not-allowed;
   background: rgba(65, 43, 99, 0.1);
   color: var(--text-on-light-dim);
 }
 
-.simAsk__note {
+.simRate__note {
   flex: 1 1 16ch;
   font-size: 0.76rem;
   line-height: 1.5;
   color: var(--text-on-light-dim);
 }
 
-.simAsk__failed {
+.simRate__failed {
   margin-top: 0.9rem;
   padding: 0.7rem 0.9rem;
   border-radius: var(--r-md);
@@ -195,17 +203,17 @@
   /* Five columns of a phone's width leaves each step 55px wide and the words
      at the ends broken over three lines, so the scale stacks its labels under
      a single row of numbers instead. */
-  .simAsk__step {
+  .simRate__step {
     min-height: 52px;
     padding: 0.45rem 0.2rem;
   }
 
-  .simAsk__word {
+  .simRate__word {
     display: none;
   }
 
   /* The two ends still have to be named, so they are named once, underneath. */
-  .simAsk__scale::after {
+  .simRate__scale::after {
     content: 'Not really → genuinely useful';
     grid-column: 1 / -1;
     font-size: 0.7rem;
@@ -214,14 +222,14 @@
 }
 
 @media (pointer: coarse) {
-  .simAsk__step {
+  .simRate__step {
     min-height: 56px;
   }
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .simAsk__step,
-  .simAsk__send {
+  .simRate__step,
+  .simRate__send {
     transition: none;
   }
 }

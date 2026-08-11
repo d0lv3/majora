@@ -378,6 +378,11 @@
 }
 
 /* ============================ SCREEN 03 ============================== */
+/* The questions you put to the patient. This is what .simAsk means here and
+   has meant since before the end-of-simulation rating existed — that card is
+   .simRate, and it is called that because it briefly was not: two blocks named
+   .simAsk in one bundle put a white card with gold trim around this list on
+   screen 3, and took the padding off the rating card at the end. */
 .simAsk {
   display: grid;
   gap: 0.7rem;

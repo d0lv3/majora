@@ -136,12 +136,14 @@
   animation: reachIn 0.9s 0.55s var(--ease-out) both;
 }
 
-/* Wider tracks than the library's 215px: a card here carries a portrait and
-   two degrees under it, and at the library's width the photograph is a stamp
-   and every school line wraps to three. */
+/* Wider tracks than the library's 215px, and wider than a portrait card needed:
+   the photograph is square, so the track's width is also the photograph's
+   height, and every pixel of width here is a pixel that makes the card squarer
+   rather than taller. At the library's 215px the face is a stamp and every
+   school line wraps to three. */
 .reach__grid {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(min(100%, 290px), 1fr));
+  grid-template-columns: repeat(auto-fill, minmax(min(100%, 320px), 1fr));
   gap: clamp(1rem, 1.8vw, 1.5rem);
   list-style: none;
   padding: 0;

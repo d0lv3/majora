@@ -51,8 +51,8 @@ export default function SimFeedback({ sim, majorName }) {
 
   if (state === 'done') {
     return (
-      <aside className="simAsk simAsk--done" aria-live="polite">
-        <p className="simAsk__thanks">Thank you — that helps more than you would think.</p>
+      <aside className="simRate simRate--done" aria-live="polite">
+        <p className="simRate__thanks">Thank you — that helps more than you would think.</p>
       </aside>
     )
   }
@@ -71,35 +71,35 @@ export default function SimFeedback({ sim, majorName }) {
   }
 
   return (
-    <aside className="simAsk">
+    <aside className="simRate">
       <form onSubmit={submit}>
-        <p className="simAsk__eyebrow">Before you go</p>
+        <p className="simRate__eyebrow">Before you go</p>
         {/* The major's name as it is written on its own page — sim.major holds
             the URL slug, and "what english-language-literature is like" is not
             a sentence anybody should be shown. */}
-        <h2 className="simAsk__title">
+        <h2 className="simRate__title">
           {majorName
             ? `Was this a good way to see what ${majorName} is like?`
             : 'Was this a good way to see what the subject is like?'}
         </h2>
 
-        <div className="simAsk__scale" role="group" aria-label="Rating out of five">
+        <div className="simRate__scale" role="group" aria-label="Rating out of five">
           {SCALE.map((step) => (
             <button
               key={step.value}
               type="button"
-              className={`simAsk__step${rating === step.value ? ' is-on' : ''}`}
+              className={`simRate__step${rating === step.value ? ' is-on' : ''}`}
               onClick={() => setRating(step.value)}
               aria-pressed={rating === step.value}
               aria-label={step.label || `${step.value} out of 5`}
             >
-              <span className="simAsk__n">{step.value}</span>
-              {step.label && <span className="simAsk__word">{step.label}</span>}
+              <span className="simRate__n">{step.value}</span>
+              {step.label && <span className="simRate__word">{step.label}</span>}
             </button>
           ))}
         </div>
 
-        <label className="simAsk__field">
+        <label className="simRate__field">
           <span>Anything you would change? (optional)</span>
           <textarea
             rows={3}
@@ -110,17 +110,17 @@ export default function SimFeedback({ sim, majorName }) {
           />
         </label>
 
-        <div className="simAsk__foot">
-          <button type="submit" className="simAsk__send" disabled={rating === null || state === 'sending'}>
+        <div className="simRate__foot">
+          <button type="submit" className="simRate__send" disabled={rating === null || state === 'sending'}>
             {state === 'sending' ? 'Sending…' : 'Send'}
           </button>
-          <p className="simAsk__note">
+          <p className="simRate__note">
             Anonymous — the rating and your note, nothing that says who you are.
           </p>
         </div>
 
         {state === 'failed' && (
-          <p className="simAsk__failed" role="alert">
+          <p className="simRate__failed" role="alert">
             That did not go through. Check the connection and try again — nothing was lost.
           </p>
         )}

@@ -41,12 +41,16 @@
 }
 
 /* ------------------------------ the photograph ------------------------- */
-/* 4:5, which is the crop the source images were cut to. Stated here as well so
-   a photograph that arrives at some other ratio is cropped by the card rather
-   than allowed to change the height of one card in a row of them. */
+/* Square. A 4:5 portrait made the card a column — photograph, then name, then
+   two degrees, at nearly 760px tall in a 355px track — and a row of those reads
+   as three posters rather than three people you might call. A 1:1 crop takes
+   about 90px off the top of the card and leaves it roughly as wide as it is
+   tall. Stated here as well as in the files so a photograph that arrives at
+   some other ratio is cropped by the card rather than allowed to make one card
+   in a row taller than its neighbours. */
 .pcard__shot {
   position: relative;
-  aspect-ratio: 4 / 5;
+  aspect-ratio: 1 / 1;
   overflow: hidden;
   background: var(--purple-800);
 }
@@ -55,8 +59,10 @@
   width: 100%;
   height: 100%;
   object-fit: cover;
-  /* Faces sit in the upper part of a portrait, so a crop that has to give
-     something up gives up the feet. */
+  /* Does nothing while the file is square and the box is square, which is the
+     case for both photographs here — it is the safety net for one that arrives
+     some other shape. Faces sit in the upper part of a frame, so a crop that
+     has to give something up gives up the feet. */
   object-position: 50% 22%;
   transition: transform 0.7s var(--ease);
 }
@@ -66,27 +72,31 @@
   transform: scale(1.03);
 }
 
-/* The subject, over the foot of the picture. A scrim rather than a solid bar:
-   these are photographs of people in rooms, and a band across the bottom of
-   one looks like a caption printed over a mistake. */
+/* The subject and the name, over the foot of the picture. A scrim rather than a
+   solid bar: these are photographs of people in rooms, and a band across the
+   bottom of one looks like a caption printed over a mistake. Deep enough to
+   carry two lines of type now that the name is on it as well. */
 .pcard__shot::after {
   content: '';
   position: absolute;
   inset: auto 0 0 0;
-  height: 46%;
-  background: linear-gradient(to top, rgba(21, 13, 33, 0.82), transparent);
+  height: 58%;
+  background: linear-gradient(to top, rgba(21, 13, 33, 0.9) 12%, rgba(21, 13, 33, 0.55) 46%, transparent);
   pointer-events: none;
 }
 
-.pcard__majors {
+.pcard__over {
   position: absolute;
-  left: 0.9rem;
-  right: 0.9rem;
-  bottom: 0.85rem;
+  left: 1rem;
+  right: 1rem;
+  bottom: 0.9rem;
+}
+
+.pcard__majors {
   display: flex;
   flex-wrap: wrap;
   gap: 0.35rem;
-  margin: 0;
+  margin: 0 0 0.45rem;
   padding: 0;
   list-style: none;
 }
@@ -118,39 +128,28 @@
   color: var(--purple-950);
 }
 
-/* --------------------------------- body -------------------------------- */
-.pcard__body {
-  flex: 1;
-  padding: 1.1rem 1.15rem 0.9rem;
-}
-
+/* On the photograph, so it is white and needs the shadow the scrim alone does
+   not give it over a light patch of picture. */
 .pcard__name {
   font-family: var(--font-display);
   font-size: clamp(1.15rem, 1.5vw, 1.32rem);
   font-weight: 700;
   line-height: 1.15;
   letter-spacing: -0.028em;
-  color: var(--purple-600);
+  color: #fff;
+  text-shadow: 0 1px 12px rgba(0, 0, 0, 0.6);
   text-wrap: balance;
 }
 
-.pcard__headline {
-  margin-top: 0.35rem;
-  font-size: 0.86rem;
-  line-height: 1.5;
-  color: var(--text-on-light-dim);
-  text-wrap: pretty;
+/* --------------------------------- body -------------------------------- */
+.pcard__body {
+  flex: 1;
+  padding: 0.95rem 1.15rem 0.6rem;
 }
 
-/* Every degree, not the latest one. Somebody part way through a master's in
-   another country is a different person to ask than an undergraduate, and
-   flattening the two to one line is throwing away the reason to book them. */
 .pcard__study {
   display: grid;
-  gap: 0.6rem;
-  margin-top: 0.9rem;
-  padding-top: 0.85rem;
-  border-top: 1px solid rgba(65, 43, 99, 0.12);
+  gap: 0.55rem;
   list-style: none;
 }
 

@@ -1,7 +1,7 @@
 import { Link } from 'react-router-dom'
 
 import { getMajor, isAvailable } from '../../data/majors.js'
-import { schoolName, schoolWhere } from '../../data/reach.js'
+import { schoolName } from '../../data/reach.js'
 import './reach.css'
 
 /**
@@ -24,41 +24,55 @@ export default function ReachCard({ person, index = 0, onReach }) {
           className="pcard__photo"
           src={person.photo}
           alt={person.photoAlt}
-          width="720"
-          height="900"
+          width="800"
+          height="800"
           /* The first row is the page — a lazy photograph there is the largest
              thing on screen waiting for a frame before it starts loading.
              Everything past it can wait until it is scrolled to. */
           loading={index < 3 ? 'eager' : 'lazy'}
         />
 
-        {/* The subjects, over the foot of the photograph. A link where the
-            major is written up, plain text where it is not: a tag that opens a
-            "coming soon" page is worse than a tag that opens nothing. */}
-        <ul className="pcard__majors">
-          {person.majors.map((slug) => {
-            const major = getMajor(slug)
-            if (!major) return null
-            return (
-              <li key={slug}>
-                {isAvailable(major) ? (
-                  <Link to={`/app/${slug}`} className="pcard__major pcard__major--open">
-                    {major.name}
-                    <span aria-hidden="true"> →</span>
-                  </Link>
-                ) : (
-                  <span className="pcard__major">{major.name}</span>
-                )}
-              </li>
-            )
-          })}
-        </ul>
+        {/* The subject and the name, over the foot of the photograph rather
+            than under it. Both belong to the person in the picture, and moving
+            them onto it is what stops the card being a column: with a square
+            photograph and three stacked blocks of type beneath it, the card was
+            more than twice as tall as it was wide. */}
+        <div className="pcard__over">
+          <ul className="pcard__majors">
+            {person.majors.map((slug) => {
+              const major = getMajor(slug)
+              if (!major) return null
+              return (
+                <li key={slug}>
+                  {/* A link where the major is written up, plain text where it
+                      is not: a tag that opens a "coming soon" page is worse
+                      than a tag that opens nothing. */}
+                  {isAvailable(major) ? (
+                    <Link to={`/app/${slug}`} className="pcard__major pcard__major--open">
+                      {major.name}
+                      <span aria-hidden="true"> →</span>
+                    </Link>
+                  ) : (
+                    <span className="pcard__major">{major.name}</span>
+                  )}
+                </li>
+              )
+            })}
+          </ul>
+          <h2 className="pcard__name">{person.name}</h2>
+        </div>
       </div>
 
       <div className="pcard__body">
-        <h2 className="pcard__name">{person.name}</h2>
-        <p className="pcard__headline">{person.headline}</p>
+        {/* Every degree, not the latest one. Somebody part way through a
+            master's in another country is a different person to ask than an
+            undergraduate, and flattening the two to one line throws away the
+            reason to book them.
 
+            The city is not repeated here. "University of Mosul · Mosul,
+            Nineveh" is a line and a half saying one thing, and where a
+            university is, is the map's job. Only somewhere the map does not
+            cover says where it is — which is the part worth knowing. */}
         <ul className="pcard__study">
           {person.study.map((entry) => (
             <li key={`${entry.award}-${entry.uni ?? entry.place}`} className="pcard__degree">
@@ -67,11 +81,8 @@ export default function ReachCard({ person, index = 0, onReach }) {
                 {entry.current && <span className="pcard__now">In progress</span>}
               </span>
               <span className="pcard__school">
-                {entry.level && `${entry.level}, `}
                 {schoolName(entry)}
-                {schoolWhere(entry) && (
-                  <span className="pcard__where"> · {schoolWhere(entry)}</span>
-                )}
+                {entry.where && <span className="pcard__where"> · {entry.where}</span>}
               </span>
             </li>
           ))}
