@@ -21,12 +21,51 @@
  * being squashed into one — the layout is the meaning here.
  */
 
+/* The devices, as silhouettes. Identity is the shape — a real topology diagram
+   names a machine by its outline, not its colour — so these stay stroked in
+   currentColor and let the node's state (dim, lit, gold, taken) do the colour.
+   Detailed enough to read as the thing they are: a rack with its units and a
+   status light, a database as a stack of platters, a laptop with a prompt on
+   the screen, the office as a switch with its ports, you as a globe. */
 const ICONS = {
-  you: <path d="M12 2a10 10 0 100 20 10 10 0 000-20zM2 12h20M12 2c3 3 4.5 6.5 4.5 10S15 19 12 22c-3-3-4.5-6.5-4.5-10S9 5 12 2z" />,
-  server: <path d="M4 5h16v6H4zM4 13h16v6H4zM7.5 8h.01M7.5 16h.01" />,
-  network: <path d="M12 3v6M5 21v-4h14v4M5 17l7-8 7 8M12 9h.01" />,
-  laptop: <path d="M5 5h14v10H5zM2 19h20l-2-4H4z" />,
-  database: <path d="M4 6c0-1.7 3.6-3 8-3s8 1.3 8 3-3.6 3-8 3-8-1.3-8-3zM4 6v12c0 1.7 3.6 3 8 3s8-1.3 8-3V6M4 12c0 1.7 3.6 3 8 3s8-1.3 8-3" />,
+  you: (
+    <>
+      <circle cx="12" cy="12" r="9" />
+      <path d="M3 12h18" />
+      <path d="M12 3c3 2.6 3 15.4 0 18M12 3c-3 2.6-3 15.4 0 18" />
+    </>
+  ),
+  server: (
+    <>
+      <rect x="6" y="3" width="12" height="18" rx="1.6" />
+      <path d="M9 7.2h6M9 11h6" />
+      <circle cx="15" cy="16.6" r="0.7" fill="currentColor" stroke="none" />
+      <path d="M9 16.6h3" />
+    </>
+  ),
+  network: (
+    <>
+      <rect x="3" y="8.5" width="18" height="7.5" rx="1.4" />
+      <path d="M6.5 13.4v1.4M9.5 13.4v1.4M12.5 13.4v1.4M15.5 13.4v1.4" />
+      <circle cx="6.5" cy="11" r="0.7" fill="currentColor" stroke="none" />
+      <circle cx="9.5" cy="11" r="0.7" fill="currentColor" stroke="none" />
+    </>
+  ),
+  laptop: (
+    <>
+      <rect x="5" y="4.5" width="14" height="9.5" rx="1.3" />
+      <path d="M8.3 7.6l2.2 1.7-2.2 1.7" />
+      <path d="M12.5 11h3" />
+      <path d="M2.5 18.5h19l-1.7-3H4.2z" />
+    </>
+  ),
+  database: (
+    <>
+      <ellipse cx="12" cy="5.5" rx="7" ry="2.6" />
+      <path d="M5 5.5v12.5c0 1.45 3.13 2.6 7 2.6s7-1.15 7-2.6V5.5" />
+      <path d="M5 11.75c0 1.45 3.13 2.6 7 2.6s7-1.15 7-2.6" />
+    </>
+  ),
 }
 
 export default function NetworkMap({ sim, state, onSelect, unreadIds = [], pathIds = [], cutLinks = [], defending = false, mode = null }) {
@@ -55,6 +94,24 @@ export default function NetworkMap({ sim, state, onSelect, unreadIds = [], pathI
           <span className="netMap__modeDot" aria-hidden="true" />
           <span className="netMap__modeSide">{mode.side}</span>
           {mode.label && <span className="netMap__modeLabel">{mode.label}</span>}
+        </div>
+      )}
+
+      {/* The segments, behind everything. Drawn as HTML rather than in the
+          stretched SVG so their labels are not squashed with the coordinate
+          space — same inset as the nodes, so the boxes land around them. */}
+      {sim.zones && (
+        <div className="netMap__zones" aria-hidden="true">
+          {sim.zones.map((z) => (
+            <div
+              key={z.id}
+              className={`netZone netZone--${z.tone}`}
+              style={{ left: `${z.x}%`, top: `${z.y}%`, width: `${z.w}%`, height: `${z.h}%` }}
+            >
+              <span className="netZone__label">{z.label}</span>
+              {z.sub && <span className="netZone__sub">{z.sub}</span>}
+            </div>
+          ))}
         </div>
       )}
 

@@ -125,6 +125,21 @@ export const BREACH = {
     ['office', 'db'],
   ],
 
+  /* ------------------------------- the segments ----------------------------
+   * The network drawn as the three grounds it actually has, behind everything
+   * else. These are not decoration — they are the lesson. The point the whole
+   * simulation turns on is that the middle one is FLAT: the website, the office
+   * machines and the file server all sit in a single box with nothing between
+   * them, which is why getting a foot on the edge is getting a foot on all of
+   * it. The records keep their own ground on the right, the one real boundary
+   * inside the building, and the reader has to borrow a trusted machine to
+   * cross it. x/y/w/h are in the same 0–100 space the nodes use. */
+  zones: [
+    { id: 'wan', label: 'The internet', sub: 'Outside the building', tone: 'outside', x: 2, y: 27, w: 16, h: 46 },
+    { id: 'lan', label: 'Office network', sub: 'Flat — nothing is separated', tone: 'inside', x: 20, y: 6, w: 62, h: 88 },
+    { id: 'mgmt', label: 'Management', sub: 'The records only answer here', tone: 'prize', x: 84, y: 30, w: 15, h: 40 },
+  ],
+
   /* ------------------------------ observations -----------------------------
    * What a node tells you when you look at it. `after` gates a line behind a
    * step of the chain, so the network opens up as you move through it rather

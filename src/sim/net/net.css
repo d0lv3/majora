@@ -64,6 +64,73 @@
   }
 }
 
+/* ------------------------------- segments ------------------------------
+   The three grounds of the network, drawn behind the nodes. Same inset as the
+   node layer so the boxes land around the right machines; below the links so a
+   connection reads over the region it crosses. */
+.netMap__zones {
+  position: absolute;
+  inset: 6% 9% 6% 5%;
+  z-index: 3;
+  pointer-events: none;
+}
+
+.netZone {
+  position: absolute;
+  padding: 7px 9px;
+  border-radius: 13px;
+  border: 1.5px dashed rgba(255, 255, 255, 0.16);
+  background: rgba(255, 255, 255, 0.018);
+}
+
+.netZone__label {
+  display: block;
+  font-family: 'SFMono-Regular', 'Consolas', monospace;
+  font-size: 0.56rem;
+  font-weight: 700;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  line-height: 1.1;
+  color: rgba(255, 255, 255, 0.5);
+}
+
+.netZone__sub {
+  display: block;
+  margin-top: 3px;
+  max-width: 20ch;
+  font-family: var(--font-display);
+  font-size: 0.62rem;
+  font-weight: 500;
+  line-height: 1.3;
+  color: rgba(255, 255, 255, 0.34);
+}
+
+/* Inside the building — the flat one, tinted the brand purple so it reads as
+   one undivided room the moment you look at it. */
+.netZone--inside {
+  border-color: rgba(138, 112, 173, 0.42);
+  background: rgba(107, 78, 148, 0.08);
+}
+
+.netZone--inside .netZone__label {
+  color: var(--purple-200);
+}
+
+/* Management — the records' own ground, the one real boundary, marked gold like
+   the objective it holds. */
+.netZone--prize {
+  border-color: rgba(238, 175, 22, 0.42);
+  background: rgba(238, 175, 22, 0.06);
+}
+
+.netZone--prize .netZone__label {
+  color: var(--gold-400);
+}
+
+.netZone--prize .netZone__sub {
+  color: rgba(245, 195, 63, 0.5);
+}
+
 /* The mode ribbon: which head you are wearing, top-left of the screen. Gold as
    the attacker, green as the defender — the site's one-line thesis, made into a
    thing you can see you are inside of. */
@@ -128,15 +195,15 @@
 }
 
 /* A faint grid, so the dark reads as a diagram rather than a hole. */
+/* A dot grid rather than lines — quieter, so the segment boxes behind the
+   nodes carry the depth instead of fighting a lattice for it. */
 .netMap::before {
   content: '';
   position: absolute;
   inset: 0;
   z-index: 1;
-  background-image:
-    linear-gradient(rgba(255, 255, 255, 0.045) 1px, transparent 1px),
-    linear-gradient(90deg, rgba(255, 255, 255, 0.045) 1px, transparent 1px);
-  background-size: 28px 28px;
+  background-image: radial-gradient(circle, rgba(255, 255, 255, 0.07) 1px, transparent 1.6px);
+  background-size: 22px 22px;
   pointer-events: none;
 }
 
@@ -873,6 +940,27 @@
 
   .netLog__src {
     display: none;
+  }
+
+  /* The two narrow segments are tall thin boxes on a phone — too thin for a
+     word across them. Their labels turn to run down the box the way a real
+     rack diagram labels a column, and they drop their sub-lines; the wide
+     office box keeps its label and its one telling line about being flat. */
+  .netZone--outside .netZone__sub,
+  .netZone--prize .netZone__sub {
+    display: none;
+  }
+
+  .netZone--outside .netZone__label,
+  .netZone--prize .netZone__label {
+    writing-mode: vertical-rl;
+    text-orientation: mixed;
+    letter-spacing: 0.12em;
+  }
+
+  .netZone__sub {
+    font-size: 0.56rem;
+    max-width: 16ch;
   }
 
   /* A smaller map wants a smaller ribbon, so it clears the top row of nodes
