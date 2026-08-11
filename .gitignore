@@ -5,6 +5,11 @@ dist-ssr
 .DS_Store
 .vite
 
+# Local configuration. .env.example is committed and lists what belongs here.
+.env
+.env.*
+!.env.example
+
 # The dental workbench this simulation was lifted from: one 68 MB HTML file,
 # almost all of it a base64 3D model and a thousand pre-rendered tooth images.
 # What was worth keeping is already in the tree — the model itself lives at
