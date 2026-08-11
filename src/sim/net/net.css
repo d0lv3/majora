@@ -92,34 +92,45 @@
   transform: translate(-50%, -50%);
 }
 
+/* The drawing itself, standing on the map — no card, no ring, no plate behind
+   it. Every state is carried by the strokes: dim, lit, gold when it is yours,
+   and larger when it is the one open in the panel.
+
+   The padding stays even though nothing paints it. It is the hit area, and
+   without it a one-word node is a 33px target.
+
+   The halo is the one thing the card was doing that still has to be done: the
+   links run underneath the nodes, and a line crossing an icon makes both
+   unreadable. Two drop-shadows in the map's own background push the dark back
+   a few pixels around every stroke, which separates the icon from whatever is
+   behind it without drawing an edge anybody can see. */
 .netNode {
+  position: relative;
   display: grid;
   justify-items: center;
-  gap: 0.3rem;
+  gap: 0.35rem;
   width: max-content;
-  /* A one-word node would otherwise be a 33px target. */
   min-width: 48px;
   max-width: 8.5rem;
   padding: 0.5rem 0.6rem;
-  border-radius: var(--r-md);
-  background: rgba(21, 13, 33, 0.72);
-  box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.14);
-  color: rgba(255, 255, 255, 0.55);
+  color: rgba(255, 255, 255, 0.62);
+  filter:
+    drop-shadow(0 0 7px var(--purple-950))
+    drop-shadow(0 0 3px var(--purple-950));
   transition:
     color 0.3s ease,
-    box-shadow 0.3s ease,
-    background-color 0.3s ease,
+    opacity 0.3s ease,
     transform 0.3s var(--ease);
 }
 
 .netNode__icon svg {
-  width: 22px;
-  height: 22px;
+  width: 28px;
+  height: 28px;
 }
 
 .netNode__label {
   font-family: var(--font-display);
-  font-size: 0.68rem;
+  font-size: 0.7rem;
   font-weight: 600;
   line-height: 1.2;
   text-align: center;
@@ -130,21 +141,25 @@
 }
 
 .netNode.is-lit {
-  color: rgba(255, 255, 255, 0.9);
-  box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.28);
+  color: rgba(255, 255, 255, 0.94);
 }
 
+/* Yours. Gold, and lit from behind rather than boxed in. */
 .netNode.is-taken {
   color: var(--gold-400);
-  background: rgba(238, 175, 22, 0.14);
-  box-shadow: inset 0 0 0 1.5px rgba(238, 175, 22, 0.6);
+  filter:
+    drop-shadow(0 0 7px var(--purple-950))
+    drop-shadow(0 0 10px rgba(238, 175, 22, 0.35));
 }
 
+/* The one open in the panel. Size and colour say so now that there is no ring
+   to thicken, so it is a bigger step than the 1.06 the card needed. */
 .netNode.is-on {
-  transform: scale(1.06);
-  box-shadow:
-    inset 0 0 0 1.5px var(--gold),
-    0 12px 30px -14px rgba(0, 0, 0, 0.9);
+  transform: scale(1.14);
+  color: var(--gold);
+  filter:
+    drop-shadow(0 0 7px var(--purple-950))
+    drop-shadow(0 0 14px rgba(238, 175, 22, 0.5));
 }
 
 .netNode:hover:not(:disabled) {
@@ -155,8 +170,8 @@
    carrying an icon and a name and cannot afford a third piece of text. */
 .netNode__new {
   position: absolute;
-  top: 6px;
-  right: 6px;
+  top: 2px;
+  right: 8px;
   width: 8px;
   height: 8px;
   border-radius: 50%;
@@ -164,20 +179,18 @@
   box-shadow: 0 0 0 3px rgba(238, 175, 22, 0.22);
 }
 
-.netNode {
-  position: relative;
-}
 
 /* The database, which is what all of this is about. */
 .netNode--prize.is-lit {
-  box-shadow: inset 0 0 0 1.5px rgba(238, 175, 22, 0.5);
+  color: var(--gold-200);
 }
 
 /* Defending: the route is history, so it stops pulsing and the greens lead. */
 .netMap--defend .netNode.is-taken {
-  color: rgba(255, 255, 255, 0.85);
-  background: rgba(21, 13, 33, 0.72);
-  box-shadow: inset 0 0 0 1px rgba(238, 175, 22, 0.4);
+  color: rgba(255, 255, 255, 0.88);
+  filter:
+    drop-shadow(0 0 7px var(--purple-950))
+    drop-shadow(0 0 3px var(--purple-950));
 }
 
 /* ================================ PANEL =============================== */
@@ -666,8 +679,8 @@
   }
 
   .netNode__icon svg {
-    width: 18px;
-    height: 18px;
+    width: 23px;
+    height: 23px;
   }
 
   .netNode__label {

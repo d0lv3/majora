@@ -192,8 +192,11 @@ export const BREACH = {
 
   /* ------------------------------- the chain -------------------------------
    * Three steps, each unlocked by what the reader noticed rather than by
-   * arriving at a screen. `opens` is what the step puts within reach, which is
-   * how the map grows. `assumption` is the point of the whole simulation. */
+   * arriving at a screen. `owns` is the one node the step actually gives you;
+   * `opens` is everything it puts within reach, which is how the map grows.
+   * They are not the same and the map draws them differently — taking the web
+   * server makes the file server reachable, and reachable is not yours.
+   * `assumption` is the point of the whole simulation. */
   steps: [
     {
       id: 'in',
@@ -203,6 +206,7 @@ export const BREACH = {
       result:
         'It works, first try. You are administering the company website — and the machine it runs on is sitting on the office network with everything else.',
       assumption: 'Nobody will find the address, and we will change the password before launch.',
+      owns: 'web',
       opens: ['office', 'files'],
       act: 'entry',
     },
@@ -214,6 +218,7 @@ export const BREACH = {
       result:
         'At 08:12 Kawa signs in. Because the page is plain HTTP, his password crosses the network as text, and you are on the network. It is not the login from the guide — it is his own, the one he uses everywhere.',
       assumption: 'It is only the office network. Nobody is listening inside the building.',
+      owns: 'admin',
       opens: ['admin', 'db'],
       act: 'move',
     },
@@ -225,6 +230,7 @@ export const BREACH = {
       result:
         'It does not ask who you are. Forty thousand consignments, every name and address attached to them.',
       assumption: 'If you are already inside, you are allowed.',
+      owns: 'db',
       opens: [],
       act: 'move',
       ends: true,

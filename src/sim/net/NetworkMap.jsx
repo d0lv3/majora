@@ -32,13 +32,11 @@ const ICONS = {
 export default function NetworkMap({ sim, state, onSelect, unreadIds = [], pathIds = [], cutLinks = [], defending = false }) {
   const at = (id) => sim.nodes.find((n) => n.id === id)
   const reached = (id) => state.reached.includes(id)
-  /* A node is yours if a step you took opened it, or if it was the ground that
-     step was taken from — both are places you ended up standing. */
+  /* Yours, which is not the same as reachable. Taking the web server puts the
+     file server within reach and gives you nothing on it, so `owns` is the one
+     node a step hands over and `opens` is everything it lets you see. */
   const taken = (id) =>
-    state.taken.some((t) => {
-      const step = sim.steps.find((s) => s.id === t)
-      return step?.at === id || step?.opens?.includes(id)
-    })
+    state.taken.some((t) => sim.steps.find((s) => s.id === t)?.owns === id)
 
   /** A link is on the route if both its ends are. */
   const onPath = (a, b) => pathIds.includes(a) && pathIds.includes(b)
