@@ -7,21 +7,44 @@
  *
  * They are different kinds, and the object says which: `screens` for a fixed
  * run of hand-built instruments, `story` for a branching scene graph,
- * `network` for a console you poke at. Simulation.jsx reads that field and
- * nothing else has to care.
+ * `network` for a console you poke at, `jaw` for a specimen you turn over.
+ * Simulation.jsx reads that field and nothing else has to care.
+ *
+ * A major may have more than one. Dentistry does: the Year 5 clinic, which is
+ * the curriculum played out, and the anatomy bench, which is the first weeks of
+ * it. They are listed in the order a reader should meet them, and the first is
+ * what /app/<major>/simulation opens — so the plain route keeps meaning what it
+ * meant before a second one existed.
  *
  * Kept beside landings.js and branches.js so the three things a major page can
  * carry are found the same way.
  */
 
 import { ORTHODONTICS } from './simulations/orthodontics.js'
+import { JAW } from './simulations/jaw.js'
 import { MACBETH } from './simulations/macbeth.js'
 import { BREACH } from './simulations/breach.js'
 
 const SIMULATIONS = {
-  dentistry: ORTHODONTICS,
-  'english-language-literature': MACBETH,
-  cybersecurity: BREACH,
+  dentistry: [ORTHODONTICS, JAW],
+  'english-language-literature': [MACBETH],
+  cybersecurity: [BREACH],
 }
 
-export const simulationFor = (majorSlug) => SIMULATIONS[majorSlug] ?? null
+/**
+ * One simulation, by major and — when a major has several — by its slug.
+ *
+ * Without a slug you get the major's first, which is what the bare
+ * /app/<major>/simulation route asks for. With one that does not match you get
+ * nothing rather than a silent fallback to the first, so a mistyped link shows
+ * the "no simulation here" page instead of quietly opening the wrong one.
+ */
+export const simulationFor = (majorSlug, simSlug) => {
+  const list = SIMULATIONS[majorSlug]
+  if (!list?.length) return null
+  if (!simSlug) return list[0]
+  return list.find((s) => s.slug === simSlug) ?? null
+}
+
+/** Every simulation a major has, for a page that wants to offer the choice. */
+export const simulationsFor = (majorSlug) => SIMULATIONS[majorSlug] ?? []

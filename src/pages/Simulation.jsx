@@ -12,6 +12,8 @@ import { initialStoryState, storyReducer } from '../sim/story/storyState.js'
 import { useScenePreload } from '../sim/story/useScenePreload.js'
 import NetConsole from '../sim/net/NetConsole.jsx'
 import { actOf, initialNetState, netReducer } from '../sim/net/netState.js'
+import JawConsole from '../sim/jaw/JawConsole.jsx'
+import { initialJawState, jawReducer } from '../sim/jaw/jawState.js'
 import './Simulation.css'
 
 /**
@@ -36,9 +38,9 @@ import './Simulation.css'
  * else.
  */
 export default function Simulation() {
-  const { slug } = useParams()
+  const { slug, sim: simSlug } = useParams()
   const major = getMajor(slug)
-  const sim = simulationFor(slug)
+  const sim = simulationFor(slug, simSlug)
 
   if (!major || !isAvailable(major) || !sim) {
     return (
@@ -60,6 +62,7 @@ export default function Simulation() {
 
   if (sim.kind === 'story') return <StoryRun slug={slug} major={major} sim={sim} />
   if (sim.kind === 'network') return <NetRun slug={slug} major={major} sim={sim} />
+  if (sim.kind === 'jaw') return <JawRun slug={slug} major={major} sim={sim} />
   return <ScreensRun slug={slug} major={major} sim={sim} />
 }
 
@@ -170,6 +173,27 @@ function StoryRun({ slug, major, sim }) {
       railEnd={<StoryAudio name={sim.score} />}
     >
       <StoryPlayer sim={sim} state={state} dispatch={dispatch} />
+    </SimShell>
+  )
+}
+
+function JawRun({ slug, major, sim }) {
+  const [state, dispatch] = useReducer(jawReducer, undefined, initialJawState)
+
+  return (
+    <SimShell
+      slug={slug}
+      major={major}
+      sim={sim}
+      variant="net"
+      /* The act, and not the tooth: scrolling the page back to the top every
+         time the reader picks a different tooth would fight the one thing this
+         simulation is for. */
+      step={state.act}
+      acts={sim.acts}
+      act={sim.acts.find((a) => a.id === state.act)}
+    >
+      <JawConsole sim={sim} state={state} dispatch={dispatch} />
     </SimShell>
   )
 }

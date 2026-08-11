@@ -431,5 +431,38 @@ export const DENTISTRY_LANDING = {
         },
       ],
     },
+
+    /* ---------------------------- the first level ----------------------- */
+    /* And the other end of the degree. The clinic above is Year 5; this is the
+       first weeks of Year 1, and it is placed after it on purpose — a reader
+       who has just seen where the course arrives is the one most likely to
+       want to know what it starts from. */
+    {
+      id: 'anatomy',
+      title: 'Year 1, in your hands',
+      tag: 'Simulation',
+      panel: true,
+      blocks: [
+        { type: 'lede', text: 'Before any of the clinical work: learning to read a jaw.' },
+        {
+          type: 'text',
+          text: 'A real scanned jaw — the mandible, both maxillae, the gingiva and all 32 teeth, each one separately identified. Turn it over, take the gum and then the bone away, and lift any tooth out of the arch to see the root, which is most of the tooth and the part nobody ever sees.',
+        },
+        {
+          type: 'text',
+          text: 'Then the two things that make a dental chart readable: why a tooth is called 46, and what the five faces of a tooth are called. Both arrive on the model you have already been holding, and neither is scored.',
+        },
+        {
+          type: 'flow',
+          steps: ['Look', 'The numbering', 'The surfaces', 'The chart'],
+        },
+        {
+          type: 'action',
+          label: 'Open the jaw',
+          to: '/app/dentistry/simulation/the-jaw',
+          note: 'The Jaw, Read Properly · about 8 minutes',
+        },
+      ],
+    },
   ],
 }

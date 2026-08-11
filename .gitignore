@@ -4,3 +4,10 @@ dist-ssr
 *.local
 .DS_Store
 .vite
+
+# The dental workbench this simulation was lifted from: one 68 MB HTML file,
+# almost all of it a base64 3D model and a thousand pre-rendered tooth images.
+# What was worth keeping is already in the tree — the model itself lives at
+# src/assets/dental/jaw.glb at 1.2 MB. The original is kept out of git because a
+# file this size is permanent once committed, and nothing builds from it.
+src/data/simulations/standalone-dental-jaw.html

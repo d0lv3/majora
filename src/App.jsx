@@ -243,6 +243,19 @@ export default function App() {
               </RequireAuth>
             }
           />
+          {/* A major with more than one names which. The bare route above still
+              opens that major's first, so every link written before a second
+              one existed keeps working. */}
+          <Route
+            path="/app/:slug/simulation/:sim"
+            element={
+              <RequireAuth>
+                <Suspense fallback={<BrandLoader label="Preparing the simulation" />}>
+                  <Simulation />
+                </Suspense>
+              </RequireAuth>
+            }
+          />
           {/* A branch inside a major — English Literature inside the English
               department. Ranked more specific than /app/:slug, so the order
               here is for reading rather than for routing. */}

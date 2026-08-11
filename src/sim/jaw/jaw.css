@@ -1,0 +1,668 @@
+/* =========================================================
+   The Jaw, Read Properly — the dentistry anatomy console.
+
+   A dark room with one lit specimen in it. The clinic
+   simulation next door is a bright surgery; this is the
+   dissection bench, because the thing on it is a scan of a
+   real jaw and it reads as one against dark.
+   ========================================================= */
+.jawConsole {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) clamp(360px, 34vw, 520px);
+  gap: clamp(1rem, 2.5vw, 1.8rem);
+  align-items: start;
+}
+
+/* ================================ STAGE =============================== */
+.jawStage {
+  position: sticky;
+  /* Follows the reader down the panel, because the panel is long and every
+     word of it is about the thing in this box. */
+  top: clamp(1rem, 3vh, 2rem);
+  display: grid;
+  gap: 0.7rem;
+}
+
+.jawStage__shell {
+  position: relative;
+  aspect-ratio: 4 / 3;
+  max-height: min(70svh, 660px);
+  border-radius: var(--r-lg);
+  background:
+    radial-gradient(70% 60% at 50% 38%, rgba(122, 90, 168, 0.28), transparent 72%),
+    linear-gradient(180deg, #1b1029, #120b1e);
+  box-shadow:
+    inset 0 0 0 1px rgba(255, 255, 255, 0.1),
+    inset 0 0 70px rgba(0, 0, 0, 0.5),
+    0 40px 80px -44px rgba(0, 0, 0, 0.9);
+  overflow: hidden;
+}
+
+.jawViewer {
+  position: absolute;
+  inset: 0;
+}
+
+.jawViewer canvas {
+  display: block;
+  width: 100%;
+  height: 100%;
+  touch-action: none;
+}
+
+/* The curtain, held inside the specimen box. */
+.jawStage__curtain {
+  position: absolute;
+  inset: 0;
+  display: grid;
+  place-items: center;
+  z-index: 2;
+}
+
+.jawStage__curtain--bad {
+  padding: 2rem;
+  text-align: center;
+  font-size: 0.9rem;
+  color: rgba(255, 255, 255, 0.75);
+}
+
+/* What is in your hand, named on the specimen itself. */
+.jawStage__pill {
+  position: absolute;
+  left: 12px;
+  top: 12px;
+  z-index: 3;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.55rem;
+  padding: 0.34rem 0.8rem;
+  border-radius: var(--r-pill);
+  background: rgba(18, 11, 30, 0.74);
+  box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.14);
+  backdrop-filter: blur(6px);
+  font-family: var(--font-display);
+  font-size: 0.72rem;
+  color: rgba(255, 255, 255, 0.78);
+}
+
+.jawStage__pill b {
+  font-size: 0.86rem;
+  color: var(--gold-400);
+}
+
+/* -------------------------------- tools -------------------------------- */
+.jawTools {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.4rem;
+}
+
+.jawTools__group {
+  display: inline-flex;
+  gap: 2px;
+  padding: 2px;
+  border-radius: var(--r-pill);
+  background: rgba(255, 255, 255, 0.06);
+}
+
+.jawTool {
+  min-height: 36px;
+  padding: 0.4rem 0.9rem;
+  border-radius: var(--r-pill);
+  background: rgba(255, 255, 255, 0.06);
+  font-family: var(--font-display);
+  font-size: 0.76rem;
+  font-weight: 600;
+  color: rgba(255, 255, 255, 0.66);
+  transition:
+    background-color 0.25s ease,
+    color 0.25s ease;
+}
+
+.jawTools__group .jawTool {
+  background: transparent;
+}
+
+.jawTool:hover {
+  color: #fff;
+}
+
+.jawTool.is-on {
+  background: var(--gold-500);
+  color: var(--purple-950);
+}
+
+.jawCredit {
+  font-size: 0.66rem;
+  line-height: 1.5;
+  color: rgba(255, 255, 255, 0.42);
+}
+
+/* ================================ PANEL =============================== */
+.jawPanel {
+  padding: clamp(1.1rem, 2.4vw, 1.7rem);
+  border-radius: var(--r-lg);
+  background: var(--white);
+  box-shadow:
+    0 0 0 1px rgba(238, 175, 22, 0.16),
+    0 34px 70px -34px rgba(0, 0, 0, 0.85);
+}
+
+.jawPanel__eyebrow {
+  font-size: 0.62rem;
+  font-weight: 700;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: var(--gold-700);
+}
+
+.jawPanel__title {
+  margin-top: 0.45rem;
+  font-size: clamp(1.2rem, 2.4vw, 1.7rem);
+  line-height: 1.16;
+  letter-spacing: -0.02em;
+  color: var(--purple-600);
+  text-wrap: balance;
+}
+
+.jawPanel__sub {
+  margin-top: 0.5rem;
+  font-size: 0.94rem;
+  line-height: 1.6;
+  color: var(--text-on-light-dim);
+}
+
+.jawPanel__text {
+  margin-top: 0.9rem;
+  max-width: 62ch;
+  font-size: 0.95rem;
+  line-height: 1.7;
+  color: var(--text-on-light-dim);
+  text-wrap: pretty;
+}
+
+.jawPanel__hint {
+  margin-top: 1.1rem;
+  padding: 0.85rem 1rem;
+  border-radius: var(--r-md);
+  background: rgba(65, 43, 99, 0.05);
+  font-size: 0.88rem;
+  color: var(--text-on-light-dim);
+}
+
+.jawPanel__close {
+  margin-top: 1.2rem;
+  padding-top: 1rem;
+  border-top: 1px solid var(--line);
+  font-family: var(--font-display);
+  font-size: 1rem;
+  font-weight: 500;
+  line-height: 1.5;
+  color: var(--purple-600);
+}
+
+/* things to try */
+.jawTry {
+  display: grid;
+  gap: 0.45rem;
+  margin: 1.1rem 0 0;
+  padding: 0;
+  list-style: none;
+}
+
+.jawTry li {
+  padding: 0.6rem 0.9rem 0.6rem 2rem;
+  position: relative;
+  border-radius: var(--r-md);
+  background: var(--paper);
+  font-size: 0.88rem;
+  line-height: 1.55;
+  color: var(--text-on-light-dim);
+}
+
+.jawTry li::before {
+  content: '';
+  position: absolute;
+  left: 0.9rem;
+  top: 1.05rem;
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: var(--gold);
+}
+
+/* --------------------------- the tooth card ---------------------------- */
+.jawCard {
+  margin-top: 1.2rem;
+  padding: 1rem 1.1rem;
+  border-radius: var(--r-md);
+  background: var(--paper);
+  box-shadow: inset 0 0 0 1px var(--line);
+}
+
+.jawCard__head {
+  display: flex;
+  align-items: center;
+  gap: 0.85rem;
+}
+
+.jawCard__fdi {
+  flex: none;
+  display: grid;
+  place-items: center;
+  width: 46px;
+  height: 46px;
+  border-radius: 12px;
+  background: var(--purple-600);
+  font-family: var(--font-display);
+  font-size: 1.1rem;
+  font-weight: 700;
+  color: var(--white);
+}
+
+.jawCard__type {
+  font-family: var(--font-display);
+  font-size: 1rem;
+  font-weight: 600;
+  color: var(--purple-600);
+}
+
+.jawCard__where {
+  margin-top: 0.15rem;
+  font-size: 0.78rem;
+  color: var(--text-on-light-dim);
+}
+
+.jawCard__job {
+  margin-top: 0.8rem;
+  font-size: 0.9rem;
+  line-height: 1.6;
+  color: var(--text-on-light);
+}
+
+.jawCard__roots {
+  margin-top: 0.35rem;
+  font-size: 0.82rem;
+  color: var(--text-on-light-dim);
+}
+
+.jawCard__note {
+  margin-top: 0.6rem;
+  padding-left: 0.8rem;
+  border-left: 2px solid var(--gold);
+  font-size: 0.86rem;
+  line-height: 1.6;
+  color: var(--text-on-light-dim);
+}
+
+.jawCard__parse {
+  margin-top: 0.8rem;
+  padding-top: 0.7rem;
+  border-top: 1px solid var(--line);
+  font-size: 0.82rem;
+  line-height: 1.6;
+  color: var(--text-on-light-dim);
+}
+
+.jawCard__parse b {
+  color: var(--gold-700);
+}
+
+/* ------------------------------ quadrants ------------------------------ */
+.jawQuads {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 0.45rem;
+  margin: 1.1rem 0 0;
+  padding: 0;
+  list-style: none;
+}
+
+.jawQuads li {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  padding: 0.6rem 0.7rem;
+  border-radius: var(--r-md);
+  background: var(--paper);
+  box-shadow: inset 0 0 0 1px var(--line);
+}
+
+.jawQuads__n {
+  display: grid;
+  place-items: center;
+  width: 26px;
+  height: 26px;
+  flex: none;
+  border-radius: 50%;
+  background: var(--gold-500);
+  font-family: var(--font-display);
+  font-size: 0.8rem;
+  font-weight: 700;
+  color: var(--purple-950);
+}
+
+.jawQuads__label {
+  font-size: 0.82rem;
+  font-weight: 600;
+  color: var(--purple-600);
+}
+
+.jawQuads__range {
+  margin-left: auto;
+  font-family: 'SFMono-Regular', 'Consolas', monospace;
+  font-size: 0.74rem;
+  color: var(--text-on-light-dim);
+}
+
+/* ------------------------------- finds --------------------------------- */
+.jawFinds {
+  margin-top: 1.2rem;
+}
+
+.jawFinds__title {
+  font-family: var(--font-display);
+  font-size: 0.78rem;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--gold-700);
+}
+
+.jawFind {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  margin-top: 0.45rem;
+  padding: 0.6rem 0.8rem;
+  border-radius: var(--r-md);
+  background: var(--paper);
+  font-size: 0.87rem;
+  line-height: 1.5;
+  color: var(--text-on-light-dim);
+  transition: background-color 0.3s ease;
+}
+
+.jawFind__mark {
+  flex: none;
+  width: 14px;
+  height: 14px;
+  border-radius: 50%;
+  box-shadow: inset 0 0 0 2px var(--line-strong);
+}
+
+.jawFind.is-done {
+  background: rgba(110, 231, 168, 0.14);
+  color: var(--text-on-light);
+}
+
+.jawFind.is-done .jawFind__mark {
+  background: #3fae76;
+  box-shadow: none;
+}
+
+.jawFind__got {
+  margin-left: auto;
+  font-size: 0.66rem;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: #2f7d55;
+}
+
+/* ------------------------------- faces --------------------------------- */
+.jawFaces {
+  display: grid;
+  gap: 0.4rem;
+  margin: 1.1rem 0 0;
+  padding: 0;
+  list-style: none;
+}
+
+.jawFace {
+  display: grid;
+  gap: 0.2rem;
+  width: 100%;
+  min-height: 44px;
+  padding: 0.65rem 0.9rem;
+  border-radius: var(--r-md);
+  background: var(--white);
+  box-shadow: inset 0 0 0 1.5px var(--line-strong);
+  text-align: left;
+  transition: box-shadow 0.25s ease, background-color 0.25s ease;
+}
+
+.jawFace:hover {
+  box-shadow: inset 0 0 0 1.5px var(--purple-500);
+}
+
+.jawFace.is-on {
+  background: var(--paper);
+  box-shadow: inset 0 0 0 2px var(--gold-600);
+}
+
+.jawFace__label {
+  font-family: var(--font-display);
+  font-size: 0.92rem;
+  font-weight: 600;
+  color: var(--purple-600);
+}
+
+.jawFace__gloss {
+  font-size: 0.84rem;
+  line-height: 1.5;
+  color: var(--text-on-light-dim);
+}
+
+.jawFace__where {
+  margin: 0.4rem 0 0.2rem 0.95rem;
+  padding-left: 0.8rem;
+  border-left: 2px solid var(--gold);
+  font-size: 0.84rem;
+  line-height: 1.55;
+  color: var(--text-on-light);
+}
+
+/* ------------------------------- the chart ----------------------------- */
+.jawMarks {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.35rem;
+  margin-top: 1.1rem;
+}
+
+.jawMark {
+  min-height: 34px;
+  padding: 0.35rem 0.75rem;
+  border-radius: var(--r-pill);
+  background: var(--paper);
+  box-shadow: inset 0 0 0 1.5px var(--line);
+  font-size: 0.78rem;
+  font-weight: 600;
+  color: var(--text-on-light-dim);
+  transition: box-shadow 0.2s ease, color 0.2s ease;
+}
+
+.jawMark.is-on {
+  box-shadow: inset 0 0 0 2px var(--purple-500);
+  color: var(--purple-600);
+}
+
+.jawMarks__gloss {
+  margin-top: 0.5rem;
+  font-size: 0.82rem;
+  line-height: 1.5;
+  color: var(--text-on-light-dim);
+}
+
+.jawChart {
+  margin-top: 1rem;
+  padding: 0.8rem;
+  border-radius: var(--r-md);
+  background: var(--paper);
+  box-shadow: inset 0 0 0 1px var(--line);
+  overflow-x: auto;
+}
+
+.jawChart__sides,
+.jawChart__midline {
+  display: flex;
+  justify-content: space-between;
+  font-size: 0.6rem;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--text-on-light-dim);
+}
+
+.jawChart__midline {
+  margin: 0.35rem 0;
+  padding: 0.25rem 0;
+  border-top: 1px dashed var(--line-strong);
+  border-bottom: 1px dashed var(--line-strong);
+  justify-content: flex-start;
+  gap: 0.5rem;
+}
+
+.jawChart__row {
+  display: grid;
+  grid-template-columns: repeat(16, minmax(0, 1fr));
+  gap: 2px;
+  margin: 0.35rem 0;
+  padding: 0;
+  list-style: none;
+  min-width: 420px;
+}
+
+.jawChart__tooth {
+  display: grid;
+  place-items: center;
+  width: 100%;
+  aspect-ratio: 2 / 3;
+  border-radius: 5px;
+  background: var(--white);
+  box-shadow: inset 0 0 0 1px var(--line);
+  font-family: 'SFMono-Regular', 'Consolas', monospace;
+  font-size: 0.6rem;
+  color: var(--text-on-light-dim);
+  transition: box-shadow 0.2s ease, background-color 0.2s ease;
+}
+
+.jawChart__tooth:hover {
+  box-shadow: inset 0 0 0 1.5px var(--purple-400);
+}
+
+.jawChart__tooth.is-on {
+  box-shadow: inset 0 0 0 2px var(--gold-600);
+}
+
+/* The five marks. Colour is the state, and the number stays readable in all
+   of them — a chart nobody can read the numbers on is not a chart. */
+.jawChart__tooth.is-sound {
+  background: rgba(110, 231, 168, 0.3);
+}
+.jawChart__tooth.is-watch {
+  background: rgba(148, 163, 184, 0.35);
+}
+.jawChart__tooth.is-decay {
+  background: rgba(239, 68, 68, 0.3);
+}
+.jawChart__tooth.is-filled {
+  background: rgba(59, 130, 246, 0.28);
+}
+.jawChart__tooth.is-missing {
+  background: repeating-linear-gradient(
+    45deg,
+    rgba(65, 43, 99, 0.16),
+    rgba(65, 43, 99, 0.16) 3px,
+    transparent 3px,
+    transparent 6px
+  );
+  color: var(--text-on-light-dim);
+}
+
+/* -------------------------------- actions ------------------------------ */
+.jawAct {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.8rem;
+  margin-top: 1.4rem;
+}
+
+.jawAct__btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 46px;
+  padding: 0.75rem 1.3rem;
+  border-radius: var(--r-pill);
+  background: var(--purple-600);
+  font-family: var(--font-display);
+  font-size: 0.94rem;
+  font-weight: 600;
+  color: var(--white);
+  transition:
+    background-color 0.25s ease,
+    transform 0.25s var(--ease),
+    box-shadow 0.25s ease;
+}
+
+.jawAct__btn:hover {
+  transform: translateY(-2px);
+  background: var(--purple-500);
+  box-shadow: 0 16px 30px -18px rgba(65, 43, 99, 0.9);
+}
+
+.jawAct__count {
+  font-size: 0.78rem;
+  font-variant-numeric: tabular-nums;
+  color: var(--text-on-light-dim);
+}
+
+/* ================================ NARROW ============================== */
+@media (max-width: 960px) {
+  .jawConsole {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  /* The specimen stops following and simply sits above its panel: on a phone
+     a sticky box that tall would leave nothing to read beside it. */
+  .jawStage {
+    position: static;
+  }
+
+  .jawStage__shell {
+    aspect-ratio: 1 / 1;
+    max-height: 62svh;
+  }
+
+  .jawQuads {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* A finger is not a mouse pointer. The controls under the model and the mark
+   buttons are set for a cursor; on a touch screen they get the 44px the rest of
+   the site gives, and the chart is widened so a tooth is a target rather than a
+   dot — it already scrolls sideways, so the extra width costs nothing. */
+@media (pointer: coarse) {
+  .jawTool,
+  .jawMark {
+    min-height: 44px;
+  }
+
+  .jawChart__row {
+    min-width: 560px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .jawTool,
+  .jawFace,
+  .jawFind,
+  .jawAct__btn,
+  .jawChart__tooth {
+    transition: none;
+  }
+}
