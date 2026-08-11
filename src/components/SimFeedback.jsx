@@ -73,7 +73,13 @@ export default function SimFeedback({ sim, majorName }) {
   return (
     <aside className="simRate">
       <form onSubmit={submit}>
-        <p className="simRate__eyebrow">Before you go</p>
+        {/* The simulation's own name, because the rating is its own too — one
+            per simulation, remembered per simulation, sent with its slug. Two
+            of them belong to the same major and the question below is written
+            from the major's name, so without this the card at the end of the
+            jaw and the card at the end of the clinic are word for word the
+            same and the reader is asked to rate "Dentistry" twice. */}
+        <p className="simRate__eyebrow">{sim.title}</p>
         {/* The major's name as it is written on its own page — sim.major holds
             the URL slug, and "what english-language-literature is like" is not
             a sentence anybody should be shown. */}
