@@ -125,6 +125,18 @@ Google:
   read the reply, and asking to read it is exactly what gets the request
   blocked.
 
+### It does not wait for the reply
+
+Apps Script is slow to wake — a cold endpoint took **fifteen seconds** in
+testing. Fifteen seconds of a dead "Sending…" button is how somebody decides
+the site is broken, and waiting buys nothing anyway, because the reply is
+opaque and tells us no more than a request still in flight.
+
+So the reader is thanked after 2.5 seconds and the request finishes in the
+background. It is sent with `keepalive`, so the browser completes it even if
+they close the tab a moment later. A real failure — offline, wrong address —
+rejects in well under that and is still reported honestly.
+
 ### The honest limitation
 
 Because the reply is opaque, **the site can tell that the request left, and

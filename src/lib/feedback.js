@@ -32,6 +32,22 @@
 
 const ENDPOINT = import.meta.env.VITE_FEEDBACK_URL
 
+/**
+ * How long the button is allowed to say "Sending…" before the reader is thanked
+ * anyway.
+ *
+ * Apps Script is slow to wake: a cold endpoint took fifteen seconds in testing,
+ * and fifteen seconds of a dead button is how somebody decides the site is
+ * broken and closes it. Waiting longer buys nothing either — the reply is
+ * opaque, so a request that finishes tells us no more than one still in flight.
+ * What actually matters is that the request survives the reader leaving, which
+ * is what keepalive below is for.
+ *
+ * Short enough to feel immediate, long enough that a genuine failure — offline,
+ * bad address — still rejects inside it and is reported honestly.
+ */
+const SETTLE_MS = 2500
+
 /** Whether an endpoint has been configured at build time. */
 export const feedbackEnabled = () => Boolean(ENDPOINT)
 
@@ -76,10 +92,22 @@ export async function sendFeedback({ slug, title, rating, comment }) {
     screen: typeof window === 'undefined' ? '' : `${window.innerWidth}x${window.innerHeight}`,
   })
 
-  await fetch(ENDPOINT, {
+  const request = fetch(ENDPOINT, {
     method: 'POST',
     mode: 'no-cors',
     headers: { 'Content-Type': 'text/plain;charset=utf-8' },
     body,
+    /* Let the browser finish this even if the page is closed or navigated away
+       from a moment after the button is pressed. This is the last thing a
+       reader does on the page, so it is exactly the request most likely to be
+       interrupted by them leaving. */
+    keepalive: true,
   })
+
+  /* Late failures are nobody's business: by then the reader has been thanked,
+     and there is no version of this where we could have told them more. Handled
+     here so a slow rejection is not an unhandled promise. */
+  request.catch(() => {})
+
+  await Promise.race([request, new Promise((resolve) => setTimeout(resolve, SETTLE_MS))])
 }
