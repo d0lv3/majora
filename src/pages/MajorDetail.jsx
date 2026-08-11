@@ -2,6 +2,7 @@ import { Link, useParams, useNavigate } from 'react-router-dom'
 
 import Reveal from '../components/Reveal.jsx'
 import Lattice from '../components/decor/Lattice.jsx'
+import MajorMotif from '../components/decor/MajorMotif.jsx'
 import MajorCard from '../components/MajorCard.jsx'
 import MajorLanding from '../components/MajorLanding.jsx'
 import SpecularButton from '../components/ui/SpecularButton.jsx'
@@ -54,6 +55,10 @@ export default function MajorDetail() {
     <div className="mdetail">
       <header className="mdetail__head">
         <Lattice className="mdetail__lattice" size={78} color="rgba(255,255,255,0.06)" />
+        {/* The subject itself, oversized and cropped by the header's own
+            overflow so it reads as a detail of something larger. Only the
+            majors that are written up have one. */}
+        <MajorMotif slug={slug} className="mdetail__motif" />
 
         <div className="shell mdetail__headInner">
           <Link to="/app" className="mdetail__back">

@@ -205,13 +205,24 @@ export default function MajorMap() {
       marker.addTo(layer)
     }
 
+    // selectedId, because the pins are redrawn to show which one is lit — and
+    // for no other reason. Where the map looks is the next effect's business;
+    // the two were one, and it meant every selection first flew out to fit the
+    // whole major and then back in to the college, so choosing a second one
+    // mid-flight read as the map zooming away from you.
+  }, [colleges, selectedId, fitNonce])
+
+  /* ---------------- the whole major, when the major changes ------------- */
+  useEffect(() => {
+    const map = mapRef.current
+    if (!map || !colleges.length) return
     map.fitBounds(
       colleges.map((c) => [c.lat, c.lng]),
       { padding: [48, 48], maxZoom: 8, animate: !prefersReducedMotion() },
     )
     // fitNonce, so that a fit computed against an unmeasured container is done
     // again once the container has been measured. See the ResizeObserver below.
-  }, [colleges, selectedId, fitNonce])
+  }, [colleges, fitNonce])
 
   /* --------------- selecting from the list moves the map --------------- */
   useEffect(() => {

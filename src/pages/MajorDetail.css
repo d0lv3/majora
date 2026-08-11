@@ -20,6 +20,30 @@
   pointer-events: none;
 }
 
+/* The subject, drawn behind the head on the right.
+   Sized against the header's own height rather than the viewport, so it keeps
+   the same relationship to the title at every width, and pushed far enough
+   right that it clears the tagline's measure — the text is the page and this
+   is the room it sits in. Both edges crop it, which is the intent: aria-hidden
+   and pointer-events off, because it is the h1 said again in a picture. */
+.mdetail__motif {
+  position: absolute;
+  top: 50%;
+  /* Hung off the right edge, so what is on the page is the left of the
+     drawing rather than the whole of it — the crop is what makes it read as a
+     detail. The viewBox is square, so the height also sets the width: 135% of
+     the header is about 800px, and hanging 18% of the header's width past the
+     right edge is what starts the drawing after the tagline's measure ends
+     rather than under it. */
+  right: -18%;
+  width: auto;
+  height: 135%;
+  transform: translateY(-50%);
+  color: #ffffff;
+  opacity: 0.08;
+  pointer-events: none;
+}
+
 .mdetail__headInner {
   position: relative;
 }
@@ -100,6 +124,18 @@
     align-items: center;
     min-height: 44px;
     margin-bottom: 0.9rem;
+  }
+}
+
+/* On a phone the header is all measure and no margin, so the motif stops
+   being a backdrop and starts being something the title sits on top of. It
+   moves further out and fades back rather than going away: the page should
+   still look like this major's page at any width. */
+@media (max-width: 760px) {
+  .mdetail__motif {
+    right: -18%;
+    height: 150%;
+    opacity: 0.05;
   }
 }
 

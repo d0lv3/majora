@@ -262,11 +262,17 @@
    into it, so both shapes keep their own silhouette. The mark is scaled past
    the padding box so it reads at this size instead of floating in the middle
    of a large circle. */
+/* 52px rather than 58, and pulled a little left of the bar.
+   At 58 the disc was reading as the largest thing in the header and sitting
+   dead against the first pill; the negative margin is what sets it apart from
+   the bar rather than centring it over the shell's gutter, so the mark leads
+   the row instead of being the first item in it. */
 .majora-nav .pill-logo {
-  width: 58px;
-  height: 58px;
+  width: 52px;
+  height: 52px;
   padding: 2px;
-  margin-right: 10px;
+  margin-right: 12px;
+  margin-left: -6px;
   background: var(--purple-600);
   /* a thin ink stroke so the disc keeps its edge against a light section */
   box-shadow: 0 0 0 2px var(--ink);
