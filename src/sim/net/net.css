@@ -122,12 +122,18 @@
 
 /* The mode ribbon: which head you are wearing, top-left of the screen. Gold as
    the attacker, green as the defender — the site's one-line thesis, made into a
-   thing you can see you are inside of. */
+   thing you can see you are inside of.
+
+   It is a label and never a control, so it never takes a tap. It lies over the
+   top-left of the drawing, the machine nearest that corner is a button, and on
+   a phone the ribbon was landing across the IT laptop and swallowing presses
+   meant for it. */
 .netMap__mode {
   position: absolute;
   top: 11px;
   left: 12px;
   z-index: 5;
+  pointer-events: none;
   display: inline-flex;
   align-items: center;
   gap: 0.5rem;
@@ -929,14 +935,18 @@
     aspect-ratio: 4 / 3;
   }
 
-  /* Narrower panel, same labels, so the coordinate box gives up more room at
-     the sides — most of it on the right, where the longest name lives. The
-     wires and the machines have to be given the same box, or the two are drawn
-     against different scales. */
+  /* The coordinate box takes nearly the whole panel here, because the six
+     names are the same number of pixels wide whatever the map is and the row
+     they sit on has to fit them. At the old 15%/8% insets the box was 258px
+     for a row needing 230px of node plus gaps — the website and the office
+     network stood 1.8px apart, and the moment either was selected and grew by
+     14% they overlapped and one swallowed the other's taps. The wires and the
+     machines have to be given the same box, or the two are drawn against
+     different scales. */
   .netMap__wires,
   .netMap__nodes,
   .netMap__zones {
-    inset: 7% 15% 7% 8%;
+    inset: 7% 8% 7% 5%;
   }
 
   .netNode {
@@ -955,6 +965,17 @@
     font-size: 0.64rem;
   }
 
+  /* The two narrow segments drop their sub-lines the moment the console goes
+     to one column. They are about a fifth of the map wide from here down, which
+     is a measure of four or five characters — the line wraps to four rows and
+     reaches down into the machine standing in the box. Their names carry the
+     meaning; the office keeps its sub-line, because "flat — nothing is
+     separated" is the whole lesson and it has the width to say it. */
+  .netZone--outside .netZone__sub,
+  .netZone--prize .netZone__sub {
+    display: none;
+  }
+
   /* The right-hand crowd, given room. On a full-width map the IT laptop, the
      file server and the records sit comfortably apart; on a 260px-wide one
      their names are the same number of pixels and they collide, so the two
@@ -962,9 +983,14 @@
      office and the management ground opens up between them. */
   /* !important because the coordinate arrives as an inline custom property,
      and an inline declaration outranks a stylesheet one whatever its
-     specificity. This is the one place the narrow layout has to win. */
+     specificity. This is the one place the narrow layout has to win.
+
+     `you` is not at 8% here for the same reason it is not at 10%: the two
+     narrow segments label themselves down their own left edge at this width,
+     and at 8% the globe was drawn straight through the word "internet". It
+     stands clear of the label instead, and the segment widens to keep it. */
   .netMap__nodes li[data-node='you'] {
-    --nx: 8% !important;
+    --nx: 11% !important;
   }
 
   .netMap__nodes li[data-node='admin'],
@@ -976,23 +1002,46 @@
     --nx: 96% !important;
   }
 
+  /* The three grounds, re-cut to the wider coordinate box. Management moves
+     left and grows for the same reason the internet does: the records icon was
+     sitting on its own segment's vertical label. */
   .netZone--outside {
     --zx: -3% !important;
-    --zw: 21.5% !important;
+    --zw: 23% !important;
   }
 
   .netZone--inside {
-    --zx: 19.5% !important;
-    --zw: 63% !important;
+    --zx: 20.5% !important;
+    --zw: 61% !important;
   }
 
   .netZone--prize {
-    --zx: 84% !important;
-    --zw: 24% !important;
+    --zx: 82% !important;
+    --zw: 26% !important;
   }
 }
 
 @media (max-width: 560px) {
+  /* Square, because on a phone the drawing is short of height, not width. The
+     network is three deep — the IT laptop above the office, the file server
+     below it — and in a 4:3 box 335px wide that is 216px of coordinate space
+     for rows of 73px machines. They overlapped by 12px, which is not only ugly
+     but wrong to use: two buttons sharing a corner means the one that answers
+     a tap is whichever happens to be later in the document. A square box gives
+     the same three rows 288px and they stand apart. */
+  .netMap {
+    aspect-ratio: 1 / 1;
+  }
+
+  /* And the box gives back most of its top and bottom margin, for the same
+     reason: three rows of machine at a fixed 73px are what has to fit, and the
+     panel's rounded corners are nowhere near them. */
+  .netMap__wires,
+  .netMap__nodes,
+  .netMap__zones {
+    inset: 4.5% 8% 4.5% 5%;
+  }
+
   .netLog__row {
     grid-template-columns: 3rem minmax(0, 1fr);
   }
@@ -1003,13 +1052,8 @@
 
   /* The two narrow segments are tall thin boxes on a phone — too thin for a
      word across them. Their labels turn to run down the box the way a real
-     rack diagram labels a column, and they drop their sub-lines; the wide
-     office box keeps its label and its one telling line about being flat. */
-  .netZone--outside .netZone__sub,
-  .netZone--prize .netZone__sub {
-    display: none;
-  }
-
+     rack diagram labels a column; the wide office box keeps its label and its
+     one telling line about being flat. */
   .netZone--outside .netZone__label,
   .netZone--prize .netZone__label {
     writing-mode: vertical-rl;
@@ -1036,9 +1080,85 @@
     letter-spacing: 0.12em;
   }
 
+  /* The act, dropped. Even at these sizes "Attacker · Reconnaissance" ran 182px
+     across a 335px map — over half the drawing, and far enough right to reach
+     the machines. Which side you are on is the part that has to be on the map;
+     which act you are in is already the lit chip in the rail above it. */
   .netMap__modeLabel {
-    padding-left: 0.45rem;
+    display: none;
+  }
+}
+
+/* ================================ SMALLEST ============================ */
+/* The small phones, where everything above stops being enough: below this the
+   machines are wider than the gaps between them and two of them share a corner
+   again.
+
+   The breakpoint is arithmetic, not a round number. A node is 57.6px wide and
+   72.9px tall whatever the map is, the box is 87% of the map across and 91%
+   down, and the closest pair sit 23% and 28% of it apart — so a node and its
+   selected neighbour, which is 14% larger, stop fitting between their centres
+   at a map about 308px wide. Add the shell's gutters and that is a 348px
+   screen; 360 is the narrowest phone in common use, so the rule takes
+   everything under it.
+
+   Below there the drawing itself gets smaller rather than the space around it —
+   a smaller icon, less padding, a shorter name — because the map's proportions
+   are the lesson and shuffling the topology to fit would cost more than the
+   few pixels it saved. */
+@media (max-width: 359px) {
+  .netConsole {
+    --net-icon: 26px;
+  }
+
+  .netNode {
+    max-width: 3.2rem;
+    padding: 0.28rem 0.35rem;
+  }
+
+  .netNode__label {
     font-size: 0.6rem;
+  }
+
+  /* The segments' own labels move out to their edges. They are written inside
+     the boxes the machines stand in, and at this width the 10px of padding was
+     enough to put "the internet" through the globe and "flat — nothing is
+     separated" through the laptop. */
+  .netZone {
+    padding: 6px 5px;
+  }
+
+  /* The segments follow the machines in: narrower nodes want a narrower
+     office, and the two outer boxes take the width it gives back so their
+     vertical labels still clear the icons standing in them. */
+  .netZone--outside {
+    --zw: 24% !important;
+  }
+
+  .netZone--inside {
+    --zx: 21.5% !important;
+    --zw: 60% !important;
+  }
+}
+
+/* ============================== ON ITS SIDE =========================== */
+/* A phone turned sideways, which is the one case where the map is short of
+   height rather than width — and the network is three machines deep.
+
+   The panel's ratio and its 64svh cap between them were handing the drawing a
+   320x240 box on an 812x375 screen: 206px of coordinate space for three rows of
+   73px machine, so the office and the two boxes above and below it overlapped
+   by 15px whatever else was done. Height is stated outright here instead, and
+   the cap that was enforcing 240 is lifted. The map ends up about as tall as
+   the screen and the page scrolls, which is what a phone on its side does
+   anyway — and it is a drawing you can read rather than one you cannot use. */
+@media (pointer: coarse) and (max-height: 520px) {
+  .netMap {
+    aspect-ratio: auto;
+    /* The floor is what three rows need; the ceiling stops a tablet held
+       sideways from getting a map taller than its own panel. */
+    height: clamp(330px, 46vw, 420px);
+    max-height: none;
   }
 }
 

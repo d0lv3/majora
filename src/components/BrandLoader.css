@@ -34,9 +34,11 @@
   text-align: center;
 }
 
+/* Height, not width: the mark's viewBox is cut to its own ink, so the two are
+   no longer interchangeable. Same drawn size as the old square gave. */
 .brandCurtain--inset .splash__mark {
-  width: clamp(72px, 16vmin, 104px);
-  height: clamp(72px, 16vmin, 104px);
+  height: clamp(61px, 13.6vmin, 88px);
+  width: auto;
 }
 
 .brandCurtain--inset .splash__word {

@@ -80,7 +80,14 @@ export default function Home() {
                 destinations across it — so the brand opens the page instead,
                 which is where you look first anyway. Decorative: the headline
                 below it already says the name. */}
-            <img className="hero__mark" src={logo} alt="" width="800" height="800" />
+            {/* The disc is the span and the artwork is the image inside it,
+                the same two boxes the nav's lockup uses. One element doing
+                both jobs cannot be corrected: the mark sits high in its own
+                file, and nudging it down would take the purple circle with
+                it. See the note on that correction in index.css. */}
+            <span className="hero__mark" aria-hidden="true">
+              <img src={logo} alt="" width="800" height="800" />
+            </span>
 
             <h1 className="hero__title">
               Majora - Discover

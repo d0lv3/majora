@@ -1885,6 +1885,28 @@
   opacity: 0.55;
 }
 
+/* On a phone the nav bar is at the foot of the screen, so the briefing is
+   holding 96px of clearance for a bar that is not overhead. The head was 552px
+   of an 812px screen before the rail had said anything, which put the map — the
+   whole simulation — a screen and a half down. The clamp above has a 6rem floor
+   that a smaller viewport can never get under, so the phone states its own. */
+@media (max-width: 768px), (pointer: coarse) and (max-height: 520px) {
+  .sim--net .sim__head {
+    padding-top: 1.4rem;
+  }
+
+  /* Five acts and a count, wrapping to two rows of chips. Tighter here so the
+     rail stays a rail rather than a block. */
+  .sim--net .sim__rail {
+    padding-block: 0.7rem;
+  }
+
+  .sim--net .simActs li {
+    padding: 0.3rem 0.65rem;
+    font-size: 0.72rem;
+  }
+}
+
 /* The console takes the whole screen. A network diagram is the one thing on
    this site that genuinely wants every pixel of width it can get — the map is
    the lesson, and a wider map is a bigger drawing rather than a longer line of

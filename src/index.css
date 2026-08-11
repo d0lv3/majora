@@ -173,6 +173,36 @@ svg {
   max-width: 100%;
 }
 
+/* ---------------------------------------------------------------------
+   THE LOGO IS NOT CENTRED IN ITS OWN FILE.
+
+   Both exports carry uneven transparent margins: sampled on a grid, the
+   mark's ink in logo-web.png runs y=36..718 of 800, which puts its centre
+   2.9% of the frame ABOVE the middle of the file. So anything that centres
+   the image — a round disc, a lockup beside the wordmark — is centring the
+   padding rather than the mark, and on the two discs that shows plainly: the
+   gap under the mark came out more than twice the gap over it.
+
+   Corrected here, once, because it is one fact about one asset and five
+   places render it. `translate` rather than `transform` on purpose — two of
+   these already carry a scale, and the shorthand would wipe it; the
+   individual property composes with it instead.
+
+   Vertical only. The same measurement puts the ink 0.5% right of centre,
+   which is a quarter of a pixel at these sizes — correcting it would move
+   nothing and blur the edge doing it.
+
+   If the artwork is ever re-exported with even margins, delete this rule
+   rather than re-measuring it.
+   --------------------------------------------------------------------- */
+.pill-logo img,
+.hero__mark img,
+.foot__lockup img,
+.auth__brand img,
+.quiz__brand img {
+  translate: 0 2.9%;
+}
+
 button,
 input,
 textarea,

@@ -102,9 +102,17 @@
         visibility: hidden;
       }
 
+      /* Sized by height, because the box is now the drawing.
+
+         It used to be a square 200x200 with the mark loose inside it, and the
+         slack was not even: 10.65 units of air over the frame's peak and 19.2
+         under the book's foot. place-content centres boxes, not ink, so the
+         thing anybody could actually see — mark, then wordmark — sat low on
+         the screen and the gap under the mark read as too big. The viewBox is
+         cut to the ink instead, so centring the box is centring the logo. */
       .splash__mark {
-        width: clamp(120px, 26vmin, 190px);
-        height: clamp(120px, 26vmin, 190px);
+        height: clamp(102px, 22.1vmin, 162px);
+        width: auto;
         overflow: visible;
         /* Once the mark is drawn it breathes, so a slow connection gets a
            screen that is still alive rather than a still image.
@@ -269,8 +277,14 @@
         composed with the tassel hanging outside the frame, so the frame sits
         right of centre and the whole thing balances. Moving it to 100 is what
         made the previous version look like a different logo.
+
+        Which is why the viewBox is not that 200x200 square but the ink's own
+        bounding box, strokes included: x 20.15 to 182.5, y 10.65 to 180.8. The
+        path data is untouched — this only says where the drawing's edges are,
+        so the mark centres on whatever centres this element, and the wordmark
+        under it lines up with the logo rather than with the logo's padding.
       -->
-      <svg class="splash__mark" viewBox="0 0 200 200" aria-hidden="true">
+      <svg class="splash__mark" viewBox="20.15 10.65 162.35 170.15" aria-hidden="true">
         <!-- The house frame, as one stroke. It starts where the tassel hangs —
              the left edge stops at y=106.5 in the artwork, and that break is
              what the tassel hangs from — then runs up over the peak, down the

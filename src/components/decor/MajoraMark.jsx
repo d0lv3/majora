@@ -11,6 +11,13 @@
  * with the tassel hanging outside the frame, so the frame sits right of centre
  * and the whole thing balances.
  *
+ * Which is also why the viewBox is not the 200x200 square the paths were drawn
+ * on but the ink's own bounding box, strokes included — x 20.15 to 182.5, y
+ * 10.65 to 180.8. Inside the square the drawing sits high and right, so
+ * centring the square put the mark off-centre over the wordmark and left a gap
+ * under it that read as too big. The path data is untouched; only the edges of
+ * the drawing are now where the drawing is.
+ *
  * `animated` stamps the class names the splash's stylesheet already targets, so
  * the mark draws itself exactly as it does on the way into the site — same
  * order, same delays, same gold tassel swinging in last. Nothing about the
@@ -23,7 +30,7 @@ export default function MajoraMark({ className, strokeWidth = 9, animated = fals
   return (
     <svg
       className={className}
-      viewBox="0 0 200 200"
+      viewBox="20.15 10.65 162.35 170.15"
       aria-hidden="true"
       fill="none"
       stroke="currentColor"
