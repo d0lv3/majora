@@ -10,6 +10,8 @@ import StoryLoader from '../sim/story/StoryLoader.jsx'
 import StoryAudio from '../sim/story/StoryAudio.jsx'
 import { initialStoryState, storyReducer } from '../sim/story/storyState.js'
 import { useScenePreload } from '../sim/story/useScenePreload.js'
+import NetConsole from '../sim/net/NetConsole.jsx'
+import { actOf, initialNetState, netReducer } from '../sim/net/netState.js'
 import './Simulation.css'
 
 /**
@@ -26,6 +28,8 @@ import './Simulation.css'
  *            clinic, where each screen is its own instrument
  *   story    a branching scene graph driven by choices — Macbeth, where the
  *            scenes are alike and only the path through them differs
+ *   network  one map and a phase — The Way In, where the screen never changes
+ *            and what you are being asked to do to it does
  *
  * Deliberately not the app's dark ground. The reader is inside the case rather
  * than reading about one; the surrounding chrome is a way back out and nothing
@@ -54,11 +58,9 @@ export default function Simulation() {
     )
   }
 
-  return sim.kind === 'story' ? (
-    <StoryRun slug={slug} major={major} sim={sim} />
-  ) : (
-    <ScreensRun slug={slug} major={major} sim={sim} />
-  )
+  if (sim.kind === 'story') return <StoryRun slug={slug} major={major} sim={sim} />
+  if (sim.kind === 'network') return <NetRun slug={slug} major={major} sim={sim} />
+  return <ScreensRun slug={slug} major={major} sim={sim} />
 }
 
 /* -------------------------------- the shell ----------------------------- */
@@ -167,6 +169,25 @@ function StoryRun({ slug, major, sim }) {
       railEnd={<StoryAudio name={sim.score} />}
     >
       <StoryPlayer sim={sim} state={state} dispatch={dispatch} />
+    </SimShell>
+  )
+}
+
+function NetRun({ slug, major, sim }) {
+  const [state, dispatch] = useReducer(netReducer, undefined, initialNetState)
+  const actId = actOf(sim, state)
+
+  return (
+    <SimShell
+      slug={slug}
+      major={major}
+      sim={sim}
+      variant="net"
+      step={`${state.phase}:${state.taken.length}`}
+      acts={sim.acts}
+      act={sim.acts.find((a) => a.id === actId)}
+    >
+      <NetConsole sim={sim} state={state} dispatch={dispatch} />
     </SimShell>
   )
 }

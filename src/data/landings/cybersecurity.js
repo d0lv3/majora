@@ -131,9 +131,13 @@ export const CYBERSECURITY_LANDING = {
 
     /* ---------------------------- experience ---------------------------- */
     /* `panel` paints the section as the closing call to action rather than
-       more document. The simulations the button points at are not built yet,
-       so `ready: false` renders it as a button that is plainly not ready
-       instead of a link to nowhere. */
+       more document.
+
+       This panel promised networks, then cryptography, then investigation
+       before any of it existed. The Way In is that promise kept, in that
+       order: a network you find your way into, a wire that gives up a password
+       because nothing encrypted it, and a log you read afterwards to find your
+       own footprints in it. */
     {
       id: 'experience',
       title: 'Experience cybersecurity',
@@ -148,8 +152,8 @@ export const CYBERSECURITY_LANDING = {
         {
           type: 'action',
           label: 'Start Exploring',
-          ready: false,
-          note: 'The simulations are being built.',
+          to: '/app/cybersecurity/simulation',
+          note: 'The Way In · about 15 minutes',
         },
       ],
     },

@@ -1,0 +1,694 @@
+/* =========================================================
+   The Way In — the network console.
+
+   Map on the left, whatever the phase is asking on the
+   right, and the map never leaves. The colour carries the
+   phase: gold while you are the one moving through it,
+   purple once it is yours to defend.
+   ========================================================= */
+.netConsole {
+  display: grid;
+  grid-template-columns: minmax(0, 1.15fr) minmax(0, 1fr);
+  gap: clamp(1rem, 2.5vw, 1.8rem);
+  align-items: start;
+}
+
+/* ================================= MAP ================================ */
+.netMap {
+  position: relative;
+  aspect-ratio: 16 / 10;
+  border-radius: var(--r-lg);
+  background:
+    radial-gradient(70% 60% at 50% 45%, rgba(107, 78, 148, 0.22), transparent 70%),
+    var(--purple-950);
+  box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.08);
+  overflow: hidden;
+}
+
+/* A faint grid, so the dark reads as a diagram rather than a hole. */
+.netMap::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background-image:
+    linear-gradient(rgba(255, 255, 255, 0.045) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255, 255, 255, 0.045) 1px, transparent 1px);
+  background-size: 28px 28px;
+  pointer-events: none;
+}
+
+/* The diagram's own box, inset from the panel.
+   Node positions are percentages and a node is centred on its point, so a node
+   at 92% hangs half its width past the edge — and the widest label sits there.
+   Insetting the coordinate space is the fix rather than moving the node,
+   because the links are drawn in the same percentages and the two have to
+   agree: this shrinks both together and the topology is untouched. */
+.netMap__svg,
+.netMap__nodes {
+  position: absolute;
+  inset: 6% 9% 6% 5%;
+  width: auto;
+  height: auto;
+}
+
+/* preserveAspectRatio is none, so the stroke is scaled with the box and has to
+   be given back its width in the two axes separately. vector-effect keeps it
+   honest at any size. */
+.netMap__link {
+  stroke: rgba(255, 255, 255, 0.16);
+  stroke-width: 1.5;
+  vector-effect: non-scaling-stroke;
+  transition:
+    stroke 0.4s ease,
+    stroke-width 0.4s ease;
+}
+
+.netMap__link.is-live {
+  stroke: rgba(255, 255, 255, 0.32);
+}
+
+/* The route, once the turn has happened. */
+.netMap__link.is-path {
+  stroke: var(--gold);
+  stroke-width: 2.5;
+}
+
+/* A link a fix has cut: dashed and dimmed, and the dash is what says "no
+   longer a way through" without needing a legend. */
+.netMap__link.is-cut {
+  stroke: #6ee7a8;
+  stroke-width: 2.5;
+  stroke-dasharray: 5 5;
+}
+
+.netMap__nodes {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.netMap__nodes li {
+  position: absolute;
+  transform: translate(-50%, -50%);
+}
+
+.netNode {
+  display: grid;
+  justify-items: center;
+  gap: 0.3rem;
+  width: max-content;
+  /* A one-word node would otherwise be a 33px target. */
+  min-width: 48px;
+  max-width: 8.5rem;
+  padding: 0.5rem 0.6rem;
+  border-radius: var(--r-md);
+  background: rgba(21, 13, 33, 0.72);
+  box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.14);
+  color: rgba(255, 255, 255, 0.55);
+  transition:
+    color 0.3s ease,
+    box-shadow 0.3s ease,
+    background-color 0.3s ease,
+    transform 0.3s var(--ease);
+}
+
+.netNode__icon svg {
+  width: 22px;
+  height: 22px;
+}
+
+.netNode__label {
+  font-family: var(--font-display);
+  font-size: 0.68rem;
+  font-weight: 600;
+  line-height: 1.2;
+  text-align: center;
+}
+
+.netNode.is-dim {
+  opacity: 0.45;
+}
+
+.netNode.is-lit {
+  color: rgba(255, 255, 255, 0.9);
+  box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.28);
+}
+
+.netNode.is-taken {
+  color: var(--gold-400);
+  background: rgba(238, 175, 22, 0.14);
+  box-shadow: inset 0 0 0 1.5px rgba(238, 175, 22, 0.6);
+}
+
+.netNode.is-on {
+  transform: scale(1.06);
+  box-shadow:
+    inset 0 0 0 1.5px var(--gold),
+    0 12px 30px -14px rgba(0, 0, 0, 0.9);
+}
+
+.netNode:hover:not(:disabled) {
+  color: #fff;
+}
+
+/* Something here you have not looked at. A dot, because the node is already
+   carrying an icon and a name and cannot afford a third piece of text. */
+.netNode__new {
+  position: absolute;
+  top: 6px;
+  right: 6px;
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: var(--gold);
+  box-shadow: 0 0 0 3px rgba(238, 175, 22, 0.22);
+}
+
+.netNode {
+  position: relative;
+}
+
+/* The database, which is what all of this is about. */
+.netNode--prize.is-lit {
+  box-shadow: inset 0 0 0 1.5px rgba(238, 175, 22, 0.5);
+}
+
+/* Defending: the route is history, so it stops pulsing and the greens lead. */
+.netMap--defend .netNode.is-taken {
+  color: rgba(255, 255, 255, 0.85);
+  background: rgba(21, 13, 33, 0.72);
+  box-shadow: inset 0 0 0 1px rgba(238, 175, 22, 0.4);
+}
+
+/* ================================ PANEL =============================== */
+.netPanel {
+  padding: clamp(1.1rem, 2.4vw, 1.6rem);
+  border-radius: var(--r-lg);
+  background: var(--white);
+  box-shadow:
+    inset 0 0 0 1px rgba(65, 43, 99, 0.1),
+    var(--shadow-card);
+}
+
+.netPanel__eyebrow {
+  font-size: 0.62rem;
+  font-weight: 700;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: var(--gold-700);
+}
+
+.netPanel__title {
+  margin-top: 0.45rem;
+  font-size: clamp(1.15rem, 2.4vw, 1.6rem);
+  line-height: 1.18;
+  color: var(--purple-600);
+  letter-spacing: -0.02em;
+  text-wrap: balance;
+}
+
+.netPanel__sub {
+  margin-top: 0.5rem;
+  font-size: 0.92rem;
+  line-height: 1.6;
+  color: var(--text-on-light-dim);
+}
+
+.netPanel__text {
+  margin-top: 0.9rem;
+  font-size: 0.95rem;
+  line-height: 1.7;
+  color: var(--text-on-light-dim);
+  text-wrap: pretty;
+}
+
+.netPanel__close {
+  margin-top: 1.2rem;
+  padding-top: 1rem;
+  border-top: 1px solid var(--line);
+  font-family: var(--font-display);
+  font-size: 1rem;
+  font-weight: 500;
+  line-height: 1.5;
+  color: var(--purple-600);
+}
+
+.netPanel__locked {
+  margin-top: 1rem;
+  padding: 0.85rem 1rem;
+  border-radius: var(--r-md);
+  background: rgba(65, 43, 99, 0.05);
+  font-size: 0.9rem;
+  line-height: 1.6;
+  color: var(--text-on-light-dim);
+}
+
+/* ------------------------------ observations --------------------------- */
+.netObs {
+  display: grid;
+  gap: 0.5rem;
+  margin-top: 1.1rem;
+  padding: 0;
+  list-style: none;
+}
+
+.netObs__btn {
+  width: 100%;
+  min-height: 44px;
+  padding: 0.7rem 0.95rem;
+  border-radius: var(--r-md);
+  background: var(--white);
+  box-shadow: inset 0 0 0 1.5px var(--line-strong);
+  text-align: left;
+  font-size: 0.9rem;
+  line-height: 1.6;
+  color: var(--purple-600);
+  transition: box-shadow 0.25s ease, background-color 0.25s ease;
+}
+
+.netObs__btn:hover {
+  box-shadow: inset 0 0 0 1.5px var(--purple-500);
+}
+
+.netObs__btn.is-seen {
+  background: var(--paper);
+  box-shadow: inset 0 0 0 1px var(--line);
+  color: var(--text-on-light-dim);
+  cursor: default;
+}
+
+.netObs__note {
+  margin: 0.4rem 0 0 0.95rem;
+  padding-left: 0.8rem;
+  border-left: 2px solid var(--gold);
+  font-size: 0.85rem;
+  line-height: 1.55;
+  color: var(--text-on-light);
+}
+
+.netObs__empty {
+  font-size: 0.88rem;
+  color: var(--text-on-light-dim);
+}
+
+/* -------------------------------- actions ------------------------------ */
+.netAct {
+  margin-top: 1.2rem;
+}
+
+.netAct__btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 46px;
+  padding: 0.75rem 1.3rem;
+  border-radius: var(--r-pill);
+  background: var(--purple-600);
+  font-family: var(--font-display);
+  font-size: 0.94rem;
+  font-weight: 600;
+  color: var(--white);
+  transition:
+    background-color 0.25s ease,
+    transform 0.25s var(--ease),
+    box-shadow 0.25s ease;
+}
+
+.netAct__btn:hover:not(:disabled) {
+  transform: translateY(-2px);
+  background: var(--purple-500);
+  box-shadow: 0 16px 30px -18px rgba(65, 43, 99, 0.9);
+}
+
+.netAct__btn:disabled {
+  cursor: not-allowed;
+  background: rgba(65, 43, 99, 0.08);
+  color: var(--text-on-light-dim);
+}
+
+.netAct__hint {
+  margin-top: 0.7rem;
+  font-size: 0.82rem;
+  line-height: 1.55;
+  color: var(--text-on-light-dim);
+}
+
+/* -------------------------------- results ------------------------------ */
+.netResult {
+  margin-top: 1.3rem;
+  padding-top: 1.1rem;
+  border-top: 1px solid var(--line);
+}
+
+.netResult__text {
+  font-size: 0.95rem;
+  line-height: 1.7;
+  color: var(--text-on-light);
+}
+
+/* The point of the whole simulation, so it is the one thing on the panel that
+   is painted rather than written. */
+.netAssume {
+  display: grid;
+  gap: 0.35rem;
+  margin-top: 1rem;
+  padding: 0.9rem 1.1rem;
+  border-radius: var(--r-md);
+  background: linear-gradient(120deg, var(--purple-700), var(--purple-800));
+  color: var(--white);
+}
+
+.netAssume__tag {
+  font-size: 0.6rem;
+  font-weight: 700;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: var(--gold-400);
+}
+
+.netAssume__text {
+  font-family: var(--font-display);
+  font-size: 1rem;
+  font-weight: 500;
+  line-height: 1.5;
+}
+
+/* --------------------------------- terms ------------------------------- */
+.netTerm {
+  margin-top: 1rem;
+  padding: 0.9rem 1.1rem;
+  border-radius: var(--r-md);
+  background: var(--paper);
+  box-shadow: inset 0 0 0 1px var(--line);
+}
+
+.netTerm__name {
+  font-family: var(--font-display);
+  font-size: 0.98rem;
+  font-weight: 600;
+  color: var(--purple-600);
+}
+
+.netTerm__text {
+  margin-top: 0.35rem;
+  font-size: 0.88rem;
+  line-height: 1.65;
+  color: var(--text-on-light-dim);
+}
+
+.netTerms {
+  margin-top: 1.2rem;
+}
+
+/* --------------------------------- chain ------------------------------- */
+.netChain {
+  display: grid;
+  gap: 0.5rem;
+  margin-top: 1.2rem;
+  padding: 0 0 1.2rem;
+  list-style: none;
+}
+
+.netChain li {
+  display: flex;
+  align-items: baseline;
+  gap: 0.7rem;
+  padding: 0.7rem 0.95rem;
+  border-radius: var(--r-md);
+  background: var(--paper);
+  box-shadow: inset 0 0 0 1px var(--line);
+}
+
+.netChain__n {
+  flex: none;
+  font-family: var(--font-display);
+  font-size: 0.7rem;
+  font-weight: 700;
+  color: var(--gold-700);
+}
+
+.netChain__assume {
+  font-size: 0.9rem;
+  line-height: 1.55;
+  color: var(--text-on-light-dim);
+}
+
+/* ---------------------------------- log -------------------------------- */
+.netLog {
+  display: grid;
+  gap: 0.25rem;
+  margin: 1.1rem 0;
+  padding: 0;
+  list-style: none;
+}
+
+.netLog__row {
+  display: grid;
+  grid-template-columns: 3.2rem 5.5rem minmax(0, 1fr);
+  gap: 0.6rem;
+  width: 100%;
+  min-height: 44px;
+  align-items: center;
+  padding: 0.5rem 0.6rem;
+  border-radius: var(--r-sm);
+  background: var(--paper);
+  text-align: left;
+  font-family: 'SFMono-Regular', 'Consolas', monospace;
+  font-size: 0.76rem;
+  line-height: 1.45;
+  color: var(--text-on-light-dim);
+  transition: background-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+.netLog__row:hover {
+  background: rgba(65, 43, 99, 0.07);
+}
+
+.netLog__row.is-marked {
+  background: rgba(238, 175, 22, 0.16);
+  box-shadow: inset 0 0 0 1.5px var(--gold-600);
+  color: var(--text-on-light);
+}
+
+.netLog__at {
+  font-variant-numeric: tabular-nums;
+  color: var(--purple-500);
+}
+
+.netLog__src {
+  font-size: 0.7rem;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: var(--purple-400);
+}
+
+/* --------------------------------- fixes ------------------------------- */
+.netFixes {
+  display: grid;
+  gap: 0.6rem;
+  margin: 1.2rem 0;
+  padding: 0;
+  list-style: none;
+}
+
+.netFix {
+  display: grid;
+  gap: 0.35rem;
+  width: 100%;
+  padding: 0.95rem 1.1rem;
+  border-radius: var(--r-md);
+  background: var(--white);
+  box-shadow: inset 0 0 0 1.5px var(--line-strong);
+  text-align: left;
+  transition:
+    box-shadow 0.25s ease,
+    background-color 0.25s ease,
+    opacity 0.25s ease;
+}
+
+.netFix:hover:not(:disabled) {
+  box-shadow: inset 0 0 0 1.5px var(--purple-500);
+}
+
+.netFix.is-on {
+  background: rgba(110, 231, 168, 0.12);
+  box-shadow: inset 0 0 0 2px #3fae76;
+}
+
+.netFix:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.netFix__label {
+  font-family: var(--font-display);
+  font-size: 0.98rem;
+  font-weight: 600;
+  color: var(--purple-600);
+}
+
+.netFix__detail {
+  font-size: 0.87rem;
+  line-height: 1.55;
+  color: var(--text-on-light-dim);
+}
+
+.netFix__cost {
+  margin-top: 0.35rem;
+  padding-top: 0.5rem;
+  border-top: 1px solid var(--line);
+  font-size: 0.82rem;
+  line-height: 1.55;
+  color: var(--text-on-light-dim);
+}
+
+.netFix__costTag {
+  display: block;
+  margin-bottom: 0.2rem;
+  font-family: var(--font-body);
+  font-size: 0.6rem;
+  font-weight: 700;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--gold-700);
+}
+
+/* --------------------------------- replay ------------------------------ */
+.netPath {
+  margin-top: 1.2rem;
+  padding: 1rem 1.1rem;
+  border-radius: var(--r-md);
+  background: var(--paper);
+  box-shadow: inset 0 0 0 1px var(--line);
+}
+
+.netPath__label {
+  font-family: var(--font-display);
+  font-size: 0.95rem;
+  font-weight: 600;
+  color: var(--purple-600);
+}
+
+.netPath__intro {
+  margin-top: 0.35rem;
+  font-size: 0.86rem;
+  line-height: 1.55;
+  color: var(--text-on-light-dim);
+}
+
+.netPath__steps {
+  display: grid;
+  gap: 0.45rem;
+  margin: 0.8rem 0 0;
+  padding: 0;
+  list-style: none;
+}
+
+.netPath__steps li {
+  display: grid;
+  grid-template-columns: 10px minmax(0, 1fr) auto;
+  gap: 0.6rem;
+  align-items: baseline;
+  font-size: 0.85rem;
+  line-height: 1.5;
+  color: var(--text-on-light-dim);
+}
+
+.netPath__mark {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: var(--purple-200);
+}
+
+.netPath__steps li.is-through .netPath__mark {
+  background: #d9534f;
+}
+
+.netPath__steps li.is-blocked .netPath__mark {
+  background: #3fae76;
+}
+
+.netPath__steps li.is-moot {
+  opacity: 0.42;
+}
+
+.netPath__verdict {
+  font-size: 0.7rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.netPath__steps li.is-through .netPath__verdict {
+  color: #a33532;
+}
+
+.netPath__steps li.is-blocked .netPath__verdict {
+  color: #2f7d55;
+}
+
+.netPath__end {
+  margin-top: 0.8rem;
+  padding-top: 0.7rem;
+  border-top: 1px solid var(--line);
+  font-size: 0.88rem;
+  font-weight: 600;
+  color: #2f7d55;
+}
+
+.netPath__end.is-bad {
+  color: #a33532;
+}
+
+/* ================================ NARROW ============================== */
+/* The map goes on top and keeps its shape: the topology is the meaning, so it
+   is the last thing that should be squeezed. */
+@media (max-width: 900px) {
+  .netConsole {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .netMap {
+    aspect-ratio: 4 / 3;
+  }
+
+  /* Narrower panel, same labels, so the coordinate box gives up more room at
+     the sides — most of it on the right, where the longest name lives. */
+  .netMap__svg,
+  .netMap__nodes {
+    inset: 7% 15% 7% 8%;
+  }
+
+  .netNode {
+    max-width: 6rem;
+    padding: 0.4rem 0.45rem;
+  }
+
+  .netNode__icon svg {
+    width: 18px;
+    height: 18px;
+  }
+
+  .netNode__label {
+    font-size: 0.6rem;
+  }
+}
+
+@media (max-width: 560px) {
+  .netLog__row {
+    grid-template-columns: 3rem minmax(0, 1fr);
+  }
+
+  .netLog__src {
+    display: none;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .netNode,
+  .netMap__link,
+  .netAct__btn {
+    transition: none;
+  }
+}
