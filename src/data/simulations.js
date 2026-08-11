@@ -10,11 +10,12 @@
  * `network` for a console you poke at, `jaw` for a specimen you turn over.
  * Simulation.jsx reads that field and nothing else has to care.
  *
- * A major may have more than one. Dentistry does: the Year 5 clinic, which is
- * the curriculum played out, and the anatomy bench, which is the first weeks of
- * it. They are listed in the order a reader should meet them, and the first is
- * what /app/<major>/simulation opens — so the plain route keeps meaning what it
- * meant before a second one existed.
+ * A major may have more than one. Dentistry does: the anatomy bench, which is
+ * the first weeks of the degree, and the Year 5 clinic, which is the whole of
+ * it played out. They are listed in the order a reader should meet them — the
+ * jaw first, because it teaches the language the clinic then speaks — and the
+ * first is what /app/<major>/simulation opens. Both are linked by name from the
+ * dentistry page, so nothing depends on which happens to be first.
  *
  * Kept beside landings.js and branches.js so the three things a major page can
  * carry are found the same way.
@@ -26,7 +27,7 @@ import { MACBETH } from './simulations/macbeth.js'
 import { BREACH } from './simulations/breach.js'
 
 const SIMULATIONS = {
-  dentistry: [ORTHODONTICS, JAW],
+  dentistry: [JAW, ORTHODONTICS],
   'english-language-literature': [MACBETH],
   cybersecurity: [BREACH],
 }

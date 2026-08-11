@@ -642,6 +642,30 @@
   }
 }
 
+/* A phone on its side: plenty of width, almost no height. Stacking there gives
+   the model a 230px square with six hundred pixels of nothing beside it, so the
+   two columns come back and the specimen goes back to following the reader —
+   the height it gets is now the screen's, not the column's. */
+@media (max-width: 960px) and (orientation: landscape) and (max-height: 560px) {
+  .jawConsole {
+    grid-template-columns: minmax(0, 0.85fr) minmax(0, 1.15fr);
+    gap: 0.8rem;
+  }
+
+  .jawStage {
+    position: sticky;
+    top: 0.5rem;
+  }
+
+  .jawStage__shell {
+    max-height: 74svh;
+  }
+
+  .jawQuads {
+    grid-template-columns: 1fr 1fr;
+  }
+}
+
 /* A finger is not a mouse pointer. The controls under the model and the mark
    buttons are set for a cursor; on a touch screen they get the 44px the rest of
    the site gives, and the chart is widened so a tooth is a target rather than a

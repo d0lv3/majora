@@ -400,43 +400,12 @@ export const DENTISTRY_LANDING = {
       ],
     },
 
-    /* ---------------------------- the last level ------------------------ */
-    /* The simulation is the end of the curriculum above rather than a feature
-       beside it, so it closes the document: five years of reading, and then
-       the fifth year done rather than read. */
-    {
-      id: 'simulate',
-      title: 'Year 5, played out',
-      tag: 'Simulation',
-      panel: true,
-      blocks: [
-        { type: 'lede', text: 'Don’t just read about it. Take the case yourself.' },
-        {
-          type: 'text',
-          text: 'The last level of this curriculum is a Year 5 orthodontic case. One patient, followed across eighteen months and five visits: you talk to her, examine her, collect the records, trace the radiograph yourself, plan the treatment, and then watch what the body does with your plan and change it when it disagrees.',
-        },
-        {
-          type: 'text',
-          text: 'There is nothing to get right. Every choice has a clinical consequence instead of a score.',
-        },
-        {
-          type: 'flow',
-          steps: ['Listen', 'Examine', 'Record', 'Analyse', 'Plan', 'Monitor', 'Adapt'],
-        },
-        {
-          type: 'action',
-          label: 'Start the case',
-          to: '/app/dentistry/simulation',
-          note: 'The Journey of a Smile · about 15 minutes',
-        },
-      ],
-    },
-
-    /* ---------------------------- the first level ----------------------- */
-    /* And the other end of the degree. The clinic above is Year 5; this is the
-       first weeks of Year 1, and it is placed after it on purpose — a reader
-       who has just seen where the course arrives is the one most likely to
-       want to know what it starts from. */
+    /* ------------------------- the two played out ----------------------- */
+    /* The curriculum above, done rather than read — and in the order the degree
+       does them. The jaw is the first weeks of Year 1 and it comes first,
+       because it teaches the language the clinic then speaks in: a reader who
+       has taken 46 out of the arch and knows why it is called that is a reader
+       the Year 5 case can talk to. */
     {
       id: 'anatomy',
       title: 'Year 1, in your hands',
@@ -461,6 +430,37 @@ export const DENTISTRY_LANDING = {
           label: 'Open the jaw',
           to: '/app/dentistry/simulation/the-jaw',
           note: 'The Jaw, Read Properly · about 8 minutes',
+        },
+      ],
+    },
+
+    /* And then the far end of it: five years of reading, and the fifth year
+       done. Named in the link rather than left to the bare route, so the order
+       of the two can change again without quietly changing where this goes. */
+    {
+      id: 'simulate',
+      title: 'Year 5, played out',
+      tag: 'Simulation',
+      panel: true,
+      blocks: [
+        { type: 'lede', text: 'Don’t just read about it. Take the case yourself.' },
+        {
+          type: 'text',
+          text: 'The last level of this curriculum is a Year 5 orthodontic case. One patient, followed across eighteen months and five visits: you talk to her, examine her, collect the records, trace the radiograph yourself, plan the treatment, and then watch what the body does with your plan and change it when it disagrees.',
+        },
+        {
+          type: 'text',
+          text: 'There is nothing to get right. Every choice has a clinical consequence instead of a score.',
+        },
+        {
+          type: 'flow',
+          steps: ['Listen', 'Examine', 'Record', 'Analyse', 'Plan', 'Monitor', 'Adapt'],
+        },
+        {
+          type: 'action',
+          label: 'Start the case',
+          to: '/app/dentistry/simulation/orthodontics',
+          note: 'The Journey of a Smile · about 15 minutes',
         },
       ],
     },
