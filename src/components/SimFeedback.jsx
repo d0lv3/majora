@@ -1,6 +1,6 @@
 import { useEffect, useId, useState } from 'react'
 
-import { alreadyAnswered, feedbackEnabled, rememberAnswered, sendFeedback } from '../lib/feedback.js'
+import { feedbackEnabled, rememberAnswered, sendFeedback } from '../lib/feedback.js'
 import './SimFeedback.css'
 
 /**
@@ -26,13 +26,28 @@ import './SimFeedback.css'
  * read by people in the middle of the thing as often as by people at the end of
  * it. It is offered and never in the way; scrolling past costs nothing.
  *
- * IT ASKS ONCE
+ * IT STAYS
  *
- * Answered ratings are remembered per simulation in this browser, so a reader
- * who has already said their piece is not asked again on the next screen, or on
- * a replay. That also means one reader can only rate a simulation once from one
- * browser, which is the right trade: a form that keeps asking gets ignored, and
- * a rating given twice is not worth more than a rating given once.
+ * It used to ask once: an answer was remembered per simulation in this browser
+ * and the card never came back. That kept the average honest — one reader, one
+ * rating — at the price of a control that disappears permanently the first time
+ * you use it, which is indistinguishable from one that broke. A reader with a
+ * second thought on a second run had nowhere to put it, and anybody checking
+ * whether the thing works had to clear storage to see it again.
+ *
+ * So it comes back. The thank-you still takes its four seconds and then the
+ * form returns, empty. The answer is still recorded per simulation — nothing
+ * reads that to hide the card any more, and it is worth keeping because the
+ * Sheet is the only other place that knows.
+ *
+ * WHAT THAT COSTS, SAID PLAINLY
+ *
+ * One reader can now rate the same simulation as many times as they care to,
+ * and every one of those counts towards the average shown underneath. There is
+ * no identity here to stop it with — nothing that says who anybody is is sent,
+ * deliberately — so this is a number to read as a mood rather than a
+ * measurement. The `Show` column in the Sheet is what takes a run of them back
+ * out; see docs/feedback.md.
  */
 
 const SCALE = [
@@ -44,12 +59,12 @@ const SCALE = [
 ]
 
 /**
- * How long the thank-you stays before the card takes itself away.
+ * How long the thank-you stays before the form comes back.
  *
  * It has to go. This sits under the simulation on every screen, so a thank-you
  * that stayed would follow the reader through the rest of it — an
  * acknowledgement on the first pass and clutter on every screen after. Long
- * enough to read twice, then gone.
+ * enough to read twice, then the card is a form again.
  */
 const THANKS_MS = 4000
 
@@ -59,23 +74,25 @@ export default function SimFeedback({ sim, majorName }) {
   const [rating, setRating] = useState(null)
   const [comment, setComment] = useState('')
   const [state, setState] = useState('asking')
-  /* Read once, at mount, and kept — so that answering now still shows the
-     thank-you, while having answered on some earlier visit shows nothing at
-     all. A card thanking you for something you no longer remember doing is just
-     clutter under a simulation you came back to for another reason. */
-  const [answeredBefore] = useState(() => alreadyAnswered(slug))
 
   useEffect(() => {
     if (state !== 'done') return undefined
-    const id = window.setTimeout(() => setState('gone'), THANKS_MS)
+    /* Back to an empty form rather than off the page. Cleared as it returns,
+       so what comes back is a question and not the last answer sitting in the
+       box waiting to be sent twice. */
+    const id = window.setTimeout(() => {
+      setState('asking')
+      setRating(null)
+      setComment('')
+    }, THANKS_MS)
     return () => window.clearTimeout(id)
   }, [state])
 
   /* Nothing to post to, so nothing to ask. A form that silently throws its
-     answers away is worse than no form — see docs/feedback.md for the setup. */
+     answers away is worse than no form — see docs/feedback.md for the setup.
+     The only thing that still hides this card, and the only one that should:
+     it is about the build being misconfigured, not about the reader. */
   if (!feedbackEnabled()) return null
-  if (state === 'gone') return null
-  if (answeredBefore && state === 'asking') return null
 
   if (state === 'done') {
     return (

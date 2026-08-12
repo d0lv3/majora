@@ -62,6 +62,18 @@
   margin-right: 0.4rem;
 }
 
+/* The section with nothing in it, and the section still asking. Dimmer than a
+   review and set on the same top margin as one, so the card is the same shape
+   whichever of the three states it is in and does not jump when the answer
+   arrives. */
+.simSaid__none {
+  padding-top: 0.9rem;
+  font-size: 0.9rem;
+  line-height: 1.6;
+  color: var(--text-on-light-dim);
+  text-wrap: pretty;
+}
+
 .simSaid__list {
   display: grid;
   gap: 0.9rem;

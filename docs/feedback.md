@@ -2,13 +2,24 @@
 
 Under every simulation, on every screen of it, two ways to answer: a rating out
 of five, and a box to write whatever the reader thinks. Either on its own is
-enough to send, and it is asked once per simulation per browser. There is no API
-behind the site, so the answers go to a Google Apps Script Web App, which writes
-them into a Sheet.
+enough to send. There is no API behind the site, so the answers go to a Google
+Apps Script Web App, which writes them into a Sheet.
 
 Deliberately not held back until the ending. The reader who stops half way
 through is the one worth hearing from, and waiting for the last screen is
 exactly how you never hear from them.
+
+**Neither card ever hides.** The form is there whether or not this browser has
+already answered, and the reviews below it are there whether or not anybody has
+written one — an empty section says so in a line rather than disappearing. A
+section that vanishes when empty cannot be told apart from one that is broken,
+which is the confusion that cost an afternoon.
+
+**So one reader can rate the same simulation repeatedly**, and every one of
+those counts towards the average shown underneath. Nothing identifying is sent,
+by design, so there is no identity here to stop it with. Read the average as a
+mood rather than a measurement, and use the `Show` column below to take a run of
+them back out.
 
 **They are published.** Underneath the form, the site shows what other students
 wrote about that simulation, with the average of the ratings. Which means the
