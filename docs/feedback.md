@@ -10,14 +10,21 @@ Deliberately not held back until the ending. The reader who stops half way
 through is the one worth hearing from, and waiting for the last screen is
 exactly how you never hear from them.
 
+**They are published.** Underneath the form, the site shows what other students
+wrote about that simulation, with the average of the ratings. Which means the
+Sheet is not a private inbox any more — see "Taking one down" below before you
+open this to real readers.
+
 Nothing is collected that identifies a reader. The site knows the signed-in
 email and does not send it.
 
-> **If you deployed this script before the writing box existed, redeploy it.**
-> The old version rejected any submission without a 1–5 rating. The page cannot
-> read the reply — see "What this costs" below — so it would thank a student for
-> a paragraph that was never written down. Paste the script below over the old
-> one and deploy a new version.
+> **If you deployed this script before today, redeploy it.** Two things changed
+> and neither works against the old one: it rejected any submission without a
+> 1–5 rating (and the page cannot read the reply, so it would thank a student
+> for a paragraph that was never written down), and it had no way to hand the
+> reviews back, so the site has nothing to show. Paste the script below over the
+> old one and deploy a **new version** — editing the code is not enough, Apps
+> Script serves whichever version you deployed.
 
 ---
 
@@ -42,7 +49,10 @@ and paste this:
  */
 
 var TAB = 'feedback';
-var HEADERS = ['Received', 'Simulation', 'Title', 'Rating', 'Comment', 'Screen', 'Sent at'];
+var HEADERS = ['Received', 'Simulation', 'Title', 'Rating', 'Comment', 'Screen', 'Sent at', 'Show'];
+
+/** Most recent reviews returned to the site, per simulation. */
+var MAX_REVIEWS = 40;
 
 function doPost(e) {
   try {
@@ -69,6 +79,8 @@ function doPost(e) {
       comment,
       String(data.screen || '').slice(0, 20),
       String(data.at || '').slice(0, 40),
+      // Shown on the site. Set this cell to FALSE to take one down.
+      true,
     ]);
 
     return ContentService.createTextOutput(JSON.stringify({ ok: true }))
@@ -79,9 +91,43 @@ function doPost(e) {
   }
 }
 
-/** So that opening the URL in a browser says something rather than erroring. */
-function doGet() {
-  return ContentService.createTextOutput('Majora feedback endpoint. POST only.');
+/**
+ * What the site reads back: the reviews for one simulation, newest first.
+ *
+ * Only the three fields that get published — when, the number, the words. The
+ * screen size and the raw sent-at stay in the Sheet; there is no reason to hand
+ * them back out to every visitor.
+ */
+function doGet(e) {
+  try {
+    var slug = (e && e.parameter && e.parameter.sim) || '';
+    var sheet = SpreadsheetApp.getActiveSpreadsheet().getSheetByName(TAB);
+    var out = [];
+
+    if (sheet && sheet.getLastRow() > 1) {
+      var rows = sheet.getRange(2, 1, sheet.getLastRow() - 1, HEADERS.length).getValues();
+      // Backwards: the newest row is the last one, and the newest reviews are
+      // the ones worth the reader's attention.
+      for (var i = rows.length - 1; i >= 0 && out.length < MAX_REVIEWS; i--) {
+        var row = rows[i];
+        // Only FALSE hides a row. Blank means shown, so rows written before
+        // this column existed keep working.
+        if (row[7] === false) continue;
+        if (slug && String(row[1]) !== slug) continue;
+        out.push({
+          at: row[0] ? new Date(row[0]).toISOString() : '',
+          rating: row[3] === '' || row[3] === null ? null : Number(row[3]),
+          comment: String(row[4] || ''),
+        });
+      }
+    }
+
+    return ContentService.createTextOutput(JSON.stringify({ ok: true, reviews: out }))
+      .setMimeType(ContentService.MimeType.JSON);
+  } catch (err) {
+    return ContentService.createTextOutput(JSON.stringify({ ok: false, error: String(err) }))
+      .setMimeType(ContentService.MimeType.JSON);
+  }
 }
 ```
 
@@ -118,6 +164,30 @@ Restart `npm run dev`. Vite only reads env files at startup.
 For the deployed site, set the same variable in the host's environment
 settings — it is baked in at build time, so a rebuild is needed after changing
 it.
+
+---
+
+## Taking one down
+
+Anything a student writes appears under that simulation as soon as the site next
+loads it. There is no queue and nothing to approve, which is the right default
+for a handful of readers and the wrong one the day somebody types something
+vile.
+
+The switch is the **`Show`** column, the last one in the Sheet. Set a cell to
+`FALSE` and that row stops being returned; leave it alone and it is published.
+Blank counts as shown, so rows written before this column existed still appear.
+
+Two things worth knowing about the delay:
+
+- The site holds a simulation's reviews for the rest of the browsing session, so
+  a reader already on the page keeps seeing what they had. A reload clears it.
+- A new review does not appear to the person who just wrote it. It is in the
+  Sheet immediately; the page they are on fetched its list before they typed.
+
+If you want a queue rather than a switch — nothing visible until you approve it
+— change the default in `doPost` from `true` to `false`. The site needs no
+changes for that: it only ever shows what the script hands back.
 
 ---
 

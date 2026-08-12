@@ -51,6 +51,39 @@ const SETTLE_MS = 2500
 /** Whether an endpoint has been configured at build time. */
 export const feedbackEnabled = () => Boolean(ENDPOINT)
 
+/**
+ * What other students said about one simulation.
+ *
+ * READING WORKS WHERE WRITING DOES NOT
+ *
+ * Sending has to be a "simple" request — text/plain, no-cors, opaque reply —
+ * because anything else is preflighted and Apps Script does not answer OPTIONS.
+ * A plain GET with no custom headers is simple too, and the difference is that
+ * its reply can be read: Apps Script bounces it to googleusercontent, and that
+ * response carries `Access-Control-Allow-Origin: *`. So the site can post and
+ * never know it landed, and can ask and be answered. Odd, and useful.
+ *
+ * Fetched once per simulation and held for the session — the reviews under a
+ * simulation do not need to be live, and the endpoint is slow to wake.
+ */
+const REVIEWS = new Map()
+
+export async function loadReviews(slug) {
+  if (!ENDPOINT) return []
+  if (REVIEWS.has(slug)) return REVIEWS.get(slug)
+
+  const url = `${ENDPOINT}?sim=${encodeURIComponent(slug)}`
+  const res = await fetch(url)
+  if (!res.ok) throw new Error(`Feedback endpoint answered ${res.status}`)
+  const data = await res.json()
+  const reviews = Array.isArray(data?.reviews) ? data.reviews : []
+  REVIEWS.set(slug, reviews)
+  return reviews
+}
+
+/** Forget one simulation's reviews, so a fresh answer can bring back the list. */
+export const forgetReviews = (slug) => REVIEWS.delete(slug)
+
 const seenKey = (slug) => `majora.feedback.${slug}`
 
 /** Whether this browser has already answered for this simulation. */

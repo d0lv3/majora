@@ -15,6 +15,7 @@ import { actOf, initialNetState, netReducer } from '../sim/net/netState.js'
 import JawConsole from '../sim/jaw/JawConsole.jsx'
 import { initialJawState, jawReducer } from '../sim/jaw/jawState.js'
 import SimFeedback from '../components/SimFeedback.jsx'
+import SimReviews from '../components/SimReviews.jsx'
 import './Simulation.css'
 
 /**
@@ -136,6 +137,11 @@ function SimShell({ slug, major, sim, step, acts, act, count, variant, railEnd, 
             the one place that is "below the simulation" whichever kind it
             is. */}
         <SimFeedback sim={sim} majorName={major.name} />
+
+        {/* And what everybody else said, under the place they said it. Asking
+            for an opinion and never showing anybody else's makes the question a
+            survey; this is what makes it a page people talk on. */}
+        <SimReviews sim={sim} />
       </main>
     </div>
   )
