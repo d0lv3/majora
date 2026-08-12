@@ -85,8 +85,13 @@
   pointer-events: none;
 }
 
+/* Above the scrim, not under it. The scrim is ::after on the photograph, which
+   makes it the last child of it — and two positioned boxes with no z-index
+   between them paint in tree order, so the gradient was being laid over the
+   name and the tag it exists to make readable. One step up is all it takes. */
 .pcard__over {
   position: absolute;
+  z-index: 1;
   left: 1rem;
   right: 1rem;
   bottom: 0.9rem;

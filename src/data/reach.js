@@ -27,9 +27,9 @@ import { UNIVERSITIES } from './universities.js'
  */
 
 /**
- * PRICES ARE PLACEHOLDERS. Every `sessions` block below is a guess at a
- * sensible number, not a rate anybody has agreed to. Set them, per person,
- * before this goes anywhere near a real reader.
+ * What a session costs, per person. 10,000 IQD for half an hour and 15,000 for
+ * a full one — set here rather than derived, because the day somebody's time is
+ * worth more than somebody else's, this is the only line that has to change.
  */
 export const CURRENCY = 'IQD'
 
@@ -60,8 +60,8 @@ export const PEOPLE = [
     ],
     linkedin: 'https://www.linkedin.com/in/d0lv3/',
     sessions: [
-      { minutes: 30, amount: 15000 },
-      { minutes: 60, amount: 25000 },
+      { minutes: 30, amount: 10000 },
+      { minutes: 60, amount: 15000 },
     ],
   },
 
@@ -94,8 +94,8 @@ export const PEOPLE = [
     ],
     linkedin: 'https://www.linkedin.com/in/mohammed-al-fatih-mowafaq-32855228a',
     sessions: [
-      { minutes: 30, amount: 15000 },
-      { minutes: 60, amount: 25000 },
+      { minutes: 30, amount: 10000 },
+      { minutes: 60, amount: 15000 },
     ],
   },
 ]

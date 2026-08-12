@@ -1,5 +1,4 @@
 import { useMemo, useState } from 'react'
-import { Link } from 'react-router-dom'
 
 import CornerLines from '../components/decor/CornerLines.jsx'
 import ReachCard from '../components/reach/ReachCard.jsx'
@@ -65,9 +64,6 @@ export default function Reach() {
           the library, and you can book time with one of them — a call, half an hour or an hour, to
           ask the things nobody puts in a prospectus.
         </p>
-        <p className="reach__note">
-          You pay for their time, and only once they have confirmed it.
-        </p>
       </header>
 
       <div className="shell">
@@ -101,32 +97,39 @@ export default function Reach() {
             </div>
           </div>
 
-          <div className="reach__filterRow" role="group" aria-label="Filter by university">
-            <span className="reach__filterLabel" id="reach-school">
+          {/* A menu rather than chips, and the two filters are not the same
+              shape for a reason: there are a handful of majors and there is one
+              university per person in the country. Pills for that would be a
+              wall of them, growing every time somebody joins from somewhere
+              new, and a wall of pills is a list you have to read all of. */}
+          <div className="reach__filterRow">
+            <label className="reach__filterLabel" htmlFor="reach-school">
               University
-            </span>
-            <div className="filters reach__filters" aria-labelledby="reach-school">
-              <button
-                type="button"
-                className={`filter ${school === 'all' ? 'is-on' : ''}`}
-                aria-pressed={school === 'all'}
-                onClick={() => setSchool('all')}
+            </label>
+            <div className="reach__selectWrap">
+              <select
+                id="reach-school"
+                className="reach__select"
+                value={school}
+                onChange={(e) => setSchool(e.target.value)}
               >
-                Anywhere
-                <span className="filter__count">{schools.length}</span>
-              </button>
-              {schools.map((s) => (
-                <button
-                  type="button"
-                  key={s.id}
-                  className={`filter ${school === s.id ? 'is-on' : ''}`}
-                  aria-pressed={school === s.id}
-                  onClick={() => setSchool(s.id)}
-                >
-                  {s.name}
-                  <span className="filter__count">{s.count}</span>
-                </button>
-              ))}
+                <option value="all">Anywhere</option>
+                {schools.map((s) => (
+                  <option key={s.id} value={s.id}>
+                    {s.name} ({s.count})
+                  </option>
+                ))}
+              </select>
+              <svg className="reach__selectArrow" viewBox="0 0 24 24" aria-hidden="true">
+                <path
+                  d="m7 10 5 5 5-5"
+                  fill="none"
+                  stroke="currentColor"
+                  strokeWidth="2"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                />
+              </svg>
             </div>
           </div>
         </div>
@@ -169,24 +172,6 @@ export default function Reach() {
           </div>
         )}
 
-        {/* Said at the bottom rather than dressed up as a card in the grid: it
-            is honest about how small this is, and a reader who has looked at
-            every card has earned the explanation. */}
-        <aside className="reach__more">
-          <p className="reach__moreTitle">Only {PEOPLE.length} so far.</p>
-          <p className="reach__moreText">
-            Reach grows one person at a time, and each one is somebody who agreed to be asked. If
-            the major you are weighing up is not here yet, the{' '}
-            <Link to="/app" className="reach__moreLink">
-              library
-            </Link>{' '}
-            still has the written answer, and{' '}
-            <Link to="/app/map" className="reach__moreLink">
-              the map
-            </Link>{' '}
-            has where it is taught.
-          </p>
-        </aside>
       </div>
 
       <ReachDialog person={booking} onClose={() => setBooking(null)} />
