@@ -124,6 +124,18 @@ function SimShell({ slug, major, sim, step, acts, act, count, variant, railEnd, 
 
       <main className="shell sim__stage" ref={stage}>
         {children}
+
+        {/* Under the simulation, on every screen of it, for everybody.
+            It used to wait for the ending — four different endings, four
+            conditions, one per run below — which meant the only readers who
+            could say anything were the ones who had already got all the way
+            through. The ones who gave up halfway are the ones worth hearing
+            from, and they were the ones being shown nothing.
+
+            Rendered here rather than in each run for the same reason: this is
+            the one place that is "below the simulation" whichever kind it
+            is. */}
+        <SimFeedback sim={sim} majorName={major.name} />
       </main>
     </div>
   )
@@ -149,8 +161,6 @@ function ScreensRun({ slug, major, sim }) {
       count={`Screen ${state.currentScreen} of ${LAST_SCREEN}`}
     >
       <Current c={sim} state={state} dispatch={dispatch} go={go} />
-      {/* The roadmap is the last screen of the clinic, so this is the end. */}
-      {state.currentScreen === LAST_SCREEN && <SimFeedback sim={sim} majorName={major.name} />}
     </SimShell>
   )
 }
@@ -176,8 +186,6 @@ function StoryRun({ slug, major, sim }) {
       railEnd={<StoryAudio name={sim.score} />}
     >
       <StoryPlayer sim={sim} state={state} dispatch={dispatch} />
-      {/* The closing scene is the one that offers to play it again. */}
-      {sim.scenes.find((s) => s.id === state.sceneId)?.restart && <SimFeedback sim={sim} majorName={major.name} />}
     </SimShell>
   )
 }
@@ -199,7 +207,6 @@ function JawRun({ slug, major, sim }) {
       act={sim.acts.find((a) => a.id === state.act)}
     >
       <JawConsole sim={sim} state={state} dispatch={dispatch} />
-      {state.act === 'close' && <SimFeedback sim={sim} majorName={major.name} />}
     </SimShell>
   )
 }
@@ -232,7 +239,6 @@ function NetRun({ slug, major, sim }) {
       headExtra={dossier}
     >
       <NetConsole sim={sim} state={state} dispatch={dispatch} />
-      {state.phase === 'debrief' && <SimFeedback sim={sim} majorName={major.name} />}
     </SimShell>
   )
 }

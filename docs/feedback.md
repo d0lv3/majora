@@ -1,9 +1,14 @@
 # Simulation feedback → a Google Sheet
 
-At the end of every simulation, two ways to answer: a rating out of five, and a
-box to write whatever the reader thought. Either on its own is enough to send.
-There is no API behind the site, so the answers go to a Google Apps Script Web
-App, which writes them into a Sheet.
+Under every simulation, on every screen of it, two ways to answer: a rating out
+of five, and a box to write whatever the reader thinks. Either on its own is
+enough to send, and it is asked once per simulation per browser. There is no API
+behind the site, so the answers go to a Google Apps Script Web App, which writes
+them into a Sheet.
+
+Deliberately not held back until the ending. The reader who stops half way
+through is the one worth hearing from, and waiting for the last screen is
+exactly how you never hear from them.
 
 Nothing is collected that identifies a reader. The site knows the signed-in
 email and does not send it.
