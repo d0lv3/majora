@@ -25,6 +25,14 @@ email and does not send it.
 > reviews back, so the site has nothing to show. Paste the script below over the
 > old one and deploy a **new version** — editing the code is not enough, Apps
 > Script serves whichever version you deployed.
+>
+> **How to tell which one is deployed.** Open the `/exec` URL in a browser with
+> `?sim=the-jaw` on the end. The current script answers with JSON —
+> `{"ok":true,"reviews":[…]}`. The old one answers `Majora feedback endpoint.
+> POST only.`, or a Google "page not found", and either of those means no
+> reviews will appear under any simulation no matter how many students have
+> written one. In `npm run dev` the browser console says the same thing in
+> words, once per simulation, starting `[reviews]`.
 
 ---
 

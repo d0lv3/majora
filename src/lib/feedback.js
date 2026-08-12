@@ -65,20 +65,60 @@ export const feedbackEnabled = () => Boolean(ENDPOINT)
  *
  * Fetched once per simulation and held for the session — the reviews under a
  * simulation do not need to be live, and the endpoint is slow to wake.
+ *
+ * The promise is what is cached, not the answer, because the card asking is
+ * remounted several times as a simulation starts up and all of those land
+ * inside the same tick. Caching the answer only kept that promise once the
+ * answer had arrived: until then every remount opened its own request, which
+ * against an endpoint that takes fifteen seconds to wake is four cold starts
+ * racing each other for one list. Sharing the promise makes it one request.
+ *
+ * A rejected one is dropped rather than kept, so a blip is not a verdict for
+ * the rest of the session — but it is dropped after the mounts of that tick
+ * have all attached to it, so a broken endpoint is asked once per attempt and
+ * not once per mount.
  */
 const REVIEWS = new Map()
 
-export async function loadReviews(slug) {
-  if (!ENDPOINT) return []
-  if (REVIEWS.has(slug)) return REVIEWS.get(slug)
+export function loadReviews(slug) {
+  if (!ENDPOINT) return Promise.resolve([])
 
+  let pending = REVIEWS.get(slug)
+  if (!pending) {
+    pending = fetchReviews(slug)
+    REVIEWS.set(slug, pending)
+    pending.catch(() => REVIEWS.delete(slug))
+  }
+  return pending
+}
+
+async function fetchReviews(slug) {
   const url = `${ENDPOINT}?sim=${encodeURIComponent(slug)}`
   const res = await fetch(url)
   if (!res.ok) throw new Error(`Feedback endpoint answered ${res.status}`)
-  const data = await res.json()
-  const reviews = Array.isArray(data?.reviews) ? data.reviews : []
-  REVIEWS.set(slug, reviews)
-  return reviews
+
+  /* Read as text and parse here rather than calling res.json(), so that the
+     one failure that actually happens says what it is.
+
+     A stale deployment answers 200 with something that is not JSON — the
+     script before this feature had a doGet that replied "Majora feedback
+     endpoint. POST only." in plain text, and Apps Script serves whichever
+     version was deployed, not whichever version is in the editor. res.json()
+     turns that into "Unexpected token M", which sends you looking at the
+     parser instead of at the deployment. */
+  const body = await res.text()
+  let data
+  try {
+    data = JSON.parse(body)
+  } catch {
+    throw new Error(
+      `Feedback endpoint answered with something that is not JSON: "${body.slice(0, 80)}". ` +
+        'The deployed Apps Script is probably an older version with no doGet that returns ' +
+        'reviews — redeploy it, see docs/feedback.md.',
+    )
+  }
+
+  return Array.isArray(data?.reviews) ? data.reviews : []
 }
 
 /** Forget one simulation's reviews, so a fresh answer can bring back the list. */

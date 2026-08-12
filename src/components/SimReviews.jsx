@@ -57,10 +57,21 @@ export default function SimReviews({ sim }) {
     if (!feedbackEnabled()) return undefined
     let alive = true
     /* A failure is silence, not a message. The reader came for the simulation
-       and an apology for a Sheet they have never heard of is noise. */
+       and an apology for a Sheet they have never heard of is noise.
+
+       Silent to the reader is not the same as silent to whoever is building
+       this. Silence in both directions is how a broken endpoint looks exactly
+       like a simulation nobody has written about yet: nothing renders, nothing
+       is logged, and there is no thread to pull. So in dev it says so, with
+       the reason — in the build the reader gets, it says nothing at all. */
     loadReviews(slug)
       .then((list) => alive && setReviews(list))
-      .catch(() => alive && setReviews([]))
+      .catch((err) => {
+        if (import.meta.env.DEV) {
+          console.warn(`[reviews] nothing to show under "${slug}": ${err.message}`)
+        }
+        if (alive) setReviews([])
+      })
     return () => {
       alive = false
     }
