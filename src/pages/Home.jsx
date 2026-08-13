@@ -6,7 +6,6 @@ import SpecularButton from '../components/ui/SpecularButton.jsx'
 import SB from '../components/ui/buttonPresets.js'
 import About from '../sections/About.jsx'
 import Contact from '../sections/Contact.jsx'
-import { useAuth } from '../context/AuthContext.jsx'
 import logo from '../assets/visual-identity/logo-web.png'
 import './Home.css'
 
@@ -53,12 +52,11 @@ const FEATURES = [
 
 export default function Home() {
   const navigate = useNavigate()
-  const { isAuthenticated } = useAuth()
 
-  // Signed in, the primary action opens the app; signed out, it creates the
-  // account that unlocks it. /app itself bounces guests to the login screen.
-  const startHref = isAuthenticated ? '/app' : '/signup'
-  const startLabel = isAuthenticated ? 'Open the library' : 'Start Exploring'
+  // Straight into the library. There is no account to make first, so the
+  // primary action is the thing the reader came for.
+  const startHref = '/app'
+  const startLabel = 'Start Exploring'
 
   const scrollTo = (id) => {
     document.getElementById(id)?.scrollIntoView({ behavior: 'smooth', block: 'start' })
@@ -176,11 +174,11 @@ export default function Home() {
                 →
               </span>
             </SpecularButton>
-            {!isAuthenticated && (
-              <Link to="/login" className="linky closer__alt">
-                I already have an account
-              </Link>
-            )}
+            {/* The other way in, for a reader who has just read the whole page
+                and still could not name the thing they want to look up. */}
+            <Link to="/quiz" className="linky closer__alt">
+              Not sure yet? Take the track test
+            </Link>
           </Reveal>
         </div>
       </section>

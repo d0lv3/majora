@@ -5,11 +5,8 @@ import BrandLoader from './components/BrandLoader.jsx'
 import Navbar from './components/Navbar.jsx'
 import AppNav from './components/AppNav.jsx'
 import Footer from './components/Footer.jsx'
-import { useAuth } from './context/AuthContext.jsx'
 
 import Home from './pages/Home.jsx'
-import Login from './pages/Login.jsx'
-import Signup from './pages/Signup.jsx'
 import TrackTest from './pages/TrackTest.jsx'
 import MajorDetail from './pages/MajorDetail.jsx'
 
@@ -40,7 +37,10 @@ import NotFound from './pages/NotFound.jsx'
  *
  *   /      the landing page — everything public, on a single scroll, with the
  *          nav items as anchors into it (#top, #about, #contact).
- *   /app   the product — the majors library and its pages, behind the login.
+ *   /app   the product — the majors library and its pages.
+ *
+ * Nothing here is gated. There is no login and no registration: a reader who
+ * types /app/dentistry gets the write-up, not a form standing in front of it.
  */
 
 /**
@@ -147,32 +147,13 @@ function ScrollManager() {
   return null
 }
 
-/** Logging out is reachable as a URL, so it needs to be a real destination. */
-function Logout() {
-  const { logout } = useAuth()
-  useEffect(() => {
-    logout()
-  }, [logout])
-  return <Navigate to="/" replace />
-}
-
-function RequireAuth({ children }) {
-  const { isAuthenticated } = useAuth()
-  const location = useLocation()
-  if (!isAuthenticated) {
-    return <Navigate to="/login" state={{ from: location.pathname }} replace />
-  }
-  return children
-}
-
 export default function App() {
   const { pathname } = useLocation()
 
-  // The auth screens are full-bleed split layouts — they bring their own
-  // chrome. The track test joins them: it sits between registering and the
-  // library, and a nav bar across it would be three more ways to leave a
-  // screen that already offers one.
-  const bareLayout = ['/login', '/signup', '/quiz'].includes(pathname)
+  // The track test brings its own chrome: it is one question at a time with a
+  // way out in its header, and a nav bar across it would be three more ways to
+  // leave a screen that already offers one.
+  const bareLayout = pathname === '/quiz'
   // The app is its own place: its header, and no marketing footer under it.
   const inApp = pathname === '/app' || pathname.startsWith('/app/')
   const landingChrome = !bareLayout && !inApp
@@ -186,30 +167,17 @@ export default function App() {
       <main id="main" className={inApp ? 'main--app' : undefined}>
         <Routes>
           <Route path="/" element={<Home />} />
-          <Route path="/login" element={<Login />} />
-          <Route path="/signup" element={<Signup />} />
-          <Route path="/logout" element={<Logout />} />
 
-          {/* Where /signup sends a new account. Guarded like the app itself,
-              since it writes the result onto the signed-in user, and reachable
-              again afterwards for anyone who wants to retake it. */}
-          <Route
-            path="/quiz"
-            element={
-              <RequireAuth>
-                <TrackTest />
-              </RequireAuth>
-            }
-          />
+          {/* Offered from the landing page, and open to anyone who wants to
+              retake it afterwards. */}
+          <Route path="/quiz" element={<TrackTest />} />
 
           <Route
             path="/app"
             element={
-              <RequireAuth>
-                <Suspense fallback={<BrandLoader label="Opening the library" />}>
-                  <Majors />
-                </Suspense>
-              </RequireAuth>
+              <Suspense fallback={<BrandLoader label="Opening the library" />}>
+                <Majors />
+              </Suspense>
             }
           />
           {/* Both before /app/:slug, which would otherwise match "map" and
@@ -218,42 +186,29 @@ export default function App() {
           <Route
             path="/app/map"
             element={
-              <RequireAuth>
-                <Suspense fallback={<BrandLoader label="Loading the map" />}>
-                  <MajorMap />
-                </Suspense>
-              </RequireAuth>
+              <Suspense fallback={<BrandLoader label="Loading the map" />}>
+                <MajorMap />
+              </Suspense>
             }
           />
           <Route
             path="/app/reach"
             element={
-              <RequireAuth>
-                <Suspense fallback={<BrandLoader label="Finding people" />}>
-                  <Reach />
-                </Suspense>
-              </RequireAuth>
+              <Suspense fallback={<BrandLoader label="Finding people" />}>
+                <Reach />
+              </Suspense>
             }
           />
-          <Route
-            path="/app/:slug"
-            element={
-              <RequireAuth>
-                <MajorDetail />
-              </RequireAuth>
-            }
-          />
+          <Route path="/app/:slug" element={<MajorDetail />} />
           {/* The last level of a major's curriculum. A static segment, so the
               router ranks it above /app/:slug/:branch and "simulation" is
               never mistaken for the name of a branch. */}
           <Route
             path="/app/:slug/simulation"
             element={
-              <RequireAuth>
-                <Suspense fallback={<BrandLoader label="Preparing the simulation" />}>
-                  <Simulation />
-                </Suspense>
-              </RequireAuth>
+              <Suspense fallback={<BrandLoader label="Preparing the simulation" />}>
+                <Simulation />
+              </Suspense>
             }
           />
           {/* A major with more than one names which. The bare route above still
@@ -262,11 +217,9 @@ export default function App() {
           <Route
             path="/app/:slug/simulation/:sim"
             element={
-              <RequireAuth>
-                <Suspense fallback={<BrandLoader label="Preparing the simulation" />}>
-                  <Simulation />
-                </Suspense>
-              </RequireAuth>
+              <Suspense fallback={<BrandLoader label="Preparing the simulation" />}>
+                <Simulation />
+              </Suspense>
             }
           />
           {/* A branch inside a major — English Literature inside the English
@@ -275,11 +228,9 @@ export default function App() {
           <Route
             path="/app/:slug/:branch"
             element={
-              <RequireAuth>
-                <Suspense fallback={<BrandLoader label="Opening the guide" />}>
-                  <MajorGuide />
-                </Suspense>
-              </RequireAuth>
+              <Suspense fallback={<BrandLoader label="Opening the guide" />}>
+                <MajorGuide />
+              </Suspense>
             }
           />
 
@@ -287,6 +238,11 @@ export default function App() {
           <Route path="/about" element={<Navigate to="/#about" replace />} />
           <Route path="/contact" element={<Navigate to="/#contact" replace />} />
           <Route path="/majors/*" element={<Navigate to="/app" replace />} />
+          {/* Back when there was an account to be in or out of. Anyone still
+              holding one of these links wanted the library either way. */}
+          <Route path="/login" element={<Navigate to="/app" replace />} />
+          <Route path="/signup" element={<Navigate to="/app" replace />} />
+          <Route path="/logout" element={<Navigate to="/" replace />} />
 
           <Route path="*" element={<NotFound />} />
         </Routes>

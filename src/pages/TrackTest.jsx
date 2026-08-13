@@ -11,10 +11,11 @@ import logo from '../assets/visual-identity/logo-web.png'
 import './TrackTest.css'
 
 /**
- * The track test, at /quiz — where a new account lands straight after signing
- * up, and the only thing standing between registering and the library.
+ * The track test, at /quiz — offered from the foot of the landing page to a
+ * reader who cannot yet name the thing they want to look up, and open to
+ * anyone who wants to retake it later.
  *
- * Which is why every screen carries a way out. "Skip for now" sits in the
+ * It is never in anyone's way, and every screen says so. "Skip for now" sits in the
  * header from the first question to the last, a single question can be passed
  * over without answering it, and skipping is recorded as a real answer rather
  * than left pending so the test does not ambush the reader again next visit.

@@ -5,16 +5,12 @@ import PillNav from './ui/PillNav.jsx'
 import logo from '../assets/visual-identity/logo-web.png'
 
 /**
- * The header for the signed-in product at /app.
+ * The header for the product at /app.
  *
  * Same bar as the landing page, carrying the app's own places instead of the
- * marketing anchors. It used to be a separate solid rail, which made signing
- * in feel like arriving at a different product; the library already moved onto
- * the landing page's light ground, and this finishes that.
- *
- * Log out is a link to /logout rather than a handler that clears the session
- * here: clearing it in place would trip the route guard first and dump the
- * reader on the login screen instead of the landing page.
+ * marketing anchors. It used to be a separate solid rail, which made opening
+ * the library feel like arriving at a different product; the library already
+ * moved onto the landing page's light ground, and this finishes that.
  *
  * The items array is memoised because PillNav re-runs its GSAP layout whenever
  * `items` changes identity, and a fresh array every render would replay the
@@ -28,7 +24,6 @@ export default function AppNav() {
       { label: 'Library', href: '/app' },
       { label: 'Map', href: '/app/map' },
       { label: 'Reach', href: '/app/reach' },
-      { label: 'Log out', href: '/logout' },
     ],
     [],
   )

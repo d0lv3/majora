@@ -2,14 +2,13 @@ import { useEffect, useMemo, useState } from 'react'
 import { useLocation } from 'react-router-dom'
 import PillNav from './ui/PillNav.jsx'
 import logo from '../assets/visual-identity/logo-web.png'
-import { useAuth } from '../context/AuthContext.jsx'
 
 /**
  * The landing-page navigation, built on React Bits' <PillNav />.
  *
  * Everything public lives on one page, so Home/About/Contact are anchors into
- * it rather than routes — only the account item is a real destination. The
- * signed-in product at /app carries its own header instead of this one.
+ * it rather than routes — only the last item is a real destination. The product
+ * at /app carries its own header instead of this one.
  *
  * The items array is memoised on purpose: PillNav re-runs its GSAP layout
  * whenever `items` changes identity, so a fresh array every render would
@@ -58,7 +57,6 @@ function useActiveSection(enabled) {
 }
 
 export default function Navbar() {
-  const { isAuthenticated } = useAuth()
   const { pathname } = useLocation()
 
   const onLanding = pathname === '/'
@@ -69,15 +67,13 @@ export default function Navbar() {
       { label: 'Home', href: '/#top' },
       { label: 'About', href: '/#about' },
       { label: 'Contact', href: '/#contact' },
-      isAuthenticated
-        ? { label: 'Open app', href: '/app' }
-        : { label: 'Login', href: '/login' },
+      { label: 'Open app', href: '/app' },
     ],
-    [isAuthenticated],
+    [],
   )
 
   // Off the landing page the anchors are ordinary links home, so nothing is lit
-  // unless the reader is on the account destination itself.
+  // unless the reader is on that last destination itself.
   const activeHref = onLanding ? `/#${active}` : pathname
 
   return (

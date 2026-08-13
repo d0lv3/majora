@@ -1,12 +1,10 @@
 import { Link } from 'react-router-dom'
 import logo from '../assets/visual-identity/logo-web.png'
 import { FIELDS, MAJORS } from '../data/majors.js'
-import { useAuth } from '../context/AuthContext.jsx'
 import './Footer.css'
 
 /** The landing page's footer. The app at /app deliberately has none. */
 export default function Footer() {
-  const { isAuthenticated } = useAuth()
   const year = new Date().getFullYear()
 
   return (
@@ -42,28 +40,24 @@ export default function Footer() {
             </ul>
           </div>
 
+          {/* The app's own places, since there is no account to link to: the
+              library is open, and this is the shortest way into it from the
+              bottom of the page. */}
           <div className="foot__col">
-            <h2>Account</h2>
+            <h2>The app</h2>
             <ul>
-              {isAuthenticated ? (
-                <>
-                  <li>
-                    <Link to="/app">Open the library</Link>
-                  </li>
-                  <li>
-                    <Link to="/logout">Log out</Link>
-                  </li>
-                </>
-              ) : (
-                <>
-                  <li>
-                    <Link to="/login">Log in</Link>
-                  </li>
-                  <li>
-                    <Link to="/signup">Create an account</Link>
-                  </li>
-                </>
-              )}
+              <li>
+                <Link to="/app">Open the library</Link>
+              </li>
+              <li>
+                <Link to="/app/map">Map</Link>
+              </li>
+              <li>
+                <Link to="/app/reach">Reach</Link>
+              </li>
+              <li>
+                <Link to="/quiz">Track test</Link>
+              </li>
             </ul>
           </div>
 

@@ -198,7 +198,6 @@ svg {
 .pill-logo img,
 .hero__mark img,
 .foot__lockup img,
-.auth__brand img,
 .quiz__brand img {
   translate: 0 2.9%;
 }
@@ -389,6 +388,70 @@ h4 {
 .linky:hover::after {
   transform: scaleX(1);
   transform-origin: left;
+}
+
+/* ---------- a labelled form field ----------
+   Written for the sign-up and login screens, which are gone — the site has no
+   accounts to make. The contact form was always the other user of these rules
+   and is now the only one, so they live here rather than under a page. Select
+   and textarea match them from Contact.css, which is where the two controls
+   this form has and that one did not are styled. */
+.field {
+  display: grid;
+  gap: 0.5rem;
+  border: 0;
+  padding: 0;
+  margin: 0;
+  min-width: 0;
+}
+
+.field label,
+.field legend {
+  font-size: 0.78rem;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--purple-500);
+  padding: 0;
+}
+
+.field input {
+  width: 100%;
+  padding: 0.95rem 1.1rem;
+  border: 1.5px solid var(--line);
+  border-radius: var(--r-sm);
+  background: var(--paper);
+  font-size: 1rem;
+  color: var(--text-on-light);
+  transition:
+    border-color 0.25s ease,
+    background-color 0.25s ease,
+    box-shadow 0.25s ease;
+}
+
+.field input::placeholder {
+  color: #a89ebb;
+}
+
+.field input:hover {
+  border-color: var(--line-strong);
+}
+
+.field input:focus {
+  outline: none;
+  background: var(--white);
+  border-color: var(--purple-500);
+  box-shadow: 0 0 0 4px rgba(65, 43, 99, 0.12);
+}
+
+.field input[aria-invalid='true'] {
+  border-color: #c0392b;
+  background: #fdf3f2;
+}
+
+.field__error {
+  font-size: 0.82rem;
+  color: #c0392b;
 }
 
 /* ---------- reveal on scroll ---------- */
