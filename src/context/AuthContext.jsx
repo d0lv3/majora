@@ -62,7 +62,20 @@ export function AuthProvider({ children }) {
     setUser((u) => ({ ...u, track, trackTestDone: true }))
   }, [])
 
-  const value = useMemo(() => ({ user, completeTrackTest }), [user, completeTrackTest])
+  /**
+   * Puts the reader back where they started.
+   *
+   * Not a sign-out — there is nothing to sign out of — but a shared computer is
+   * the normal case in a school library, and this is how the last reader's
+   * track test stops being the next reader's. It hands back a fresh guest
+   * rather than nobody, because nobody is not a state this app has.
+   */
+  const logout = useCallback(() => setUser(guest()), [])
+
+  const value = useMemo(
+    () => ({ user, completeTrackTest, logout }),
+    [user, completeTrackTest, logout],
+  )
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>
 }

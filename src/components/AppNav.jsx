@@ -12,6 +12,10 @@ import logo from '../assets/visual-identity/logo-web.png'
  * the library feel like arriving at a different product; the library already
  * moved onto the landing page's light ground, and this finishes that.
  *
+ * Log out is a link to /logout rather than a handler that clears the session
+ * here: the reader is on their way to the landing page, and clearing it in
+ * place would leave them in a library that had just forgotten them.
+ *
  * The items array is memoised because PillNav re-runs its GSAP layout whenever
  * `items` changes identity, and a fresh array every render would replay the
  * reveal animation on every keystroke in the search box.
@@ -24,6 +28,7 @@ export default function AppNav() {
       { label: 'Library', href: '/app' },
       { label: 'Map', href: '/app/map' },
       { label: 'Reach', href: '/app/reach' },
+      { label: 'Log out', href: '/logout' },
     ],
     [],
   )

@@ -5,6 +5,7 @@ import BrandLoader from './components/BrandLoader.jsx'
 import Navbar from './components/Navbar.jsx'
 import AppNav from './components/AppNav.jsx'
 import Footer from './components/Footer.jsx'
+import { useAuth } from './context/AuthContext.jsx'
 
 import Home from './pages/Home.jsx'
 import TrackTest from './pages/TrackTest.jsx'
@@ -147,6 +148,21 @@ function ScrollManager() {
   return null
 }
 
+/**
+ * Clearing the session is reachable as a URL, so it needs to be a destination.
+ *
+ * A link rather than a handler in the nav, and that is deliberate: the reader
+ * ends up on the landing page, and a button that cleared the session in place
+ * would leave them standing in the library it had just emptied.
+ */
+function Logout() {
+  const { logout } = useAuth()
+  useEffect(() => {
+    logout()
+  }, [logout])
+  return <Navigate to="/" replace />
+}
+
 export default function App() {
   const { pathname } = useLocation()
 
@@ -167,6 +183,7 @@ export default function App() {
       <main id="main" className={inApp ? 'main--app' : undefined}>
         <Routes>
           <Route path="/" element={<Home />} />
+          <Route path="/logout" element={<Logout />} />
 
           {/* Offered from the landing page, and open to anyone who wants to
               retake it afterwards. */}
@@ -242,7 +259,6 @@ export default function App() {
               holding one of these links wanted the library either way. */}
           <Route path="/login" element={<Navigate to="/app" replace />} />
           <Route path="/signup" element={<Navigate to="/app" replace />} />
-          <Route path="/logout" element={<Navigate to="/" replace />} />
 
           <Route path="*" element={<NotFound />} />
         </Routes>
